@@ -5,7 +5,7 @@ public class NavScreen : MonoBehaviour
 {
     public Transform horizontalLine;
     public Transform verticalLine;
-    public Transform dot;
+    //public Transform dot;
 
     public float moveSpeed = 5f;
 
