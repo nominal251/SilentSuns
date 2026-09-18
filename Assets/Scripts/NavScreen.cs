@@ -5,7 +5,10 @@ public class NavScreen : MonoBehaviour
 {
     public Transform horizontalLine;
     public Transform verticalLine;
-    //public Transform dot;
+    public Transform reticleCenter;
+    public Transform shipPos;
+
+    private bool isMoving = false;
 
     public Button leftButton;
     public Button rightButton;
@@ -33,11 +36,11 @@ public class NavScreen : MonoBehaviour
         if (rightButton.activated)
             verticalLine.position += Vector3.right * moveSpeed * Time.deltaTime;
 
-        // central dot position (unused for now)
-        /*dot.position = new Vector3(
+        // central dot position
+        reticleCenter.position = new Vector3(
             verticalLine.position.x,
             horizontalLine.position.y,
-            dot.position.z
-        );*/
+            reticleCenter.position.z
+        );
     }
 }
