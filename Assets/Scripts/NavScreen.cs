@@ -7,6 +7,11 @@ public class NavScreen : MonoBehaviour
     public Transform verticalLine;
     //public Transform dot;
 
+    public Button leftButton;
+    public Button rightButton;
+    public Button upButton;
+    public Button downButton;
+
     public float moveSpeed = 5f;
 
     void Update()
@@ -15,17 +20,17 @@ public class NavScreen : MonoBehaviour
             return;
 
         // horizontal line up/down
-        if (Keyboard.current.upArrowKey.isPressed)
+        if (upButton.activated)
             horizontalLine.position += Vector3.up * moveSpeed * Time.deltaTime;
 
-        if (Keyboard.current.downArrowKey.isPressed)
+        if (downButton.activated)
             horizontalLine.position += Vector3.down * moveSpeed * Time.deltaTime;
 
         // vertical line left/right
-        if (Keyboard.current.leftArrowKey.isPressed)
+        if (leftButton.activated)
             verticalLine.position += Vector3.left * moveSpeed * Time.deltaTime;
 
-        if (Keyboard.current.rightArrowKey.isPressed)
+        if (rightButton.activated)
             verticalLine.position += Vector3.right * moveSpeed * Time.deltaTime;
 
         // central dot position (unused for now)
