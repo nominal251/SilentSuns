@@ -4469,7 +4469,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 419244545}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -16287,7 +16287,7 @@ MonoBehaviour:
   startButton: {fileID: 2070288823}
   stopButton: {fileID: 1744337954}
   reticleMoveSpeed: 5
-  shipMoveSpeed: 1
+  shipMoveSpeed: 0.4
 --- !u!1 &1743724483
 GameObject:
   m_ObjectHideFlags: 0

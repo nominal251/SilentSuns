@@ -48,6 +48,14 @@ public class NavScreen : MonoBehaviour
         );
 
         if (startButton.activated)
+        {
+            isMoving = true;
+        }
+
+        if (stopButton.activated)
+        {
+            isMoving = false;
+        }
 
         if (isMoving)
         {
