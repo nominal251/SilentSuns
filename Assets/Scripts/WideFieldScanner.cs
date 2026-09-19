@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class WideFieldScanner : MonoBehaviour
 {
     public TMP_Text wfsText;
+
+    public Button confirmButton;
 
     public GameObject shipMarker;
 
@@ -18,6 +21,10 @@ public class WideFieldScanner : MonoBehaviour
     private float confidence = 0.1f;
 
     private string readyText;
+
+    private GameObject currentPlanet;
+
+    private bool scanComplete = false;
 
     private string MakeProgressBar(float progress, int length = 20)
     {
@@ -36,9 +43,27 @@ public class WideFieldScanner : MonoBehaviour
 
     void Update()
     {
+        // stop doing anything once the scan is complete
+        if (scanComplete)
+            return;
+
+        if (confirmButton.activated && confidence == 1f)
+        {
+            if (currentPlanet != null)
+            {
+                // enable the planet
+                currentPlanet.SetActive(true);
+
+                // remove it from the scanner
+                planets.Remove(currentPlanet);
+
+                currentPlanet = null;
+            }
+        }
+
         Calculate();
 
-        if (confidence >= 1)
+        if (confidence >= 1f)
         {
             readyText = "! POS CONFIRM READY !";
         }
@@ -51,10 +76,15 @@ public class WideFieldScanner : MonoBehaviour
     void Calculate()
     {
         float closestDistance = Mathf.Infinity;
+        currentPlanet = null;
 
         // find the planet closest to the ship marker on the X axis
+        // ignore planets that are below the ship
         foreach (GameObject planet in planets)
         {
+            if (shipMarker.transform.position.y > planet.transform.position.y)
+                continue;
+
             float distance = Mathf.Abs(
                 shipMarker.transform.position.x - planet.transform.position.x
             );
@@ -62,12 +92,18 @@ public class WideFieldScanner : MonoBehaviour
             if (distance < closestDistance)
             {
                 closestDistance = distance;
+                currentPlanet = planet;
             }
         }
 
+        // all planets have been found
         if (planets.Count == 0)
         {
             confidence = 0f;
+            scanComplete = true;
+
+            wfsText.text = "ALL PLANETARY MASS\nOBJECTS LOCATED";
+
             return;
         }
 
@@ -85,6 +121,15 @@ public class WideFieldScanner : MonoBehaviour
             );
 
             confidence = Mathf.Clamp01(confidence);
+        }
+
+        if (confidence >= 1f)
+        {
+            readyText = "! POS CONFIRM READY !";
+        }
+        else
+        {
+            readyText = "POS CONFIRM NOT READY";
         }
 
         RefreshText();

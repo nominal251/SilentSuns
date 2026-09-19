@@ -27,7 +27,7 @@ public class PlanetManager : MonoBehaviour
     {
         CurrentPlanet = planet;
 
-        objText.GetComponent<TMP_Text>().text = "OBJ " + planet.name;
+        objText.GetComponent<TMP_Text>().text = "ORBT: " + planet.name;
 
         if (debugMode)
         {
