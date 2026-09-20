@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 
 public class WideFieldScanner : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class WideFieldScanner : MonoBehaviour
     public float confidenceRange = 0.3f;
     public float fullConfidenceMargin = 0.1f;
 
-    private float luminosity = 0.92f;
+    private float luminosity = 1f;
     private float confidence = 0.1f;
 
     private string readyText;
@@ -131,6 +132,8 @@ public class WideFieldScanner : MonoBehaviour
         {
             readyText = "POS CONFIRM NOT READY";
         }
+
+        luminosity = 1f - (confidence * 0.008f);
 
         RefreshText();
     }
