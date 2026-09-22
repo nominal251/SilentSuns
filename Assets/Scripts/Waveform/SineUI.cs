@@ -23,8 +23,8 @@ public class SineUI : MonoBehaviour
     void UpdateText()
     {
         UIText.text = (
-            "P Mag " + playerSine.magnitude + " - P Freq " + playerSine.freqButtonSens +
-            "\nT Mag " + targetSine.magnitude + " - T Freq " + targetSine.freqButtonSens
+            "P Mag " + playerSine.magnitude.ToString("F2") + " - P Freq " + playerSine.frequency.ToString("F2") +
+            "\nT Mag " + targetSine.magnitude.ToString("F2") + " - T Freq " + targetSine.frequency.ToString("F2")
         );
         
     }
