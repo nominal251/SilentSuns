@@ -23,7 +23,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // start interaction
-        if (Keyboard.current.fKey.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (currentInteractable != null)
             {
@@ -32,8 +32,8 @@ public class InteractOrigin : MonoBehaviour
             }
         }
 
-        // while holding F
-        if (Keyboard.current.fKey.isPressed && heldInteractable != null)
+        // while holding interact
+        if (Mouse.current.leftButton.isPressed && heldInteractable != null)
         {
             // check if the object is still within range
             float distance = Vector3.Distance(
@@ -48,8 +48,8 @@ public class InteractOrigin : MonoBehaviour
             }
         }
 
-        // on release F
-        if (Keyboard.current.fKey.wasReleasedThisFrame)
+        // on release interact
+        if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             if (heldInteractable != null)
             {
