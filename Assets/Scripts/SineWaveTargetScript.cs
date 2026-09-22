@@ -1,11 +1,13 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class SineWave : MonoBehaviour
+public class SineWaveTargetScript : MonoBehaviour
 {
+    // SIMPLIFIED SINE WAVE GENERATOR FOR SINE TARGET, BECAUSE SINE TARGET WILL NOT BE INFLUENCED BY BUTTONS
+
     public float frequency = 2f;
     public float magnitude = 1f;
-    public float offset = 0f;
+    public float xOffset = 0f;
 
     public float xLength = 10f;
     public int resolution = 100;
@@ -13,13 +15,6 @@ public class SineWave : MonoBehaviour
     public float magButtonSens = 0.1f;
     public float freqButtonSens = 0.1f;
     public float offsetButtonSens = 0.1f;
-
-    public Button magUpButton;
-    public Button magDownButton;
-    public Button freqUpButton;
-    public Button freqDownButton;
-    public Button offsetUpButton;
-    public Button offsetDownButton;
 
     private LineRenderer lineRenderer;
 
@@ -43,24 +38,6 @@ public class SineWave : MonoBehaviour
     void Update()
     {
         GenerateWave();
-
-        if (magUpButton.activated)
-            magnitude += (magButtonSens * Time.deltaTime);
-        
-        if (magDownButton.activated)
-            magnitude -= (magButtonSens * Time.deltaTime);
-
-        if (freqUpButton.activated)
-            frequency += (freqButtonSens * Time.deltaTime);
-
-        if (freqDownButton.activated)
-            frequency -= (freqButtonSens * Time.deltaTime);
-
-        if (offsetUpButton.activated)
-            offset += (offsetButtonSens * Time.deltaTime);
-
-        if (offsetDownButton.activated)
-            offset -= (offsetButtonSens * Time.deltaTime);
     }
 
     void GenerateWave()
@@ -73,7 +50,7 @@ public class SineWave : MonoBehaviour
 
             float x = t * xLength;
 
-            float y = Mathf.Sin((x + offset) * frequency) * magnitude;
+            float y = Mathf.Sin((x + xOffset) * frequency) * magnitude;
 
             lineRenderer.SetPosition(i, new Vector3(x, y, 0f) + transform.position);
         }
