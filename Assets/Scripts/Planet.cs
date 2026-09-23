@@ -4,6 +4,11 @@ public class Planet : MonoBehaviour
 {
     public string name;
 
+    [Header("Sine Parameters for Waveform Scanner")]
+    public float sineMag;
+    public float sineFreq;
+    public float sineOffset;
+
     public float Radius
     {
         get

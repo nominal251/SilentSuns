@@ -10,6 +10,11 @@ public class PlanetManager : MonoBehaviour
     [Header("NAV Station Assignments")]
     public GameObject objText;
 
+    [Header("Waveform Station Assignments")]
+    public SineWave targetSine;
+    [InspectorName("ScreenZoneWaveform")]
+    public SineUI sineUI;
+
     [Header("Other Assignments")]
 
     public List<Planet> planets = new List<Planet>();
@@ -29,6 +34,12 @@ public class PlanetManager : MonoBehaviour
 
         objText.GetComponent<TMP_Text>().text = "ORBT: " + planet.name;
 
+        targetSine.magnitude = planet.sineMag;
+        targetSine.frequency = planet.sineFreq;
+        targetSine.offset = planet.sineOffset;
+
+        sineUI.UpdateTargetSineState();
+
         if (debugMode)
         {
             debugText.GetComponent<TMP_Text>().text =
@@ -41,6 +52,8 @@ public class PlanetManager : MonoBehaviour
         CurrentPlanet = null;
 
         objText.GetComponent<TMP_Text>().text = "ORBT: N/A";
+
+        sineUI.UpdateTargetSineState();
 
         if (debugMode)
         {
