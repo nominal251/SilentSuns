@@ -9,6 +9,10 @@ public class Planet : MonoBehaviour
     public float sineFreq;
     public float sineOffset;
 
+    [Header("Parameters for Spectrogram")]
+    public Sprite spectrogramImage;
+    public AudioClip spectrogramAudio;
+
     public float Radius
     {
         get

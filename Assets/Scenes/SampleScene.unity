@@ -2182,6 +2182,8 @@ MonoBehaviour:
   sineMag: 1.91
   sineFreq: 0.91
   sineOffset: 2.1
+  spectrogramImage: {fileID: 0}
+  spectrogramAudio: {fileID: 0}
 --- !u!1 &253388848
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,6 +2326,8 @@ MonoBehaviour:
   sineMag: 1.11
   sineFreq: 2.31
   sineOffset: 0.7
+  spectrogramImage: {fileID: 21300000, guid: a29c8d5429f9dae498db51c291ee2ca8, type: 3}
+  spectrogramAudio: {fileID: 8300000, guid: 31cf4fd6c549cc5419640638b2eeef80, type: 3}
 --- !u!1 &276005632
 GameObject:
   m_ObjectHideFlags: 0
@@ -2336,8 +2340,9 @@ GameObject:
   - component: {fileID: 276005636}
   - component: {fileID: 276005635}
   - component: {fileID: 276005634}
+  - component: {fileID: 276005637}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: SpectrogramScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2437,6 +2442,103 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 276005632}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!82 &276005637
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276005632}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.281
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &281160887
 GameObject:
   m_ObjectHideFlags: 0
@@ -8186,6 +8288,8 @@ MonoBehaviour:
   sineMag: 0.55
   sineFreq: 0.43
   sineOffset: 0.1
+  spectrogramImage: {fileID: 21300000, guid: a29c8d5429f9dae498db51c291ee2ca8, type: 3}
+  spectrogramAudio: {fileID: 8300000, guid: 31cf4fd6c549cc5419640638b2eeef80, type: 3}
 --- !u!212 &913949521
 SpriteRenderer:
   serializedVersion: 3
@@ -8952,6 +9056,8 @@ MonoBehaviour:
   sineMag: 2.21
   sineFreq: 3.14
   sineOffset: 0.4
+  spectrogramImage: {fileID: 0}
+  spectrogramAudio: {fileID: 0}
 --- !u!1 &965427032
 GameObject:
   m_ObjectHideFlags: 0
@@ -15626,7 +15732,7 @@ GameObject:
   - component: {fileID: 2058062817}
   - component: {fileID: 2058062816}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: SineScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16301,9 +16407,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Spectrogram
   planetManager: {fileID: 1902666199}
+  spectrogramScreen: {fileID: 276005637}
   spectrogramImage: {fileID: 1499579120}
   confirmButton: {fileID: 722863642}
   sineUI: {fileID: 1465189481}
+  volume: 1
 --- !u!33 &112616976027745318
 MeshFilter:
   m_ObjectHideFlags: 0

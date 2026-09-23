@@ -1,10 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using static UnityEngine.Rendering.DebugUI;
 
 public class Spectrogram : MonoBehaviour
 {
     public PlanetManager planetManager;
+
+    public AudioSource spectrogramScreen;
+
+    public TextMeshPro spectrogramBackgroundText;
 
     public Image spectrogramImage;
     public Button confirmButton;
@@ -12,16 +17,14 @@ public class Spectrogram : MonoBehaviour
     [InspectorName("ScreenZoneWaveform")]
     public SineUI sineUI;
 
+    public float volume = 1f;
+
     private float fillSpeed = 0.1f;
 
     private bool activate;
 
-    void Start()
-    {
-        
-    }
+    private bool audioPlayed = false;
 
-    // Update is called once per frame
     void Update()
     {
         if (confirmButton.activated)
@@ -32,10 +35,30 @@ public class Spectrogram : MonoBehaviour
 
         if (sineUI.isMatched == true && activate == true)
         {
+            if (!audioPlayed)
+            {
+                SequenceStart();
+                audioPlayed = true;
+            }
+
             spectrogramImage.fillAmount += fillSpeed * Time.deltaTime;
             Mathf.Clamp(spectrogramImage.fillAmount, 0f, 1f);
         }
         else
-            spectrogramImage.fillAmount = 0;
+            Reset();
+    }
+
+    void Reset()
+    {
+        spectrogramImage.fillAmount = 0;
+        audioPlayed = false;
+        spectrogramBackgroundText.text = "SIGNAL NOT ISOLATED";
+    }
+
+    void SequenceStart()
+    {
+        spectrogramImage.sprite = planetManager.CurrentPlanet.spectrogramImage;
+        spectrogramScreen.PlayOneShot(planetManager.CurrentPlanet.spectrogramAudio);
+        spectrogramBackgroundText.text = "";
     }
 }
