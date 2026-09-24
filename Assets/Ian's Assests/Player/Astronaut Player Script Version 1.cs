@@ -30,8 +30,17 @@ public class AstronautPlayerScriptVersion1 : MonoBehaviour
 
     private void HandleRotation()
     {
-        Vector3 rollDirection = new Vector3(-inputHandler.lookInput.y * mouseSens, inputHandler.lookInput.x * mouseSens, inputHandler.rollInput);
-        rBody.AddRelativeTorque(rollDirection * rollTorque, ForceMode.Force);
+        if (inputHandler.reorientInput)
+        {
+            var springTorque = Vector3.Cross(rBody.transform.up, Vector3.up);
+            var dampTorque = -rBody.angularVelocity;
+            rBody.AddTorque(springTorque + dampTorque, ForceMode.Acceleration);
+        }
+        else
+        {
+            Vector3 rollDirection = new Vector3(-inputHandler.lookInput.y * mouseSens, inputHandler.lookInput.x * mouseSens, inputHandler.rollInput);
+            rBody.AddRelativeTorque(rollDirection * rollTorque, ForceMode.Force);
+        }
     }
 
     private void HandleMove()
