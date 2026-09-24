@@ -9,10 +9,12 @@ public class InputHandler : MonoBehaviour
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction rollAction;
+    private InputAction reorientAction;
 
     public Vector3 moveInput { get; private set; }
     public Vector2 lookInput { get; private set; }
     public float rollInput { get; private set; }
+    public bool reorientInput { get; private set; }
 
     public static InputHandler instance { get; private set; }
 
@@ -31,6 +33,7 @@ public class InputHandler : MonoBehaviour
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
         lookAction = playerControls.FindActionMap("Player").FindAction("Look");
         rollAction = playerControls.FindActionMap("Player").FindAction("Roll");
+        reorientAction = playerControls.FindActionMap("Player").FindAction("Reorient");
         RegisterInputActions();
     }
 
@@ -44,6 +47,9 @@ public class InputHandler : MonoBehaviour
 
         rollAction.performed += context => rollInput = context.ReadValue<float>();
         rollAction.canceled += context => rollInput = 0;
+
+        reorientAction.performed += context => reorientInput = true;
+        reorientAction.canceled += context => reorientInput = false;
     }
 
     private void OnEnable()
@@ -51,6 +57,7 @@ public class InputHandler : MonoBehaviour
         moveAction.Enable();
         lookAction.Enable();
         rollAction.Enable();
+        reorientAction.Enable();
     }
 
     private void OnDisable()
@@ -58,5 +65,6 @@ public class InputHandler : MonoBehaviour
         moveAction.Disable();
         lookAction.Disable();
         rollAction.Disable();
+        reorientAction.Disable();
     }
 }

@@ -7,6 +7,7 @@ public class AstronautPlayerScriptVersion2 : MonoBehaviour
     [SerializeField] private float moveForce = 10f;
     [SerializeField] private float degreesPerSecond = 60f;
     [SerializeField] private float mouseSens = 4f;
+    [SerializeField] private float reorientSpeed = 3.5f;
 
     private float xRotation = 0f;
     private float yRotation = 0f;
@@ -38,11 +39,18 @@ public class AstronautPlayerScriptVersion2 : MonoBehaviour
 
     private void HandleRotation()
     {
-        xRotation -= inputHandler.lookInput.y * mouseSens;
-        yRotation += inputHandler.lookInput.x * mouseSens;
-        zRotation += inputHandler.rollInput * degreesPerSecond * Time.deltaTime;
-
-        gameObject.transform.rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
+        if (inputHandler.reorientInput)
+        {
+            Quaternion q = Quaternion.FromToRotation(transform.up, Vector3.up) * transform.rotation;
+            transform.rotation = Quaternion.Slerp(transform.rotation, q, Time.deltaTime * reorientSpeed);
+        }
+        else
+        {
+            xRotation -= inputHandler.lookInput.y * mouseSens;
+            yRotation += inputHandler.lookInput.x * mouseSens;
+            zRotation += inputHandler.rollInput * degreesPerSecond * Time.deltaTime;
+            gameObject.transform.rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
+        }
     }
 
     private void HandleMove()
