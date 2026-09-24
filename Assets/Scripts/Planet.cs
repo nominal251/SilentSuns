@@ -13,6 +13,11 @@ public class Planet : MonoBehaviour
     public Sprite spectrogramImage;
     public AudioClip spectrogramAudio;
 
+    // OBJECTIVE COMPLETION TRACKERS
+    public bool WaveformComplete = false;
+    public bool ImageComplete = false;
+    public bool ProbesComplete = false;
+
     public float Radius
     {
         get
