@@ -53,11 +53,11 @@ public class SineUI : MonoBehaviour
     {
         bool magnitudeMatch = Mathf.Abs(
             playerSine.magnitude - targetSine.magnitude
-        ) <= 0.04f;
+        ) <= 0.15f;
 
         bool frequencyMatch = Mathf.Abs(
             playerSine.frequency - targetSine.frequency
-        ) <= 0.04f;
+        ) <= 0.15f;
 
         bool offsetMatch = OffsetMatches();
 
@@ -81,6 +81,6 @@ public class SineUI : MonoBehaviour
             period - offsetDifference
         );
 
-        return offsetDifference <= 0.08f;
+        return offsetDifference <= 0.2f;
     }
 }
