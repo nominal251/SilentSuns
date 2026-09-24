@@ -13,10 +13,18 @@ public class Planet : MonoBehaviour
     public Sprite spectrogramImage;
     public AudioClip spectrogramAudio;
 
+    [Header("Parameters for Comp Scanner (Placeholder)")]
+    public string atmoText1;
+    public string atmoText2;
+    public string compText1;
+    public string compText2;
+
+    [Header("Objective Completion Trackers")]
     // OBJECTIVE COMPLETION TRACKERS
-    public bool WaveformComplete = false;
-    public bool ImageComplete = false;
-    public bool ProbesComplete = false;
+    public bool waveformComplete = false;
+    //public bool imageComplete = false;
+    public bool compComplete = false;
+    public bool probeComplete = false;
 
     public float Radius
     {
