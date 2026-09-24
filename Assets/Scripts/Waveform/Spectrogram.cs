@@ -39,6 +39,8 @@ public class Spectrogram : MonoBehaviour
             {
                 SequenceStart();
                 audioPlayed = true;
+
+                planetManager.CurrentPlanet.waveformComplete = true;
             }
 
             spectrogramImage.fillAmount += fillSpeed * Time.deltaTime;

@@ -24,7 +24,19 @@ public class Planet : MonoBehaviour
     public bool waveformComplete = false;
     //public bool imageComplete = false;
     public bool compComplete = false;
-    public bool probeComplete = false;
+    //public bool probeComplete = false;
+
+    [Header("Anomaly Planet Settings")]
+    public bool isAnomaly = false;
+    public GameObject enemy;
+
+    private void Update()
+    {
+        if (isAnomaly && waveformComplete && compComplete)
+        {
+            enemy.SetActive(true);
+        }
+    }
 
     public float Radius
     {

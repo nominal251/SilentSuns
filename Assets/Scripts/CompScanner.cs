@@ -54,7 +54,10 @@ public class CompScanner : MonoBehaviour
             );
 
             compText.text = "Composition Scan Results:\n" + stats;
-        } else if (planetManager.CurrentPlanet != null && scanFinished == false && startScan == true)
+
+            planetManager.CurrentPlanet.compComplete = true;
+        } 
+        else if (planetManager.CurrentPlanet != null && scanFinished == false && startScan == true)
         {
             progressBarPercent += 0.15f * Time.deltaTime;
 
@@ -65,7 +68,8 @@ public class CompScanner : MonoBehaviour
                 scanFinished = true;
                 startScan = false;
             }
-        } else if (planetManager.CurrentPlanet != null)
+        } 
+        else if (planetManager.CurrentPlanet != null)
         {
             compText.text = "READY TO SCAN\n" + MakeProgressBar(0f, 20);
         }
