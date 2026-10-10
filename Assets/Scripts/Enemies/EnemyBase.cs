@@ -6,16 +6,17 @@ public class EnemyBase : MonoBehaviour
     //[SerializeField] protected float health = 10f; probably wont use this? we will see
     [SerializeField] protected float moveSpeed = 3f;
 
+    //so you can set the movespeed in the inspector and it wont bug out swapping speeds
     protected float moveSpeedHolder;
 
     protected bool stunned = false;
 
-    void Start()
+    protected virtual void Start()
     {
         moveSpeedHolder = moveSpeed;
     }
 
-    public virtual void Stun()
+    protected virtual void Stun()
     {
         if (!stunned)
         {
@@ -23,12 +24,5 @@ public class EnemyBase : MonoBehaviour
             return;
         }
         else { moveSpeedHolder = 0; }
-    }
-    void OnCollision(Collider other)
-    {
-        if (other.name == "Player")
-        {
-
-        }
     }
 }

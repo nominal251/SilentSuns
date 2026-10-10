@@ -13,8 +13,7 @@
                     "expectedControlType": "Vector3",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Look",
@@ -23,8 +22,7 @@
                     "expectedControlType": "Vector2",
                     "processors": "ScaleVector2(x=0.05,y=0.05)",
                     "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Roll",
@@ -33,8 +31,7 @@
                     "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true,
-                    "priority": 0
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Reorient",
@@ -43,8 +40,16 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false,
-                    "priority": 0
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Debug",
+                    "type": "Button",
+                    "id": "bcb636a5-a669-4b72-a436-82824dbfa607",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -177,6 +182,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Reorient",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "88954b0a-1e9a-4c5f-ad3d-934fd23d2440",
+                    "path": "<Keyboard>/f1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Debug",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

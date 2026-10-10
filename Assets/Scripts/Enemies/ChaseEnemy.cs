@@ -3,13 +3,19 @@ using UnityEngine.AI;
 
 public class ChaseEnemy : EnemyBase
 {
-    [Header("References")]
-    [SerializeField] private Transform player;
-    [SerializeField] private NavMeshAgent agent;
+    private Transform playerTransform;
+    private GameObject player;
+    private NavMeshAgent agent;
 
+    void Awake()
+    {
+        player = GameObject.Find("Astronaut Player");
+        playerTransform = player.transform;
+        agent = GetComponent<NavMeshAgent>();
+    }
     private void Update()
     {
         agent.speed = moveSpeedHolder;
-        agent.SetDestination(player.position);
+        agent.SetDestination(playerTransform.position);
     }
 }
