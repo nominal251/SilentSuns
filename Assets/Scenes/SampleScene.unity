@@ -14321,15 +14321,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5978491279597729511, guid: b2214aaf80fb50540a4f5f34935b17df, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.26367
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5978491279597729511, guid: b2214aaf80fb50540a4f5f34935b17df, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.51112
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5978491279597729511, guid: b2214aaf80fb50540a4f5f34935b17df, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -15.01478
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5978491279597729511, guid: b2214aaf80fb50540a4f5f34935b17df, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23195,6 +23195,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: isGravityOn
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_Name
       value: Player
@@ -24879,6 +24883,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1902666198}
   - {fileID: 731927031107202567}
+  - {fileID: 1318755208}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 502895158}
@@ -24910,4 +24915,3 @@ SceneRoots:
   - {fileID: 1245212415}
   - {fileID: 271210911}
   - {fileID: 1761167533}
-  - {fileID: 1318755208}

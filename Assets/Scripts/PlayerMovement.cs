@@ -11,20 +11,18 @@ public class PlayerMovement : MonoBehaviour
     [Header("Zero G Movement Parameters")]
     [SerializeField] private float floatingMoveForce = 10f;
     [SerializeField] private float rollSpeed = 60f;
-    [SerializeField] private float reorientSpeed = 30f;
+    [SerializeField] private float reorientSpeed = 2;
 
     [Header("Gravity Movement Paramenters")]
     [SerializeField] private float groundedMoveForce = 25f;
+    [SerializeField] private float maxCameraAngle = 85f;
 
-    //references
     private Rigidbody rBody;
     private GameObject camera;
     private InputHandler inputHandler;
     
-    //to do: remove
-    private float xRotation = 0f; 
     private float yRotation = 0f;
-    private float zRotation = 0f;
+    private float cameraXRotation = 0f;
 
     private bool debugDeteced = false; 
 
@@ -42,12 +40,12 @@ public class PlayerMovement : MonoBehaviour
         if (isGravityOn)
         {
             rBody.useGravity = isGravityOn;
-            rBody.freezeRotation = true;
+            rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
         else
         {
             rBody.useGravity = isGravityOn;
-            rBody.freezeRotation = false;
+            rBody.constraints = RigidbodyConstraints.None;
         }
     }
 
@@ -86,14 +84,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HandleRotationGravity() //to do: change
+    private void HandleRotationGravity()
     {
         yRotation += inputHandler.lookInput.x * mouseSens;
-        float cameraXRotation = -inputHandler.lookInput.y * mouseSens;
-        cameraXRotation = Mathf.Clamp(cameraXRotation, -85f, 85f);
+        cameraXRotation -= inputHandler.lookInput.y * mouseSens;
+        cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
 
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
-        camera.transform.Rotate(cameraXRotation, 0, 0);
+        camera.transform.localRotation = Quaternion.Euler(cameraXRotation, 0, 0);
     }
 
     private void HandleMovementGravity()
@@ -108,30 +106,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (inputHandler.reorientInput)
         {
-            if (transform.rotation.z % 180 < 0)
-            {
-                zRotation += reorientSpeed * Time.deltaTime;
-            }
-            else if (transform.rotation.z % 180 > 0)
-            {
-                zRotation -= reorientSpeed * Time.deltaTime;
-            }
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * reorientSpeed);
+        }
 
-            if (transform.rotation.x % 180 < 0)
-            {
-                xRotation += reorientSpeed * Time.deltaTime;
-            }
-            else if (transform.rotation.x % 180 > 0)
-            {
-                xRotation -= reorientSpeed * Time.deltaTime;
-            }
-        }
-        else
-        {
-            transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens, transform.right) * transform.rotation;
-            transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens, transform.up) * transform.rotation;
-            transform.rotation = Quaternion.AngleAxis(inputHandler.rollInput * rollSpeed * Time.deltaTime, transform.forward) * transform.rotation;
-        }
+        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens, transform.right) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens, transform.up) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.rollInput * rollSpeed * Time.deltaTime, transform.forward) * transform.rotation;
     }
 
     private void HandleMovementNoGravity()
@@ -142,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
         rBody.AddRelativeForce(inputDirection * floatingMoveForce, ForceMode.Force);
     }
 
-    public void SetGravity(bool incomingState)
+    public void SetGravity(bool incomingState) //to do: smooth transition between states
     {
         if(isGravityOn != incomingState)
         {
@@ -150,17 +130,12 @@ public class PlayerMovement : MonoBehaviour
             if (isGravityOn)
             {
                 rBody.useGravity = isGravityOn;
-                rBody.freezeRotation = true;
-                //to do: code to keep camera still
-                //to do: code for smooth return to z rotation 0
+                rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             }
             else
             {
                 rBody.useGravity = isGravityOn;
-                rBody.freezeRotation = false;
-
-                transform.rotation = Quaternion.Euler(camera.transform.eulerAngles.x, transform.rotation.y, 0);
-                camera.transform.localRotation = Quaternion.identity;
+                rBody.constraints = RigidbodyConstraints.None;
             }
         }
     }
