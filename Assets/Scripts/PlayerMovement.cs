@@ -1,88 +1,142 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public bool RotationLock = true;
+    [SerializeField] private bool isGravityOn = false;
 
-    public float moveForce = 10f;
-    public float verticalForce = 10f;
-    public float rollTorque = 5f;
-    public float mouseSens = 1f;
+    [Header("General Parameters")]
+    [SerializeField] private float mouseSens = 1f;
 
-    private Rigidbody rb;
+    [Header("Zero G Movement Parameters")]
+    [SerializeField] private float floatingMoveForce = 10f;
+    [SerializeField] private float rollSpeed = 60f;
+    [SerializeField] private float reorientSpeed = 2;
 
-    private float LYaw;
-    private float LPitch;
+    [Header("Gravity Movement Paramenters")]
+    [SerializeField] private float groundedMoveForce = 25f;
+    [SerializeField] private float maxCameraAngle = 85f;
 
-    void Awake()
+    private Rigidbody rBody;
+    private GameObject camera;
+    private InputHandler inputHandler;
+    
+    private float yRotation = 0f;
+    private float cameraXRotation = 0f;
+
+    private bool debugDeteced = false; 
+
+    private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        rBody = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    private void Start()
     {
-        if (RotationLock == false)
+        camera = transform.Find("Player Camera").gameObject;
+        inputHandler = InputHandler.instance;
+
+        if (isGravityOn)
         {
-            UnlockedMouseLook();
+            rBody.useGravity = isGravityOn;
+            rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
         else
         {
-            LockedMouseLook();
+            rBody.useGravity = isGravityOn;
+            rBody.constraints = RigidbodyConstraints.None;
         }
     }
 
-    void LockedMouseLook()
+    private void Update()
     {
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        if (inputHandler.debugInput)
+        {
+            debugDeteced = true;
+        }
 
-        LYaw += mouseDelta.x * mouseSens;
-        LPitch -= mouseDelta.y * mouseSens;
-
-        LPitch = Mathf.Clamp(LPitch, -90f, 90f);
-
-        transform.rotation = Quaternion.Euler(LPitch, LYaw, 0f);
+        if (isGravityOn)
+        {
+            HandleRotationGravity();
+        }
+        else
+        {
+            HandleRotationNoGravity();
+        }
     }
 
-    void UnlockedMouseLook()
+    private void FixedUpdate()
     {
-        Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+        if (debugDeteced)
+        {
+            SetGravity(!isGravityOn);
+            debugDeteced = false;
+        }
 
-        float yaw = mouseDelta.x * mouseSens;
-        float pitch = -mouseDelta.y * mouseSens;
-
-        transform.Rotate(pitch, yaw, 0f, Space.Self);
+        if (isGravityOn)
+        {
+            HandleMovementGravity();
+        }
+        else
+        {
+            HandleMovementNoGravity();
+        }
     }
 
-    void FixedUpdate()
+    private void HandleRotationGravity()
     {
-        // forward / backward
-        if (Keyboard.current.wKey.isPressed)
-            rb.AddForce(transform.forward * moveForce, ForceMode.Force);
+        yRotation += inputHandler.lookInput.x * mouseSens;
+        cameraXRotation -= inputHandler.lookInput.y * mouseSens;
+        cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
 
-        if (Keyboard.current.sKey.isPressed)
-            rb.AddForce(-transform.forward * moveForce, ForceMode.Force);
+        transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        camera.transform.localRotation = Quaternion.Euler(cameraXRotation, 0, 0);
+    }
 
-        // left / right
-        if (Keyboard.current.aKey.isPressed)
-            rb.AddForce(-transform.right * moveForce, ForceMode.Force);
+    private void HandleMovementGravity()
+    {
+        Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, 0, inputHandler.moveInput.z);
+        inputDirection.Normalize();
 
-        if (Keyboard.current.dKey.isPressed)
-            rb.AddForce(transform.right * moveForce, ForceMode.Force);
+        rBody.AddRelativeForce(inputDirection * groundedMoveForce, ForceMode.Force);
+    }
 
-        // up / down
-        if (Keyboard.current.spaceKey.isPressed)
-            rb.AddForce(transform.up * verticalForce, ForceMode.Force);
+    private void HandleRotationNoGravity()
+    {
+        if (inputHandler.reorientInput)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * reorientSpeed);
+        }
 
-        if (Keyboard.current.cKey.isPressed)
-            rb.AddForce(-transform.up * verticalForce, ForceMode.Force);
+        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens, transform.right) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens, transform.up) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.rollInput * rollSpeed * Time.deltaTime, transform.forward) * transform.rotation;
+    }
 
-        // roll (if rotation lock is off)
-        if (Keyboard.current.qKey.isPressed && RotationLock == false)
-            rb.AddRelativeTorque(Vector3.forward * rollTorque, ForceMode.Force);
+    private void HandleMovementNoGravity()
+    {
+        Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, inputHandler.moveInput.y, inputHandler.moveInput.z);
+        inputDirection.Normalize();
 
-        if (Keyboard.current.eKey.isPressed && RotationLock == false)
-            rb.AddRelativeTorque(-Vector3.forward * rollTorque, ForceMode.Force);
+        rBody.AddRelativeForce(inputDirection * floatingMoveForce, ForceMode.Force);
+    }
+
+    public void SetGravity(bool incomingState) //to do: smooth transition between states
+    {
+        if(isGravityOn != incomingState)
+        {
+            isGravityOn = incomingState;
+            if (isGravityOn)
+            {
+                rBody.useGravity = isGravityOn;
+                rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            }
+            else
+            {
+                rBody.useGravity = isGravityOn;
+                rBody.constraints = RigidbodyConstraints.None;
+            }
+        }
     }
 }
