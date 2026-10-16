@@ -4,53 +4,24 @@ using UnityEngine.Rendering;
 
 public class WeepingEnemy : EnemyBase
 {
-    [SerializeField] private LayerMask playerLayer;
     private PlayerVision playerVision;
-    private Transform playerTransform;
-    private GameObject player;
-    private NavMeshAgent agent;
-
     bool enemySight;
     bool playerSight;
 
-    void Awake()
-    {
-        Init();
-    }
-
     void Update()
     {
-
         MoveEnemy();
         //Debug.Log($"{enemySight} {playerSight}");
     }
 
-    bool EnemyCanSeePlayer()
+    protected override void Awake()
     {
-        //finding the reference points for raycast
-        Vector3 origin = agent.transform.position + Vector3.up;
-        Vector3 target = playerTransform.position + Vector3.up;
-        Vector3 direction = target - origin;
-        float distance = direction.magnitude;
+        base.Awake();
 
-        //exclude the enemy's own layer. this took forever to find the raycast kept hitting the enemy's own collider
-        int layerMask = ~(1 << gameObject.layer);
-
-        //Debug.DrawRay(origin, direction, Color.red);
-
-        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, distance, layerMask, QueryTriggerInteraction.Ignore))
+        if (player != null)
         {
-
-            if (hit.transform.IsChildOf(playerTransform))
-            {
-                //Debug.Log("enemy sees");
-                return true;
-            }
-
-            // A wall or another object blocks the view.
-            return false;
+            playerVision = player.GetComponent<PlayerVision>();
         }
-        return false;
     }
 
     bool PlayerCanSeeEnemy()
@@ -75,13 +46,5 @@ public class WeepingEnemy : EnemyBase
         }
         //stops in his place
         else { agent.isStopped = true; }
-    }
-
-    void Init()
-    {
-        player = GameObject.Find("Astronaut Player");
-        playerTransform = player.transform;
-        playerVision = player.GetComponent<PlayerVision>();
-        agent = GetComponent<NavMeshAgent>();
     }
 }
