@@ -14,7 +14,7 @@ public class AntibodyEnemy : EnemyBase
     void EnemyLogic()
     {
         timer = Mathf.Clamp(timer, 0f, killTimer);
-        Debug.Log(timer);
+        //Debug.Log(timer);
         EnemySight();
         while (enemySight)
         {
