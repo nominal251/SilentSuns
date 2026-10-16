@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -24,7 +26,9 @@ public class PlayerMovement : MonoBehaviour
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
 
-    private bool debugDeteced = false; 
+    private bool debugDeteced = false;
+    private float maxVelocity = 0f;
+
 
     private void Awake()
     {
@@ -59,6 +63,11 @@ public class PlayerMovement : MonoBehaviour
         if (isGravityOn)
         {
             HandleRotationGravity();
+            if (rBody.linearVelocity.magnitude > maxVelocity)
+            {
+                maxVelocity = rBody.linearVelocity.magnitude;
+                print($"Max survivable distance is {maxVelocity * 150} units.\n");
+            }
         }
         else
         {
