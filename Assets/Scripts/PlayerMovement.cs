@@ -17,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Gravity Movement Paramenters")]
     [SerializeField] private float groundedMoveForce = 25f;
+    [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float maxCameraAngle = 85f;
 
     private Rigidbody rBody;
@@ -63,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGravityOn)
         {
             HandleRotationGravity();
+
             if (rBody.linearVelocity.magnitude > maxVelocity)
             {
                 maxVelocity = rBody.linearVelocity.magnitude;
@@ -108,7 +110,14 @@ public class PlayerMovement : MonoBehaviour
         Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, 0, inputHandler.moveInput.z);
         inputDirection.Normalize();
 
-        rBody.AddRelativeForce(inputDirection * groundedMoveForce, ForceMode.Force);
+        if (inputHandler.sprintInput)
+        {
+            rBody.AddRelativeForce(inputDirection * groundedMoveForce * sprintMultiplier, ForceMode.Force);
+        }
+        else
+        {
+            rBody.AddRelativeForce(inputDirection * groundedMoveForce, ForceMode.Force);
+        }
     }
 
     private void HandleRotationNoGravity()
