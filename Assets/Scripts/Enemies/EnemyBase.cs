@@ -4,7 +4,7 @@ using UnityEngine.AI;
 public class EnemyBase : MonoBehaviour
 {
     [Header("Layer Mask")]
-    [Tooltip("This is objects that call for a hit on the raycast, setting our environment and player in this layerMask is how it functions")]
+    [Tooltip("These are objects that call for a hit on the raycast, setting our environment and player in this layerMask is how it functions")]
     [SerializeField] protected LayerMask layerMask;
 
     [Header("Enemy Stats")]
