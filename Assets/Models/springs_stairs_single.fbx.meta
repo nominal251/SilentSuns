@@ -3,7 +3,12 @@ guid: 8441bc4b84021b14a9a6fe52eae8370b
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: springs_single
+    second: {fileID: 2100000, guid: d424a57d4d699b34e9a10dbfb375bdc6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
