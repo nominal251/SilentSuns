@@ -8,8 +8,17 @@ public class WeepingEnemy : EnemyBase
     bool enemySight;
     bool playerSight;
 
+    private EnemyState enemyState;
+
+    private enum EnemyState
+    {
+        Stalk,
+        Hunt
+    }
+
     void Update()
     {
+        Logic();
         MoveEnemy();
         //Debug.Log($"{enemySight} {playerSight}");
     }
@@ -30,21 +39,48 @@ public class WeepingEnemy : EnemyBase
         return playerCanSee;
     }
 
-    void MoveEnemy()
+    void Logic()
     {
         //setting bools
-        enemySight = EnemyCanSeePlayer();
+        enemySight = EnemyCanSeePlayer(); //eventSystem boolean auditorEncountered can go after this line
+        //this is always running in update, so you can do an if(enemySight == true) check and when that line runs
+        //you can set run the auditorEncountered method to change the boolean
+
+        //if(enemySight) { AuditorEncountered();}
+
         playerSight = PlayerCanSeeEnemy();
 
         //if enemy sees you and you dont see enemy
         if (enemySight && !playerSight)
         {
-            agent.isStopped = false;
-            agent.speed = moveSpeedHolder;
-            //Debug.Log(agent.speed);
-            agent.SetDestination(playerTransform.position);
+            enemyState = EnemyState.Hunt;
         }
-        //stops in his place
-        else { agent.isStopped = true; }
+        //any other combination of sight will not allow it to move
+        else { enemyState = EnemyState.Stalk; }
     }
+
+    void MoveEnemy()
+    {
+        switch (enemyState)
+        {
+            case EnemyState.Hunt:
+                agent.isStopped = false;
+                agent.speed = moveSpeedHolder;
+                //Debug.Log(agent.speed);
+                agent.SetDestination(playerTransform.position);
+                break;
+
+            case EnemyState.Stalk:
+                agent.isStopped = true;
+                break;
+        }
+    }
+
+    //void AuditorEncountered()
+    //{
+    //    if(auditorEncountered) { return; }
+
+    //    eventMangaer.AuditorEncountered();
+    //    auditorEncountered = true;         this can be a boolean in this script that will stop us from continuously calling the eventManager method
+    //}
 }

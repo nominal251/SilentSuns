@@ -17,6 +17,7 @@ public class AntibodyEnemy : EnemyBase
     bool enemySight;
     bool enemyOpen = false;
 
+
     protected override void Awake()
     {
         base.Awake();
@@ -100,4 +101,6 @@ public class AntibodyEnemy : EnemyBase
         transform.LookAt(playerTransform);
         enemySight = EnemyCanSeePlayer();
     }
+
+
 }
