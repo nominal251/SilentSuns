@@ -10,6 +10,16 @@ public class InteractOrigin : MonoBehaviour
 
     void Update()
     {
+        // Release held controls before pausing; menu clicks must not reach instruments.
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        {
+            if (heldInteractable != null)
+                heldInteractable.StopInteract();
+            heldInteractable = null;
+            currentInteractable = null;
+            return;
+        }
+
         Ray ray = new Ray(transform.position, transform.forward);
 
         currentInteractable = null;

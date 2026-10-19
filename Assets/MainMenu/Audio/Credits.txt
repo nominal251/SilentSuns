@@ -1,0 +1,77 @@
+Silent Suns menu audio credits
+Source pages checked October 19, 2026.
+
+Keyboard Soundpack #1 [Typing and Single Keystrokes]
+Creator: unicaegames
+Source: https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes
+Download: https://opengameart.org/sites/default/files/unicae_games_keyboard_soundpack_1_0.zip
+License: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+Retrieved: October 16, 2026
+
+Included files: Single Keys/keypress-001.wav through keypress-004.wav.
+These are the original keypress recordings, copied without audio edits.
+The creator recorded a Cherry KC 1000 with a Shure SM7B.
+Playback level is adjusted in the game.
+
+Menu Music.mp3
+Made with Suno. Temporary track, can be replaced later.
+Original supplied file retained without audio edits.
+Playback fades and volume are applied in Unity.
+License not documented. The CC0 sound-effect licenses below do not cover this track.
+
+Interaction/KeyboardPress.wav
+Title: Key_Press
+Creator: Mediasaur
+Source: https://freesound.org/people/Mediasaur/sounds/788932/
+Recording: Keychron K10 keyboard, Samson G-Track Pro microphone.
+
+Interaction/MouseClick.wav
+Title: Mouse Click
+Creator: planet_jvk
+Source: https://freesound.org/people/planet_jvk/sounds/825193/
+Recording: HP MSU1158 laser mouse, iPhone 15 Pro.
+
+Interaction/PowerSwitch.wav
+Title: Light Switch Turn On Sound
+Creator: ChrisTutorials
+Source: https://freesound.org/people/ChrisTutorials/sounds/440498/
+Recording: physical wall switch.
+
+All three interaction recordings: CC0 1.0 Universal.
+https://creativecommons.org/publicdomain/zero/1.0/
+Retrieved October 16, 2026. Public HQ MP3 previews decoded to mono
+44.1 kHz 16-bit PCM WAV. Playback volume is adjusted in Unity.
+Exact download URLs and source hashes: Interaction/Sources.json.
+
+
+CRT hardware recordings (October 19, 2026)
+
+Hardware/CRTPowerOn.wav
+CRT monitor turns on by Darklanlan
+https://commons.wikimedia.org/wiki/File:CRT_monitor_turns_on.ogg
+License: CC0 1.0 Universal
+0.92-4.72 seconds, mono 44.1 kHz PCM, +5 dB, 5 ms start and 250 ms tail fade.
+
+Hardware/CRTHum.wav
+CRT TV Hum by X3SB
+https://freesound.org/people/X3SB/sounds/818513/
+License: CC0 1.0 Universal
+1.8-6.8 seconds of actual CRT recording, mono 44.1 kHz PCM, RMS adjusted to -29 dBFS, 300 ms overlap crossfade for looping.
+
+Both are real microphone recordings of CRT hardware, not synthesized tones.
+Original source hashes and download URLs: Hardware/Sources.json.
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Gameplay files with unknown credits
+These files were already in the project before Daniel's UI work; he did not add them.
+The planet_jvk credit above applies only to Interaction/MouseClick.wav.
+Assets/Sounds/Click.mp3
+Assets/Sounds/Click2.mp3
+Assets/Sounds/knocking.wav
+Assets/Signals/WarningSignal/signal1.wav
+Assets/Signals/signal2/signal2.mp3
+Assets/Signals/signal3/signal3.mp3
+Assets/Signals/signal4/signal4.mp3
+Creator, original source, and license are not recorded in the repository or embedded
+audio tags. Ask the team that added them; do not assume the menu sound licenses apply.

@@ -30,6 +30,7 @@ public class InputHandler : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
@@ -62,6 +63,9 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        if (instance != this)
+            return;
+
         moveAction.Enable();
         lookAction.Enable();
         rollAction.Enable();
@@ -71,10 +75,12 @@ public class InputHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        moveAction.Disable();
-        lookAction.Disable();
-        rollAction.Disable();
-        reorientAction.Disable();
-        debugAction.Disable();
+        // A duplicate is destroyed before its actions are assigned.
+
+        moveAction?.Disable();
+        lookAction?.Disable();
+        rollAction?.Disable();
+        reorientAction?.Disable();
+        debugAction?.Disable();
     }
 }

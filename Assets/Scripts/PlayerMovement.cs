@@ -51,6 +51,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        // Mouse look uses raw input, so it also needs to stop while the menu is open.
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+            return;
+
         if (inputHandler.debugInput)
         {
             debugDeteced = true;
@@ -68,6 +72,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+            return;
+
         if (debugDeteced)
         {
             SetGravity(!isGravityOn);
@@ -86,8 +93,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleRotationGravity()
     {
-        yRotation += inputHandler.lookInput.x * mouseSens;
-        cameraXRotation -= inputHandler.lookInput.y * mouseSens;
+        yRotation += inputHandler.lookInput.x * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity;
+        cameraXRotation -= inputHandler.lookInput.y * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity;
         cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
 
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
@@ -109,8 +116,8 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * reorientSpeed);
         }
 
-        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens, transform.right) * transform.rotation;
-        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens, transform.up) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity, transform.right) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity, transform.up) * transform.rotation;
         transform.rotation = Quaternion.AngleAxis(inputHandler.rollInput * rollSpeed * Time.deltaTime, transform.forward) * transform.rotation;
     }
 

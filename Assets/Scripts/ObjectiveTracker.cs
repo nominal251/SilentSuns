@@ -44,7 +44,12 @@ public class ObjectiveTracker : MonoBehaviour
         RefreshText();
 
         if (cryoButton.activated && allObjectivesComplete)
+        {
+            // Only a completed survey earns the permanent completion flag.
+            if (!debugComplete)
+                SilentSuns.Menu.GameProgress.MarkCompleted();
             SceneManager.LoadScene(victoryScene);
+        }
 
         if (allObjectivesComplete && var)
         {

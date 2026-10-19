@@ -1,0 +1,38 @@
+[
+  {
+    "file": "KeyboardPress.wav",
+    "title": "Key_Press",
+    "author": "Mediasaur",
+    "source": "https://freesound.org/people/Mediasaur/sounds/788932/",
+    "download": "https://cdn.freesound.org/previews/788/788932_10164671-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved": "2026-10-16",
+    "changes": "Public HQ MP3 preview decoded to mono 44.1 kHz 16-bit PCM WAV.",
+    "source_sha256": "19a4a25bc7d9fa612893763dbba66d4e4fe11ee1d034f2c588eb116677fd97ea"
+  },
+  {
+    "file": "MouseClick.wav",
+    "title": "Mouse Click",
+    "author": "planet_jvk",
+    "source": "https://freesound.org/people/planet_jvk/sounds/825193/",
+    "download": "https://cdn.freesound.org/previews/825/825193_12825281-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved": "2026-10-16",
+    "changes": "Public HQ MP3 preview decoded to mono 44.1 kHz 16-bit PCM WAV.",
+    "source_sha256": "52753029bd59bd6955128d9ef49114362c045fe29e101f98c340f15f35337ef4"
+  },
+  {
+    "file": "PowerSwitch.wav",
+    "title": "Light Switch Turn On Sound",
+    "author": "ChrisTutorials",
+    "source": "https://freesound.org/people/ChrisTutorials/sounds/440498/",
+    "download": "https://cdn.freesound.org/previews/440/440498_4629347-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved": "2026-10-16",
+    "changes": "Public HQ MP3 preview decoded to mono 44.1 kHz 16-bit PCM WAV.",
+    "source_sha256": "22884d506d3aea54e314f77c74ef0c7060ed14239e34a2c59578d8e35c6f42ed"
+  }
+]

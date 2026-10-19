@@ -1,0 +1,4 @@
+{
+    "name": "SilentSuns.Menu",
+    "references": ["Unity.TextMeshPro", "Unity.InputSystem", "Unity.ugui", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"]
+}
