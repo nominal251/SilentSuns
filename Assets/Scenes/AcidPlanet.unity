@@ -644,7 +644,7 @@ GameObject:
   - component: {fileID: 630910431}
   - component: {fileID: 630910430}
   m_Layer: 0
-  m_Name: Terrain
+  m_Name: acidTerrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
