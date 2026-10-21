@@ -8837,7 +8837,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: SilentSuns.Menu::SilentSuns.Menu.TerminalInteractionAudio
   keyboardPress: {fileID: 8300000, guid: 85d0641c9c32a294cbd01eabfb179947, type: 3}
   mouseClick: {fileID: 8300000, guid: 55f00789d2f7e544b8605c92c8470da5, type: 3}
-  powerSwitch: {fileID: 8300000, guid: 476833f99c5a8ae40bc524d7ea98e8cb, type: 3}
   level: 0.14
 --- !u!114 &2583662141155280468
 MonoBehaviour:

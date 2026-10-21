@@ -15,7 +15,7 @@ The creator recorded a Cherry KC 1000 with a Shure SM7B.
 Playback level is adjusted in the game.
 
 Menu Music.mp3
-Made with Suno. Temporary track, can be replaced later.
+Temporary supplied track; can be replaced later.
 Original supplied file retained without audio edits.
 Playback fades and volume are applied in Unity.
 License not documented. The CC0 sound-effect licenses below do not cover this track.
@@ -32,13 +32,7 @@ Creator: planet_jvk
 Source: https://freesound.org/people/planet_jvk/sounds/825193/
 Recording: HP MSU1158 laser mouse, iPhone 15 Pro.
 
-Interaction/PowerSwitch.wav
-Title: Light Switch Turn On Sound
-Creator: ChrisTutorials
-Source: https://freesound.org/people/ChrisTutorials/sounds/440498/
-Recording: physical wall switch.
-
-All three interaction recordings: CC0 1.0 Universal.
+Both interaction recordings: CC0 1.0 Universal.
 https://creativecommons.org/publicdomain/zero/1.0/
 Retrieved October 16, 2026. Public HQ MP3 previews decoded to mono
 44.1 kHz 16-bit PCM WAV. Playback volume is adjusted in Unity.

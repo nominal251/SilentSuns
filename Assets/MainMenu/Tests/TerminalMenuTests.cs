@@ -198,7 +198,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator SettingsAndPointerInput()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(0.8f);
@@ -231,7 +231,7 @@ namespace SilentSuns.Menu.Tests
             yield return null;
             terminal = GameObject.Find("ARCA Terminal").transform;
             yield return WaitForInvitation();
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.MainMenu);
             AssertScreen("Main Menu");
             Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("FX"));
@@ -243,7 +243,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator BootCompletesNaturally()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             yield return new WaitForSecondsRealtime(0.3f);
             TMP_Text output = terminal.Find("Boot/Boot output").GetComponent<TMP_Text>();
@@ -275,7 +275,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator TitleTypesAndRespectsReducedMotion()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             TMP_Text title = terminal.Find("Main Menu/Wordmark").GetComponent<TMP_Text>();
@@ -317,7 +317,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator CurvedSliderFollowsPointer()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(0.3f);
@@ -344,7 +344,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator SurveyPauseFreezesAndRestoresGameplay()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(0.3f);
@@ -464,9 +464,8 @@ namespace SilentSuns.Menu.Tests
             Assert.That(TerminalPause.Available, Is.True);
             terminal = GameObject.Find("ARCA Terminal").transform;
             Assert.That(terminal.GetComponent<TerminalSessionRestoration>().IsActive, Is.False);
-            Assert.That(terminal.Find("Operator Voice"), Is.Null);
             yield return WaitForInvitation();
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.MainMenu);
             AssertScreen("Main Menu");
             Assert.That(GamePreferences.PlayBoot, Is.False);
@@ -549,7 +548,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator DisplayInterferenceRespectsReducedMotion()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(2f);
@@ -575,7 +574,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(music.clip.name, Is.EqualTo("Menu Music"));
             Assert.That(music.loop, Is.True);
             Assert.That(music.isPlaying, Is.False);
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Assert.That(music.isPlaying, Is.True);
             Assert.That(music.volume, Is.LessThan(0.55f));
@@ -603,17 +602,11 @@ namespace SilentSuns.Menu.Tests
 
         [UnityTest]
         [Category("Menu")]
-        public IEnumerator BootDoesNotDependOnAudioAndOldPresentationIsRemoved()
+        public IEnumerator BootDiagnosticsContinueWithAudioMuted()
         {
-            Assert.That(terminal.Find("Operator Voice"), Is.Null);
-            // The retired voice and meter types should no longer be included in the game.
-            foreach (string typeName in new[] { "TerminalVoice", "TerminalAnnouncement", "TerminalSignal" })
-                Assert.That(typeof(TerminalMenu).Assembly.GetType("SilentSuns.Menu." + typeName), Is.Null);
-            foreach (string item in new[] { "Carrier trace", "Announcement", "Readout", "Carrier label", "Carrier state", "Signal strength" })
-                Assert.That(terminal.Find("Main Menu/" + item), Is.Null);
             GamePreferences.SetFX(0f);
             GamePreferences.SetMusic(0f);
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             var log = terminal.GetComponent<TerminalBootLog>();
             yield return new WaitForSecondsRealtime(21.3f);
@@ -639,7 +632,7 @@ namespace SilentSuns.Menu.Tests
             restore.RefreshAvailability();
             Assert.That(terminal.Find("Main Menu/Resume Session"), Is.Null);
             Assert.That(terminal.Find("Main Menu/Save availability"), Is.Null);
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(0.3f);
@@ -647,7 +640,6 @@ namespace SilentSuns.Menu.Tests
             yield return null;
             AssertScreen("Main Menu");
             Assert.That(restore.IsActive, Is.False);
-            Assert.That(terminal.Find("Operator Voice"), Is.Null);
         }
 
 
@@ -679,7 +671,7 @@ namespace SilentSuns.Menu.Tests
         [Category("Menu")]
         public IEnumerator AcceptedInputsUseTheirOwnRecordingAndHoverIsSilent()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(.3f);
@@ -739,7 +731,7 @@ namespace SilentSuns.Menu.Tests
             yield return null;
             terminal = GameObject.Find("ARCA Terminal").transform;
             var sounds = terminal.GetComponent<TerminalInteractionAudio>();
-            foreach (string field in new[] { "keyboardPress","mouseClick","powerSwitch" })
+            foreach (string field in new[] { "keyboardPress","mouseClick" })
                 SetPrivate(sounds,field,null);
             Assert.That(terminal.Find("CRT Display").GetComponent<TerminalDisplay>().ReducedMotion, Is.True);
             AssertMixer("FXVolume",0f);
@@ -760,9 +752,9 @@ namespace SilentSuns.Menu.Tests
 
         [UnityTest]
         [Category("Menu")]
-        public IEnumerator ExitProgramStopsAudioWithoutHardwareShutdown()
+        public IEnumerator ExitProgramStopsAudio()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(.3f);
@@ -781,27 +773,6 @@ namespace SilentSuns.Menu.Tests
 
 
 
-
-        private float[] BezelBrightness(Texture2D image, Camera camera)
-        {
-            float[] brightness = new float[4];
-            for (int edge = 0; edge < 4; edge++)
-            {
-                int count = 0;
-                for (float depth = .03f; depth < .20f; depth += .02f)
-                    for (float along = -.8f; along < .8f; along += .01f)
-                    {
-                        float z = depth < .09f ? Mathf.Lerp(.54f,.36f,(depth-.005f)/.085f) : Mathf.Lerp(.36f,-.22f,(depth-.09f)/.13f);
-                        Vector3 point = edge < 2 ? new Vector3((edge == 0 ? -1 : 1)*(8+depth),along*4.5f,z)
-                            : new Vector3(along*8,(edge == 2 ? 1 : -1)*(4.5f+depth),z);
-                        Vector3 pixel = camera.WorldToScreenPoint(point);
-                        brightness[edge] += image.GetPixel(Mathf.RoundToInt(pixel.x),Mathf.RoundToInt(pixel.y)).r;
-                        count++;
-                    }
-                brightness[edge] /= count;
-            }
-            return brightness;
-        }
 
         private IEnumerator WaitForInvitation()
         {
@@ -879,7 +850,7 @@ namespace SilentSuns.Menu.Tests
         [Explicit("SampleScene has two extra ObjectiveTracker components with missing text and button references.")]
         public IEnumerator BeginSurveyLoadsPrototype()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(0.3f);
@@ -919,7 +890,7 @@ namespace SilentSuns.Menu.Tests
         private void Click(string path)
         {
             Canvas.ForceUpdateCanvases();
-            GameObject target = terminal.Find(path == "Standby/Power On" ? "Standby/Wake screen" : path).gameObject;
+            GameObject target = terminal.Find(path).gameObject;
             RectTransform rect = target.GetComponent<RectTransform>();
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = terminal.Find("CRT Display").GetComponent<TerminalDisplay>().ContentToScreenPoint(rect.TransformPoint(rect.rect.center));

@@ -45,7 +45,7 @@ namespace SilentSuns.Menu.Tests
         }
 
         [UnityTest, Category("Menu")]
-        public IEnumerator TelescopePulseInvitesTouchWithoutHardware()
+        public IEnumerator TelescopePulseInvitesTouchOnShipScreen()
         {
             var display = terminal.Find("CRT Display").GetComponent<TerminalDisplay>();
             var screen = GameObject.Find("Telescope/ProbeLauncherScreen").GetComponent<Renderer>();
@@ -57,8 +57,6 @@ namespace SilentSuns.Menu.Tests
                     Assert.That(casing.sharedMaterials.Length, Is.EqualTo(2));
                     Assert.That(casing.sharedMaterials[0].shader.name, Does.Not.Contain("Ship Screen Spill"), "Native casing lighting must remain present throughout startup.");
                 }
-            Assert.That(Object.FindFirstObjectByType<TerminalHardware>(), Is.Null);
-            Assert.That(GameObject.Find("Hardware Controls"), Is.Null);
             Assert.That(Time.timeScale, Is.Zero);
             Assert.That(TerminalPause.BlocksGameplayInput, Is.True);
             Assert.That(terminal.Find("Menu Music").GetComponent<AudioSource>().isPlaying, Is.False);
@@ -86,7 +84,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(prompt.text, Is.EqualTo("i need you to respond."));
             yield return new WaitForSecondsRealtime(3.6f);
             Assert.That(prompt.text, Is.EqualTo("touch the light."));
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             yield return new WaitForSecondsRealtime(2);
             Object.Destroy(CaptureGameplay("03-telescope-diagnostics"));
@@ -152,7 +150,7 @@ namespace SilentSuns.Menu.Tests
         {
             Camera originalCamera = Camera.main;
             var sceneHandle = SceneManager.GetActiveScene().handle;
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(.35f);
@@ -209,7 +207,6 @@ namespace SilentSuns.Menu.Tests
             Assert.That(monitor.Illumination, Is.Zero);
             var original = GameObject.Find("Telescope/ProbeLauncherScreen").GetComponent<Renderer>();
             Assert.That(original.enabled, Is.True);
-            Assert.That(Object.FindFirstObjectByType<TerminalHardware>(), Is.Null, "No menu cabinet or hardware controls may be instantiated in the ship.");
             Assert.That(monitor.Screen, Is.SameAs(original));
             Assert.That(original.sharedMaterial.name, Is.EqualTo("TelescopeTexture"));
             yield return new WaitForSecondsRealtime(.5f);
@@ -274,7 +271,7 @@ namespace SilentSuns.Menu.Tests
         [UnityTest, Category("Menu")]
         public IEnumerator BootContradictionsAreReadableAndTimeLimited()
         {
-            Click("Standby/Power On");
+            Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             var log = terminal.GetComponent<TerminalBootLog>();
             var output = terminal.Find("Boot/Boot output").GetComponent<TMP_Text>();

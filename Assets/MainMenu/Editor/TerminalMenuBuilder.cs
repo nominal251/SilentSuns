@@ -133,7 +133,6 @@ namespace SilentSuns.Menu.Editor
             Label(root.transform, "Footer right", "LOCAL ACCESS ONLY", 1110, 840, 410, 28, 20, Ink, TextAlignmentOptions.Right);
 
             CanvasGroup standby = Panel(root.transform, "Standby");
-            UIButton power;
 
             CanvasGroup boot = Panel(root.transform, "Boot");
             Box(boot.transform, "POST background", 2, 98, 1596, 720, Ink);
@@ -206,50 +205,14 @@ namespace SilentSuns.Menu.Editor
             TerminalSessionRestoration restoration = root.AddComponent<TerminalSessionRestoration>();
             UnityEventTools.AddPersistentListener(skipRestore.onClick, restoration.Skip);
 
-            // Present the complete canvas through one curved CRT surface.
+            // The ship screen gets the menu texture when TerminalShipIntro loads SampleScene.
             TerminalDisplay display = Rect(root.transform, "CRT Display", 0, 0, 1600, 900).gameObject.AddComponent<TerminalDisplay>();
-            Camera displayCamera = new GameObject("CRT Camera", typeof(Camera)).GetComponent<Camera>();
-            displayCamera.tag = "MainCamera";
-            displayCamera.transform.position = new Vector3(.25f, .12f, -20.5f);
-            displayCamera.transform.LookAt(Vector3.zero);
-            displayCamera.orthographic = false;
-            displayCamera.fieldOfView = 31f;
-            displayCamera.farClipPlane = 100f;
-            TerminalHardware hardware = TerminalHardwareBuilder.Create();
-            var controls = new GameObject("Hardware Controls", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster));
-            controls.GetComponent<RectTransform>().sizeDelta = new Vector2(1600,900);
-            controls.transform.localScale = Vector3.one * 0.01f;
-            controls.transform.position = new Vector3(0,0,-0.42f);
-            controls.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-            controls.GetComponent<Canvas>().worldCamera = displayCamera;
-            power = Button(controls.transform, "Power On", "I / O", 1375, 934, 220, 42, true);
-            var powerFields = new SerializedObject(power);
-            Set(powerFields, "menu", menu);
-            powerFields.ApplyModifiedPropertiesWithoutUndo();
-            power.navigation = new Navigation {mode = Navigation.Mode.None};
-            power.GetComponent<Image>().color = Color.clear;
-            ColorBlock powerColors = power.colors;
-            powerColors.normalColor = powerColors.highlightedColor = powerColors.selectedColor = powerColors.pressedColor = powerColors.disabledColor = Color.clear;
-            power.colors = powerColors;
-            power.transform.Find("Arrow").gameObject.SetActive(false);
-            power.transform.Find("Edge").gameObject.SetActive(false);
-            TMP_Text powerLabel = power.transform.Find("Label").GetComponent<TMP_Text>();
-            powerLabel.fontSize = 18;
-            powerLabel.alignment = TextAlignmentOptions.Center;
-            powerLabel.color = new Color(0.35f,0.36f,0.33f);
-            Label(controls.transform, "Cabinet identity", "ARCA SYSTEMS   /   DISPLAY UNIT 042", 120, -58, 700, 30, 16, new Color(0.28f,0.29f,0.27f));
-            UnityEventTools.AddPersistentListener(power.onClick, menu.TogglePower);
-            displayCamera.clearFlags = CameraClearFlags.SolidColor;
-            displayCamera.backgroundColor = Color.black;
-            displayCamera.cullingMask = (1 << 30) | (1 << 29);
-            GameObject glass = new GameObject("CRT Glass", typeof(RectTransform), typeof(Canvas));
-            glass.GetComponent<RectTransform>().sizeDelta = new Vector2(1600, 900);
-            glass.transform.localScale = Vector3.one * 0.01f;
-            glass.transform.position = new Vector3(0,0,.55f);
-            glass.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
-            glass.GetComponent<Canvas>().worldCamera = displayCamera;
-            TerminalGlassGraphic surface = Rect(glass.transform, "Screen", 0, 0, 1600, 900).gameObject.AddComponent<TerminalGlassGraphic>();
-            surface.raycastTarget = false;
+            // Show black while the ship loads. The player's camera takes over in SampleScene.
+            Camera startupCamera = new GameObject("Startup Camera", typeof(Camera)).GetComponent<Camera>();
+            startupCamera.tag = "MainCamera";
+            startupCamera.clearFlags = CameraClearFlags.SolidColor;
+            startupCamera.backgroundColor = Color.black;
+            startupCamera.cullingMask = 0;
             Material crtMaterial = AssetDatabase.LoadAssetAtPath<Material>(Folder + "/Shaders/TerminalCRT.mat");
             if (crtMaterial == null)
             {
@@ -264,9 +227,8 @@ namespace SilentSuns.Menu.Editor
             }
             SerializedObject displayFields = new SerializedObject(display);
             Set(displayFields, "settings", crtSettings);
-            Set(displayFields, "sourceCamera", camera); Set(displayFields, "displayCamera", displayCamera);
-            Set(displayFields, "surface", surface); Set(displayFields, "screenMaterial", crtMaterial);
-            Set(displayFields, "hardware", hardware);
+            Set(displayFields, "sourceCamera", camera);
+            Set(displayFields, "screenMaterial", crtMaterial);
             displayFields.ApplyModifiedPropertiesWithoutUndo();
             TerminalWarmupUpgrade.ConfigureDisplay(display);
             SerializedObject restoreFields = new SerializedObject(restoration);
@@ -287,22 +249,16 @@ namespace SilentSuns.Menu.Editor
             }
             foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = 31;
-            foreach (Transform child in glass.GetComponentsInChildren<Transform>(true))
-                child.gameObject.layer = 30;
-
-            foreach (Transform child in controls.GetComponentsInChildren<Transform>(true))
-                child.gameObject.layer = 30;
             SerializedObject fields = new SerializedObject(menu);
-            Set(fields, "hardware", hardware); Set(fields, "sourceCanvas", canvas);
+            Set(fields, "sourceCanvas", canvas);
             Set(fields, "typingAudio", typingAudio);
             Set(fields, "inputModule", events.GetComponent<InputSystemUIInputModule>());
             Set(fields, "standbyScreen", standby); Set(fields, "bootScreen", boot); Set(fields, "menuScreen", main);
             Set(fields, "settingsScreen", settingsPanel); Set(fields, "guideScreen", guidePanel); Set(fields, "quitScreen", quitPanel); Set(fields, "loadingScreen", loading);
-            Set(fields, "powerButton", power.gameObject); Set(fields, "startButton", start.gameObject);
+            Set(fields, "startButton", start.gameObject);
             Set(fields, "guideBackButton", guideBack.gameObject); Set(fields, "cancelQuitButton", cancel.gameObject);
             Set(fields, "bootText", bootText); Set(fields, "bootProgress", bootProgress); Set(fields, "loadingText", loadingText);
             Set(fields, "settings", settingsControls);
-            Set(fields, "menuCamera", displayCamera);
             Set(fields, "restoration", restoration);
             Set(fields, "menuMusic", music.GetComponent<TerminalMenuMusic>());
             Set(fields, "titleAnimation", titleAnimation);
@@ -399,8 +355,8 @@ namespace SilentSuns.Menu.Editor
         {
             TerminalInteractionAudio interaction = root.AddComponent<TerminalInteractionAudio>();
             SerializedObject fields = new SerializedObject(interaction);
-            string[] names = { "KeyboardPress", "MouseClick", "PowerSwitch" };
-            string[] references = { "keyboardPress", "mouseClick", "powerSwitch" };
+            string[] names = { "KeyboardPress", "MouseClick" };
+            string[] references = { "keyboardPress", "mouseClick" };
             for (int i = 0; i < names.Length; i++)
             {
                 string path = Folder + "/Audio/Interaction/" + names[i] + ".wav";
@@ -549,11 +505,11 @@ namespace SilentSuns.Menu.Editor
         }
 
         // Keep the button treatment consistent across each terminal screen.
-        private static UIButton Button(Transform parent, string name, string text, float x, float y, float width, float height, bool hardware = false)
+        private static UIButton Button(Transform parent, string name, string text, float x, float y, float width, float height)
         {
             Image image = Box(parent, name, x, y, width, height, Color.white);
             image.raycastTarget = true;
-            UIButton button = hardware ? image.gameObject.AddComponent<TerminalPowerButton>() : image.gameObject.AddComponent<UIButton>();
+            UIButton button = image.gameObject.AddComponent<UIButton>();
             button.targetGraphic = image;
             ColorBlock colors = button.colors;
             colors.normalColor = new Color32(0, 0, 115, 255);

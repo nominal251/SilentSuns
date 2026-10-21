@@ -19,7 +19,7 @@ namespace SilentSuns.Menu
         [SerializeField] private CanvasGroup guideScreen;
         [SerializeField] private CanvasGroup quitScreen;
         [SerializeField] private CanvasGroup loadingScreen;
-        [SerializeField] private GameObject powerButton;
+        private GameObject wakeButton;
         [SerializeField] private GameObject startButton;
         [SerializeField] private GameObject guideBackButton;
         [SerializeField] private GameObject cancelQuitButton;
@@ -33,7 +33,6 @@ namespace SilentSuns.Menu
         [SerializeField] private TerminalDisplay display;
         [SerializeField] private TerminalBootLog bootLog;
         [SerializeField] private TerminalSessionRestoration restoration;
-        [SerializeField] private Camera menuCamera;
         [SerializeField] private string gameplayScene = "SampleScene";
 
         [Header("Audio")]
@@ -42,8 +41,7 @@ namespace SilentSuns.Menu
         public const float WarmupDuration = 2.4f;
         public const float ArrivalDuration = 3.6f;
 
-        [Header("Hardware")]
-        [SerializeField] private TerminalHardware hardware;
+        [Header("UI and input")]
         [SerializeField] private Canvas sourceCanvas;
         [SerializeField] private TerminalTypingAudio typingAudio;
         [SerializeField] private UnityEngine.InputSystem.UI.InputSystemUIInputModule inputModule;
@@ -54,7 +52,6 @@ namespace SilentSuns.Menu
             Booting = 2,
             MainMenu = 3,
             InGame = 4,
-            PoweringDown = 5,
             Exiting = 6,
             WarmingUp = 7
         }
@@ -63,8 +60,8 @@ namespace SilentSuns.Menu
         // The team has not connected a gameplay save system yet.
         public bool CanRestore => false;
         public bool ExitRequested { get; private set; }
-        public bool CanTogglePower => !TerminalTransition.IsActive && Time.unscaledTime >= nextPowerInput &&
-            (State == PowerState.WaitingForTouch || State == PowerState.PoweringOn || State == PowerState.Booting || State == PowerState.MainMenu);
+        private bool CanWake => State == PowerState.WaitingForTouch &&
+            !TerminalTransition.IsActive && Time.unscaledTime >= nextPowerInput;
         private float nextPowerInput;
         private CanvasGroup currentScreen;
         private Coroutine bootRoutine;
@@ -108,7 +105,7 @@ namespace SilentSuns.Menu
             ChangeState(PowerState.WarmingUp);
             ShowScreen(standbyScreen, null);
             inputModule.enabled = false;
-            powerButton.GetComponent<Button>().interactable = false;
+            wakeButton.GetComponent<Button>().interactable = false;
             currentScreen.interactable = false;
             display.SetDormant(true);
             display.SetPower(0);
@@ -144,9 +141,8 @@ namespace SilentSuns.Menu
             WaitForRelease();
         }
 
-        public void ConfigureShipScreen(Camera camera, float aspect)
+        public void ConfigureShipScreen(float aspect)
         {
-            menuCamera = camera;
             float height = 1600f / aspect;
             ResizePanels(height);
             ResizeFrame(height);
@@ -204,7 +200,7 @@ namespace SilentSuns.Menu
             var tap = face.GetComponent<TerminalButton>();
             tap.transition = Selectable.Transition.None;
             tap.onClick.AddListener(PowerOn);
-            powerButton = face;
+            wakeButton = face;
             invitation = new GameObject("Invitation", typeof(RectTransform), typeof(TextMeshProUGUI)).GetComponent<TextMeshProUGUI>();
             invitation.transform.SetParent(face.transform, false);
             invitation.font = bootText.font;
@@ -262,7 +258,7 @@ namespace SilentSuns.Menu
                 }
                 return;
             }
-            if (State == PowerState.PoweringOn || State == PowerState.PoweringDown || State == PowerState.InGame || State == PowerState.Exiting)
+            if (State == PowerState.PoweringOn || State == PowerState.InGame || State == PowerState.Exiting)
                 return;
             bool back = (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || (pad != null && pad.buttonEast.wasPressedThisFrame);
             if (State == PowerState.Booting)
@@ -300,39 +296,26 @@ namespace SilentSuns.Menu
 
             waitingForRelease = false;
             currentScreen.interactable = true;
-            powerButton.GetComponent<Button>().interactable = true;
+            wakeButton.GetComponent<Button>().interactable = true;
             inputModule.enabled = true;
-            EventSystem.current.SetSelectedGameObject(State == PowerState.WaitingForTouch ? powerButton : startButton);
+            EventSystem.current.SetSelectedGameObject(State == PowerState.WaitingForTouch ? wakeButton : startButton);
         }
 
         private void FitCamera()
         {
             lastWidth = Screen.width;
             lastHeight = Screen.height;
-            if (display.IsShipScreen) { TerminalShipIntro.FitCamera(); return; }
-            if (menuCamera == null) return;
-            float halfHeight = Mathf.Max(5.56f, 9.15f / menuCamera.aspect);
-            float distance = Vector3.Distance(menuCamera.transform.position, Vector3.zero);
-            menuCamera.fieldOfView = 2f * Mathf.Atan(halfHeight / distance) * Mathf.Rad2Deg;
+            TerminalShipIntro.FitCamera();
         }
 
         private void ChangeState(PowerState value)
         {
             State = value;
-            if (hardware != null) hardware.ApplyState(value);
-        }
-
-        // Kept for the older cabinet prefab. The current telescope uses tap-to-wake.
-        public void TogglePower()
-        {
-            if (!CanTogglePower) return;
-            if (State == PowerState.WaitingForTouch) PowerOn();
-            else PowerOff();
         }
 
         public void PowerOn()
         {
-            if (State != PowerState.WaitingForTouch || !CanTogglePower) return;
+            if (!CanWake) return;
             nextPowerInput = Time.unscaledTime + .18f;
             waitingForRelease = false;
             returnSelection = null;
@@ -346,27 +329,6 @@ namespace SilentSuns.Menu
             ChangeState(PowerState.PoweringOn);
             EventSystem.current.SetSelectedGameObject(null);
             bootRoutine = StartCoroutine(StartDiagnostics());
-        }
-
-        public void PowerOff()
-        {
-            if (!CanTogglePower || State == PowerState.WaitingForTouch) return;
-            nextPowerInput = Time.unscaledTime + .18f;
-            if (bootRoutine != null) StopCoroutine(bootRoutine);
-            bootRoutine = null;
-            waitingForRelease = false;
-            ChangeState(PowerState.PoweringDown);
-            powerButton.GetComponent<Button>().interactable = false;
-            currentScreen.interactable = false;
-            EventSystem.current.SetSelectedGameObject(null);
-            titleAnimation.enabled = false;
-            typingAudio.Stop();
-            bootLog.Stop();
-            bootLog.ResetLog();
-            bootProgress.text = "";
-            TerminalInteractionAudio.Instance?.Switch();
-            PlayerPrefs.Save();
-            bootRoutine = StartCoroutine(ShutDown());
         }
 
         private IEnumerator StartDiagnostics()
@@ -384,12 +346,10 @@ namespace SilentSuns.Menu
             {
                 float amount = screenWarm ? 1f : Mathf.SmoothStep(0f,1f,elapsed/duration);
                 display.SetPower(amount);
-                if (hardware != null) hardware.SetIllumination(amount);
                 yield return null;
             }
             display.SetPower(1f);
             screenWarm = true;
-            if (hardware != null) hardware.SetIllumination(1f);
             ChangeState(PowerState.Booting);
             menuMusic.Play();
             inputModule.enabled = true;
@@ -482,7 +442,7 @@ namespace SilentSuns.Menu
                 return;
             }
             ChangeState(PowerState.InGame);
-            powerButton.GetComponent<Button>().interactable = false;
+            wakeButton.GetComponent<Button>().interactable = false;
             inputModule.enabled = false;
             menuMusic.FadeOut();
             powerAudio?.FadeOut(menuMusic.FadeOutDuration);
@@ -500,14 +460,14 @@ namespace SilentSuns.Menu
             TerminalShipIntro.BeginSurvey();
         }
 
-        // The terminal menu exits the desktop application; the hardware switch never calls Quit.
+        // The confirmation button saves settings and closes the application.
         public void ConfirmQuit()
         {
             if (State != PowerState.MainMenu || currentScreen != quitScreen) return;
             ExitRequested = true;
             ChangeState(PowerState.Exiting);
             inputModule.enabled = false;
-            powerButton.GetComponent<Button>().interactable = false;
+            wakeButton.GetComponent<Button>().interactable = false;
             currentScreen.interactable = false;
             menuMusic.Stop();
             powerAudio?.Stop();
@@ -515,29 +475,6 @@ namespace SilentSuns.Menu
             GetComponent<AudioSource>().Stop();
             PlayerPrefs.Save();
             Application.Quit();
-        }
-
-        private IEnumerator ShutDown()
-        {
-            menuMusic.FadeOut();
-            powerAudio?.FadeOut(menuMusic.FadeOutDuration);
-            float initial = display.Illumination;
-            float duration = menuMusic.FadeOutDuration;
-            for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
-            {
-                float amount = initial * (1f - Mathf.SmoothStep(0,1,elapsed/duration));
-                display.SetPower(amount);
-                if (hardware != null) hardware.SetIllumination(amount);
-                yield return null;
-            }
-            menuMusic.Stop();
-            powerAudio?.Stop();
-            display.SetPower(0f);
-            if (hardware != null) hardware.SetIllumination(0f);
-            sourceCanvas.enabled = true;
-            screenWarm = false;
-            yield return WarmScreen();
-            bootRoutine = null;
         }
 
         public void SetReducedMotion(bool value)

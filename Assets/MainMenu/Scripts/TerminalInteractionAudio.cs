@@ -7,7 +7,6 @@ namespace SilentSuns.Menu
     {
         [SerializeField] private AudioClip keyboardPress;
         [SerializeField] private AudioClip mouseClick;
-        [SerializeField] private AudioClip powerSwitch;
         [SerializeField, Range(0f, 1f)] private float level = 0.14f;
         private AudioSource source;
         private int lastFrame = -1;
@@ -28,7 +27,7 @@ namespace SilentSuns.Menu
         public void Keyboard() { Play(keyboardPress); }
         public void TakeFocus() { Instance = this; }
 
-        // Replace the previous click rather than stacking voices during held-key navigation.
+        // Stop the previous click so held keys do not pile up sounds.
         private void Play(AudioClip clip)
         {
             if (clip == null || Time.frameCount == lastFrame)
@@ -40,12 +39,6 @@ namespace SilentSuns.Menu
             source.Play();
             LastClip = clip;
             AcceptedSounds++;
-        }
-
-        public void Switch()
-        {
-            if (powerSwitch != null)
-                source.PlayOneShot(powerSwitch, 0.35f);
         }
 
         private void OnDestroy()

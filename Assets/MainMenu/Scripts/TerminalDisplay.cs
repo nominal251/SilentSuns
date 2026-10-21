@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
@@ -11,8 +10,6 @@ namespace SilentSuns.Menu
         [Header("Screen")]
         [SerializeField] private Camera sourceCamera;
         [SerializeField] private Camera displayCamera;
-        [SerializeField] private TerminalGlassGraphic surface;
-        [SerializeField] private TerminalHardware hardware;
         [SerializeField] private Material screenMaterial;
         [SerializeField] private TerminalCRTSettings settings;
         [SerializeField] private Shader textLightShader;
@@ -46,7 +43,6 @@ namespace SilentSuns.Menu
         public Renderer ShipScreen => shipScreen;
         public Material EffectMaterial => material;
         private readonly System.Random random = new System.Random();
-        private readonly Vector3[] corners = new Vector3[4];
         private float Curvature => settings.curvature;
 
         public Camera SourceCamera => sourceCamera;
@@ -124,7 +120,6 @@ namespace SilentSuns.Menu
         {
             Illumination = Mathf.Clamp01(amount);
             sourceCamera.enabled = Illumination > 0f;
-            if (surface != null) surface.enabled = !IsShipScreen && Illumination > 0f;
             if (material != null) material.SetFloat("_Power", Illumination);
             if (Illumination == 0f) hasHistory = false;
         }
@@ -135,12 +130,11 @@ namespace SilentSuns.Menu
             set { reducedMotion = value; }
         }
 
-        // Render the terminal separately so text, borders and controls share the same glass curve.
+        // Prepare the screen material. TerminalShipIntro connects it to the telescope after loading.
         private void Awake()
         {
             material = new Material(screenMaterial);
             if (textLightShader != null) textLightMaterial = new Material(textLightShader);
-            surface.material = material;
             ResizeTexture();
             ScheduleDisturbance();
             SetPower(0f);
@@ -206,7 +200,6 @@ namespace SilentSuns.Menu
         {
             float variation = reducedMotion ? 1f : 1f + Mathf.Sin(Time.unscaledTime * 1.37f) * Mathf.Sin(Time.unscaledTime * .31f) * settings.flicker;
             float light = Illumination * variation * (1f - disturbance * .09f) * (1 - gameplayBlend) * signalLevel;
-            if (hardware != null) hardware.SetIllumination(light);
             // TerminalShipScreenLight draws the blue glow and text light on the existing casing.
             spill?.SetPower(light);
             spill?.SetInvitation(dormant ? .2f + wakePulse * .8f : 0);
@@ -240,16 +233,9 @@ namespace SilentSuns.Menu
 
         private void ResizeTexture()
         {
-            if (displayCamera == null) return;
-            float pixels;
-            if (IsShipScreen)
-                pixels = Vector2.Distance(displayCamera.WorldToScreenPoint(shipScreen.bounds.center - ScreenRight * .5f), displayCamera.WorldToScreenPoint(shipScreen.bounds.center + ScreenRight * .5f));
-            else
-            {
-                if (surface == null) return;
-                surface.rectTransform.GetWorldCorners(corners);
-                pixels = Vector2.Distance(displayCamera.WorldToScreenPoint(corners[0]), displayCamera.WorldToScreenPoint(corners[3]));
-            }
+            // TerminalShipIntro supplies the screen and camera after the ship loads.
+            if (displayCamera == null || shipScreen == null) return;
+            float pixels = Vector2.Distance(displayCamera.WorldToScreenPoint(shipScreen.bounds.center - ScreenRight * .5f), displayCamera.WorldToScreenPoint(shipScreen.bounds.center + ScreenRight * .5f));
             int width = Mathf.Clamp(Mathf.CeilToInt(pixels / 64f) * 64, 640, 3840);
             int height = Mathf.RoundToInt(width / contentAspect);
             if (screenTexture != null && screenTexture.width == width && screenTexture.height == height)
@@ -268,7 +254,6 @@ namespace SilentSuns.Menu
             textLightTexture.useMipMap = true;
             textLightTexture.autoGenerateMips = false;
             textLightTexture.Create();
-            if (hardware != null) hardware.SetTextLightTexture(textLightTexture);
             previousFrame = new RenderTexture(width, screenTexture.height, 0);
             previousFrame.name = "Terminal Previous Frame";
             previousFrame.filterMode = FilterMode.Bilinear;
@@ -277,9 +262,7 @@ namespace SilentSuns.Menu
             hasHistory = false;
             sourceCamera.targetTexture = screenTexture;
             sourceCamera.aspect = contentAspect;
-            if (surface != null) surface.texture = screenTexture;
             material.SetTexture("_MainTex", screenTexture);
-            if (hardware != null) hardware.SetScreenTexture(screenTexture);
             if (IsShipScreen)
                 spill = new TerminalShipScreenLight(shipScreen, shipSpillShader, screenTexture, textLightTexture, ScreenRight, ScreenUp);
         }
@@ -288,22 +271,12 @@ namespace SilentSuns.Menu
         public bool TryGetContentPoint(Vector2 screenPoint, out Vector2 contentPoint)
         {
             contentPoint = Vector2.zero;
-            if (Illumination < 0.99f) return false;
-            Vector2 uv;
-            if (IsShipScreen)
-            {
-                Ray ray = displayCamera.ScreenPointToRay(screenPoint);
-                var plane = new Plane(Vector3.Cross(ScreenRight, ScreenUp), shipScreen.bounds.center);
-                if (!plane.Raycast(ray, out float distance)) return false;
-                Vector3 local = shipScreen.transform.InverseTransformPoint(ray.GetPoint(distance)) - uvOrigin;
-                uv = new Vector2(Vector3.Dot(local, uvRight) / uvRight.sqrMagnitude, Vector3.Dot(local, uvUp) / uvUp.sqrMagnitude);
-            }
-            else
-            {
-                if (surface == null || !surface.ScreenToSurface(displayCamera, screenPoint, out Vector2 local)) return false;
-                Rect rect = surface.rectTransform.rect;
-                uv = new Vector2((local.x - rect.xMin) / rect.width, (local.y - rect.yMin) / rect.height);
-            }
+            if (Illumination < 0.99f || shipScreen == null || displayCamera == null || screenTexture == null) return false;
+            Ray ray = displayCamera.ScreenPointToRay(screenPoint);
+            var plane = new Plane(Vector3.Cross(ScreenRight, ScreenUp), shipScreen.bounds.center);
+            if (!plane.Raycast(ray, out float distance)) return false;
+            Vector3 local = shipScreen.transform.InverseTransformPoint(ray.GetPoint(distance)) - uvOrigin;
+            Vector2 uv = new Vector2(Vector3.Dot(local, uvRight) / uvRight.sqrMagnitude, Vector3.Dot(local, uvUp) / uvUp.sqrMagnitude);
             Vector2 centered = uv * 2f - Vector2.one;
             centered *= 1f + Curvature * Mathf.Pow(centered.sqrMagnitude * 0.5f, 2f);
             uv = (centered + Vector2.one) * 0.5f;
@@ -314,18 +287,14 @@ namespace SilentSuns.Menu
         // Used by visual checks and any screen-space labels anchored to terminal controls.
         public Vector2 ContentToScreenPoint(Vector3 worldPoint)
         {
+            if (shipScreen == null || displayCamera == null) return Vector2.zero;
             Vector3 viewport = sourceCamera.WorldToViewportPoint(worldPoint);
             Vector2 content = new Vector2(viewport.x, viewport.y) * 2f - Vector2.one;
             Vector2 curved = content;
             for (int i = 0; i < 8; i++)
                 curved = content / (1f + Curvature * Mathf.Pow(curved.sqrMagnitude * 0.5f, 2f));
             Vector2 uv = (curved + Vector2.one) * 0.5f;
-            if (IsShipScreen)
-                return displayCamera.WorldToScreenPoint(shipScreen.transform.TransformPoint(uvOrigin + uvRight * uv.x + uvUp * uv.y));
-            Rect rect = surface.rectTransform.rect;
-            Vector3 local = new Vector3(rect.xMin + uv.x * rect.width, rect.yMin + uv.y * rect.height);
-            local.z = surface.LocalDepth(local);
-            return RectTransformUtility.WorldToScreenPoint(displayCamera, surface.rectTransform.TransformPoint(local));
+            return displayCamera.WorldToScreenPoint(shipScreen.transform.TransformPoint(uvOrigin + uvRight * uv.x + uvUp * uv.y));
         }
 
         private void OnDestroy()

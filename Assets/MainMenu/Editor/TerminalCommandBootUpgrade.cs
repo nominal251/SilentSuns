@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SilentSuns.Menu.Editor
 {
-    // Applies the command-only presentation without rebuilding the tuned cabinet or CRT.
+    // Updates the boot text and layout without changing the scene setup.
     public static class TerminalCommandBootUpgrade
     {
         public static void Apply()

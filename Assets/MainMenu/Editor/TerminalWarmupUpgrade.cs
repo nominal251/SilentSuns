@@ -16,11 +16,6 @@ namespace SilentSuns.Menu.Editor
             Configure(root);
             ConfigureDisplay(root.GetComponentInChildren<TerminalDisplay>());
             root.transform.Find("Boot/POST progress").GetComponent<TMP_Text>().text = "[............]  SYSTEM CHECK   0%";
-            var paint = AssetDatabase.LoadAssetAtPath<Material>("Assets/MainMenu/Hardware/Chassis.mat");
-            paint.SetFloat("_SpillStrength", 10f);
-            paint.SetFloat("_TextScatter", 8f);
-            paint.SetFloat("_ReflectionStrength", .32f);
-            EditorUtility.SetDirty(paint);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();

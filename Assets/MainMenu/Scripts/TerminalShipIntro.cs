@@ -133,7 +133,7 @@ namespace SilentSuns.Menu
             // Save the normal lighting before TerminalDisplay adds the screen glow.
             roomLighting = new TerminalRoomLighting(Screen, playerCamera);
             display.BindToShip(Screen, playerCamera);
-            menu.ConfigureShipScreen(playerCamera, display.ScreenRight.magnitude / display.ScreenUp.magnitude);
+            menu.ConfigureShipScreen(display.ScreenRight.magnitude / display.ScreenUp.magnitude);
             cameraLocalPosition = playerCamera.transform.localPosition;
             cameraLocalRotation = playerCamera.transform.localRotation;
             cameraFov = playerCamera.fieldOfView;

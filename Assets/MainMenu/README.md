@@ -46,7 +46,7 @@ Pause opens without a selected button. Mouse hover highlights a button; arrows o
 
 Keep public button methods and Inspector field names unless you also update their scene/prefab connections. Shader property names must match the C# calls and materials.
 
-The graphics math lives in `TerminalDisplay` and `Shaders`. You do not need to change it to edit text, settings, or timing. The old voice, captions, and meter have been removed. Older cabinet/editor tools are kept for compatibility.
+The graphics math lives in `TerminalDisplay` and `Shaders`. You do not need to change it to edit text, settings, or timing.
 
 Run the **Menu** Play Mode tests in Unity's Test Runner after changes. They cover boot timing, settings, navigation, the telescope handoff, lighting restoration, and pause input. Two unrelated prototype ObjectiveTrackers have missing references; tests disable those only during testing.
 
@@ -59,10 +59,9 @@ These are all the remaining files in `Assets/MainMenu/Audio`. Source pages were 
 | `keypress-001.wav`, `keypress-002.wav`, `keypress-003.wav`, `keypress-004.wav` | unicaegames, [Keyboard Soundpack #1](https://opengameart.org/content/keyboard-soundpack-1-typing-and-single-keystrokes), Single Keys folder | CC0 | Copied without audio edits. |
 | `Interaction/KeyboardPress.wav` | Mediasaur, [Key_Press](https://freesound.org/people/Mediasaur/sounds/788932/) | CC0 | HQ MP3 preview converted to mono 44.1 kHz, 16-bit WAV. |
 | `Interaction/MouseClick.wav` | planet_jvk, [Mouse Click](https://freesound.org/people/planet_jvk/sounds/825193/) | CC0 | Same WAV conversion. |
-| `Interaction/PowerSwitch.wav` | ChrisTutorials, [Light Switch Turn On Sound](https://freesound.org/people/ChrisTutorials/sounds/440498/) | CC0 | Same WAV conversion. |
 | `Hardware/CRTPowerOn.wav` | Darklanlan, [CRT monitor turns on](https://commons.wikimedia.org/wiki/File:CRT_monitor_turns_on.ogg) | CC0 | Trimmed to 0.92–4.72 seconds, converted to mono WAV, raised 5 dB, and faded at both ends. |
 | `Hardware/CRTHum.wav` | X3SB, [CRT TV Hum](https://freesound.org/people/X3SB/sounds/818513/) | CC0 | Trimmed to 1.8–6.8 seconds, converted to mono WAV, adjusted to -29 dBFS RMS, and crossfaded for looping. |
-| `Menu Music.mp3` | Made with Suno. Temporary track, can be replaced later. | Not documented. | File unchanged. Fades and volume are handled in Unity. |
+| `Menu Music.mp3` | Temporary supplied track; can be replaced later. | Not documented. | File unchanged. Fades and volume are handled in Unity. |
 
 Exact download URLs, source hashes, and edit details are kept in `Audio/Credits.txt`, `Audio/Hardware/Sources.json`, and `Audio/Interaction/Sources.json`.
 

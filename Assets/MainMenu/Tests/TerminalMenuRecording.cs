@@ -58,7 +58,7 @@ namespace SilentSuns.Menu.Tests
                     switch (phase)
                     {
                         case 0:
-                            if (phaseFrames >= 560 && menu.InvitationReady) { Click("Standby/Power On"); bootStart = Time.unscaledTime; next = true; }
+                            if (phaseFrames >= 560 && menu.InvitationReady) { Click("Standby/Wake screen"); bootStart = Time.unscaledTime; next = true; }
                             break;
                         case 1:
                             if (menu.State == TerminalMenu.PowerState.MainMenu)
