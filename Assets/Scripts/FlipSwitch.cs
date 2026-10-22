@@ -24,7 +24,7 @@ public class FlipSwitch : MonoBehaviour, Interactable
         UpdateSwitch();
     }
 
-    public void Interact()
+    public void Interact(GameObject interactionSource)
     {
         isOn = !isOn;
         UpdateSwitch();

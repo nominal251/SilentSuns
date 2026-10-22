@@ -56,24 +56,27 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (inputHandler.debugInput)
+        if (inputHandler.debugPressed)
         {
             debugDeteced = true;
         }
 
-        if (isGravityOn)
+        if (!inputHandler.physicsRotateInput)
         {
-            HandleRotationGravity();
-
-            if (rBody.linearVelocity.magnitude > maxVelocity)
+            if (isGravityOn)
             {
-                maxVelocity = rBody.linearVelocity.magnitude;
-                print($"Max survivable distance is {maxVelocity * 150} units.\n");
+                HandleRotationGravity();
+
+                if (rBody.linearVelocity.magnitude > maxVelocity)
+                {
+                    maxVelocity = rBody.linearVelocity.magnitude;
+                    print($"Max survivable distance is {maxVelocity * 150} units.\n");
+                }
             }
-        }
-        else
-        {
-            HandleRotationNoGravity();
+            else
+            {
+                HandleRotationNoGravity();
+            }
         }
     }
 

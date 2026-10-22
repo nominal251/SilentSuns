@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &963607785818946573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5257389991197446426}
+  m_Layer: 0
+  m_Name: Hand
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5257389991197446426
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963607785818946573}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.25, y: -0.25, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 221757674407075658}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2810187639565938681
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,6 +43,7 @@ GameObject:
   - component: {fileID: 5274100319306390068}
   - component: {fileID: 1674517436396139358}
   - component: {fileID: 5373841226381726112}
+  - component: {fileID: 1615608645364647398}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -34,6 +66,7 @@ Transform:
   m_Children:
   - {fileID: 8098061926755404091}
   - {fileID: 2299435130548901269}
+  - {fileID: 5257389991197446426}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &5274100319306390068
@@ -81,6 +114,8 @@ MonoBehaviour:
   rollSpeed: 60
   reorientSpeed: 30
   groundedMoveForce: 25
+  sprintMultiplier: 2
+  maxCameraAngle: 85
 --- !u!114 &5373841226381726112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,6 +128,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 087e56cd083ed8540839bf485966e202, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractOrigin
+  interactDistance: 3
+--- !u!114 &1615608645364647398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2810187639565938681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e127e4f2e40381d47aef43e7dc47b96e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractor
   interactDistance: 3
 --- !u!1 &4978200516783072722
 GameObject:

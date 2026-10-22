@@ -27,7 +27,7 @@ public class InteractOrigin : MonoBehaviour
         {
             if (currentInteractable != null)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(gameObject);
                 heldInteractable = currentInteractable;
             }
         }

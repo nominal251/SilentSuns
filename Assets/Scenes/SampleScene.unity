@@ -4186,6 +4186,7 @@ GameObject:
   - component: {fileID: 343065124}
   - component: {fileID: 343065123}
   - component: {fileID: 343065122}
+  - component: {fileID: 343065127}
   m_Layer: 0
   m_Name: PhysicsObjectTest (1)
   m_TagString: Untagged
@@ -4313,6 +4314,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 44.277, y: -28.706, z: 7.684}
+--- !u!114 &343065127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343065121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
 --- !u!1 &351977314
 GameObject:
   m_ObjectHideFlags: 0
@@ -9800,6 +9813,7 @@ GameObject:
   - component: {fileID: 791488916}
   - component: {fileID: 791488915}
   - component: {fileID: 791488914}
+  - component: {fileID: 791488919}
   m_Layer: 0
   m_Name: PhysicsObjectTest
   m_TagString: Untagged
@@ -9927,6 +9941,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 11.652, y: 17.484, z: -7.287}
+--- !u!114 &791488919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791488913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
 --- !u!1001 &800891335
 PrefabInstance:
   m_ObjectHideFlags: 0
