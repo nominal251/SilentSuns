@@ -88,7 +88,7 @@ public class ObserverEnemy : EnemyBase
             if (DistanceToPlayer() <= 5)
             {
                 enemyState = EnemyState.Grasp;
-                playerRb.position += Vector3.up * unitsToMove;
+                //playerRb.position += Vector3.up * unitsToMove;
                 return;
             }
             enemyState = EnemyState.Hunt;
@@ -99,7 +99,7 @@ public class ObserverEnemy : EnemyBase
             if (DistanceToPlayer() <= 5)
             {
                 enemyState = EnemyState.Grasp;
-                playerRb.position += Vector3.up * unitsToMove;
+                //playerRb.position += Vector3.up * unitsToMove;
                 return;
             }
             enemyState = EnemyState.Stalk;
