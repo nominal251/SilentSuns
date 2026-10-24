@@ -87,4 +87,13 @@ public class InputHandler : MonoBehaviour
         debugAction.Disable();
         toolAction.Disable();
     }
+
+    public void EnableMovement()
+    {
+        moveAction.Enable();
+    }
+    public void DisableMovement()
+    {
+        moveAction.Disable();
+    }
 }

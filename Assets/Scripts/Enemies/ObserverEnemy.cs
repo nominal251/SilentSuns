@@ -4,16 +4,28 @@ using UnityEngine;
 
 public class ObserverEnemy : EnemyBase
 {
-    [SerializeField] private float unitsToMove = 5f;
+    [Header("Grasp Settings")]
+    [SerializeField] private float raiseDistance = 5f;
+    [SerializeField] private float raiseTime = 2.0f;
+    [Header("Stun Settings")]
+    [SerializeField] private float stunTimer = 3f;
+
+    private Vector3 startPos;
+    private Vector3 targetPosition;
     private bool enemySight;
     private bool playerSight;
+    private bool isMoving = false;
     private PlayerVision playerVision;
     private Rigidbody playerRb;
 
     private InputHandler inputHandler;
 
-    private float stunTimer = 3f;
-    private float timer = 0f;
+
+    private float timer = 0f; //timer for stun
+
+
+    private float elapsedTimer = 0f; //timer for raise movement
+
 
     private EnemyState enemyState;
     private enum EnemyState
@@ -49,7 +61,7 @@ public class ObserverEnemy : EnemyBase
         {
             timer += Time.deltaTime;
 
-            if (timer >= stunTimer)
+            if (timer >= stunTimer) //if the creature has waited long enough after being stunned, it can start it's states again
             {
                 Logic();
                 Move();
@@ -57,11 +69,30 @@ public class ObserverEnemy : EnemyBase
                 timer = 0f;
             }
 
-            return;
+            return; //if not, return
         }
         Logic();
         Move();
 
+    }
+
+    void FixedUpdate()
+    {
+        if (enemyState == EnemyState.Grasp && isMoving)
+        {
+            elapsedTimer += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsedTimer / raiseTime); //clamping so we dont fly into oblivion
+
+            t = Mathf.SmoothStep(0f, 1f, t); //smoothstep starts and ends slower, so it smooths in and out and gives it a little more life
+
+            Vector3 newPosition = Vector3.Lerp(startPos, targetPosition, t);
+            playerRb.MovePosition(newPosition);
+
+            if (t >= 1f)
+            {
+                isMoving = false;//stops once its done
+            }
+        }
     }
 
     bool PlayerCanSeeEnemy()
@@ -75,34 +106,33 @@ public class ObserverEnemy : EnemyBase
         enemySight = EnemyCanSeePlayer();
         playerSight = PlayerCanSeeEnemy();
 
-        if (enemyState == EnemyState.Grasp && inputHandler.toolInput)
+        //Debug.Log($"{enemySight} + {playerSight}");
+
+        if (enemyState == EnemyState.Grasp) //if you are in the grasp state, nothing else occurs unless you stun the enemy
         {
-            //Debug.Log("Hit");
-            enemyState = EnemyState.Stunned;
+            if (inputHandler.toolInput) { enemyState = EnemyState.Stunned; }
         }
 
-        else if (!enemySight) { enemyState = EnemyState.Hunt; }
-
-        else if (enemySight && !playerSight)
+        else
         {
-            if (DistanceToPlayer() <= 5)
+            if (enemySight && playerSight) //the enemy moves slower if you are both looking at each other
+            {
+                enemyState = EnemyState.Stalk;
+            }
+
+            else //otherwise, the enemy moves full speed
+            {
+                enemyState = EnemyState.Hunt;
+            }
+
+            if (DistanceToPlayer() <= 5) //if at any point you are close enough, you are grasped and we exit out of this block
             {
                 enemyState = EnemyState.Grasp;
-                //playerRb.position += Vector3.up * unitsToMove;
-                return;
-            }
-            enemyState = EnemyState.Hunt;
-        }
+                ResetGrasp();
 
-        else if (enemySight && playerSight)
-        {
-            if (DistanceToPlayer() <= 5)
-            {
-                enemyState = EnemyState.Grasp;
-                //playerRb.position += Vector3.up * unitsToMove;
+                //Debug.Log("Grasp");
                 return;
             }
-            enemyState = EnemyState.Stalk;
         }
     }
 
@@ -110,13 +140,13 @@ public class ObserverEnemy : EnemyBase
     {
         switch (enemyState)
         {
-            case EnemyState.Stalk:
+            case EnemyState.Stalk: //half reg speed
                 agent.isStopped = false;
                 agent.speed = moveSpeedHolder / 2;
                 agent.SetDestination(playerTransform.position);
                 break;
 
-            case EnemyState.Hunt:
+            case EnemyState.Hunt: //reg speed
                 agent.isStopped = false;
                 agent.speed = moveSpeedHolder;
                 agent.SetDestination(playerTransform.position);
@@ -142,19 +172,20 @@ public class ObserverEnemy : EnemyBase
 
     private void GraspPlayer()
     {
-        playerRb.isKinematic = true;
+        playerRb.isKinematic = true; //turns gravity off for player
+        inputHandler.DisableMovement();
     }
 
     private void UnGraspPlayer()
     {
-        playerRb.isKinematic = false;
+        playerRb.isKinematic = false; //turns gravity on for player
+        inputHandler.EnableMovement();
     }
-
-    private bool StunTimer() //returns true if active, false if inactive
+    private void ResetGrasp() //reset the transforms and timers for the grasp
     {
-        timer += Time.deltaTime;
-
-        if (timer >= stunTimer) { return true; }
-        else { return false; }
+        startPos = playerRb.position;
+        targetPosition = playerRb.position + new Vector3(0f, playerRb.position.y + raiseDistance, 0f);
+        isMoving = true;
+        elapsedTimer = 0f;
     }
 }

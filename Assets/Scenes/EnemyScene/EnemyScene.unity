@@ -2221,7 +2221,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   moveSpeed: 3
-  unitsToMove: 5
+  raiseDistance: 1.5
+  raiseTime: 1.5
 --- !u!1001 &8822847223132054500
 PrefabInstance:
   m_ObjectHideFlags: 0

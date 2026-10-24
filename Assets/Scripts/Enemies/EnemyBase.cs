@@ -32,7 +32,7 @@ public class EnemyBase : MonoBehaviour
     {
         //finding the reference points for raycast
         Vector3 origin = agent.transform.position + Vector3.up;
-        Vector3 target = playerTransform.position + Vector3.up;
+        Vector3 target = playerTransform.position + Vector3.up - new Vector3(0, 1f, 0f);
         Vector3 direction = target - origin;
         float distance = direction.magnitude;
 
@@ -65,13 +65,13 @@ public class EnemyBase : MonoBehaviour
 
     void Init()
     {
-        player = GameObject.Find("Astronaut Player");
+        player = GameObject.Find("Astronaut Player");  //finds the player gameobject for tranfrom
 
         if (player != null)
         {
             playerTransform = player.transform;
         }
 
-        agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>(); //finds the navmeshagent
     }
 }
