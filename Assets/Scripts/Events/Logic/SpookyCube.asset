@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7151f09eeadeefe48a23b2fae0e0a011, type: 3}
+  m_Name: SpookyCube
+  m_EditorClassIdentifier: Assembly-CSharp::GameEventDefinition
+  eventId: Spook_Cube_Test
+  categories: 01000000
+  designerNotes: 
+  minimumWeirdness: 0
+  maximumWeirdness: 100
+  selectionWeight: 1
+  triggerIds: []
+  oncePerRun: 0
+  oncePerSystem: 0
+  maxTriggersPerRun: 0
+  eventPrefab: {fileID: 6594030476375017555, guid: fb9e4f77cc2a2a5409b50e57d832b2a7, type: 3}
