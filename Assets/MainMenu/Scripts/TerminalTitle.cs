@@ -43,6 +43,14 @@ namespace SilentSuns.Menu
         {
             hasTyped = false;
         }
+        public void ShowComplete()
+        {
+            hasTyped = true;
+            // An inactive menu label has not run Awake yet. OnEnable will reveal it.
+            if (cursorPositions == null) return;
+            visibleCharacters = cursorPositions.Length - 1;
+            UpdateCursor();
+        }
 
         // Returning from another panel keeps the title complete instead of replaying the intro.
         private void OnEnable()

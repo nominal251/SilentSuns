@@ -28,6 +28,9 @@ Shader "Silent Suns/Terminal CRT"
         _Disturbance ("Local disturbance", Float) = 0
         _DiagnosticGlitch ("Diagnostic instability", Float) = 0
         _Warmup ("Power settling", Float) = 0
+        _DisplayBrightness ("Overlay brightness", Float) = 0
+        _DisplayContrast ("Overlay contrast", Float) = 1
+        _ClearDisplay ("Settings and calibration", Float) = 0
     }
     SubShader
     {
@@ -49,6 +52,7 @@ Shader "Silent Suns/Terminal CRT"
             float _Curvature, _ScanStrength, _ScanLines, _PhosphorStrength, _Glow, _Persistence;
             float _Vignette, _Convergence, _Noise, _Flicker, _DisplayTime;
             float _InterferenceStrength, _Disturbance, _DiagnosticGlitch, _Warmup;
+            float _DisplayBrightness, _DisplayContrast, _ClearDisplay;
             struct Attributes { float4 positionOS : POSITION; float2 uv : TEXCOORD0; };
             struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
             Varyings Vert(Attributes input)
@@ -67,6 +71,21 @@ Shader "Silent Suns/Terminal CRT"
             }
             half4 Frag(Varyings input) : SV_Target
             {
+                // Calibration needs the original picture, without the CRT's color or motion effects.
+                // Keep the overlay's brightness/contrast because its camera has no post processing.
+                if (_ClearDisplay > .5)
+                {
+                    half3 clean = Sample(input.uv);
+                    float cleanAlpha = 1;
+                    if (_RespectSourceAlpha > .5)
+                    {
+                        clean = max(0, (clean - .18) * _DisplayContrast + .18) * exp2(_DisplayBrightness * 2);
+                        cleanAlpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).a;
+                    }
+                    if (_ShipOverlay > .5)
+                        return half4(clean * _Power * _SignalLevel, 1 - _GameplayBlend);
+                    return half4(clean, cleanAlpha * _Power);
+                }
                 // UV is the position on the screen, from 0 to 1. Bend it slightly for curved glass.
                 float2 glass = input.uv * 2 - 1;
                 float radius = dot(glass, glass) * 0.5;
@@ -162,6 +181,9 @@ Shader "Silent Suns/Terminal CRT"
                 // Pause rendering is transparent outside its own panel; never tint gameplay.
                 float panelAlpha = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).a;
                 alpha *= lerp(1, panelAlpha, _RespectSourceAlpha);
+                // Overlay menus bypass the gameplay camera's color adjustments.
+                if (_RespectSourceAlpha > .5)
+                    screen = max(0, (screen - .18) * _DisplayContrast + .18) * exp2(_DisplayBrightness * 2);
                 return half4(max(screen, 0), alpha * _Power * rasterAperture);
             }
             ENDHLSL

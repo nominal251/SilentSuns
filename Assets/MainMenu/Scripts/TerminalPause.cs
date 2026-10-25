@@ -43,8 +43,10 @@ namespace SilentSuns.Menu
         private GameObject leaveSelection;
 
         public static bool Available => instance != null;
+        public static bool Paused => instance != null && instance.paused;
+        public static void PauseForDisconnect() { if (instance != null && !instance.paused) instance.Pause(); }
         // PlayerMovement and InteractOrigin use this to ignore gameplay input during menus.
-        public static bool BlocksGameplayInput => TerminalTransition.IsActive || TerminalShipIntro.BlocksInput ||
+        public static bool BlocksGameplayInput => TerminalTransition.IsActive || TerminalShipIntro.BlocksInput || TerminalModal.BlocksInput || TerminalFailure.Active || TerminalExtras.ShuttingDown ||
             (instance != null && instance.paused) || Time.frameCount <= resumeFrame;
         public bool IsPaused => paused;
 
@@ -81,12 +83,16 @@ namespace SilentSuns.Menu
                 events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             }
             SetInputScheme(0);
+            TerminalTextScale.Install(transform);
+            foreach (var button in confirmationPanel.GetComponentsInChildren<TerminalButton>(true))
+                if (button.gameObject != cancelButton) TerminalHoldConfirm.Attach(button.gameObject, ConfirmLeave);
         }
 
         // Escape and the controller's menu button toggle pause. P has no pause binding.
         private void Update()
         {
-            if (closing || TerminalTransition.IsActive || TerminalShipIntro.IsActive)
+            if (closing || TerminalTransition.IsActive || TerminalShipIntro.IsActive || TerminalModal.BlocksInput || TerminalDropdown.BlocksInput ||
+                TerminalBindings.Listening || Time.frameCount <= TerminalBindings.ConsumedFrame || TerminalFailure.Active || TerminalExtras.ShuttingDown)
                 return;
             Keyboard keyboard = Keyboard.current;
             Gamepad gamepad = Gamepad.current;
@@ -188,6 +194,10 @@ namespace SilentSuns.Menu
             keyboardNavigation = false;
             pendingNavigation = 0;
             EventSystem.current.SetSelectedGameObject(null);
+            var subtitle = pausePanel.GetComponentsInChildren<TMP_Text>();
+            foreach (var label in subtitle)
+                if (label.text.StartsWith("SESSION HELD"))
+                    label.text = "SESSION HELD IN MEMORY / ACTIVE TIME " + System.TimeSpan.FromSeconds(TerminalExtras.SessionSeconds).ToString(@"hh\:mm\:ss");
         }
 
         // Keep the resume click from reaching an instrument behind the menu on this frame.
@@ -195,6 +205,11 @@ namespace SilentSuns.Menu
         {
             if (!paused || closing)
                 return;
+            if (settingsPanel.activeSelf && settings.HasChanges)
+            {
+                settings.RequestLeave(Resume);
+                return;
+            }
             closing = true;
             visibility.interactable = false;
             FadeTo(0f);
@@ -209,9 +224,12 @@ namespace SilentSuns.Menu
 
         public void CloseSettings()
         {
-            settingsPanel.SetActive(false);
-            pausePanel.SetActive(true);
-            EventSystem.current.SetSelectedGameObject(keyboardNavigation ? settingsButton : null);
+            settings.RequestLeave(() =>
+            {
+                settingsPanel.SetActive(false);
+                pausePanel.SetActive(true);
+                EventSystem.current.SetSelectedGameObject(keyboardNavigation ? settingsButton : null);
+            });
         }
 
         private void FadeTo(float target)
@@ -274,9 +292,11 @@ namespace SilentSuns.Menu
 
         public void ConfirmLeave()
         {
+            var hold = confirmationPanel.GetComponentInChildren<TerminalHoldConfirm>();
+            if (hold != null && !hold.Completed) return;
             PlayerPrefs.Save();
             if (quitRequested)
-                Application.Quit();
+                TerminalExtras.Shutdown();
             else
             {
                 visibility.interactable = false;

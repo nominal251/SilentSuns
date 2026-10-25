@@ -7,6 +7,7 @@ namespace SilentSuns.Menu
     public class TerminalSlider : Slider
     {
         [SerializeField] private TerminalDisplay display;
+        public void SetDisplay(TerminalDisplay value) { display = value; }
 
         // Slider dragging needs the same coordinates as the curved screen's raycaster.
         public override void OnPointerDown(PointerEventData eventData)

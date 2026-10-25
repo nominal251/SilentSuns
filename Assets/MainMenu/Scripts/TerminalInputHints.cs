@@ -84,10 +84,16 @@ namespace SilentSuns.Menu
             if (restoreSkipLabel != null)
                 restoreSkipLabel.text = controller ? "CONTINUE  [" + confirm + "]" : "CONTINUE  [SPACE]";
             foreach (TMP_Text label in backLabels)
-                label.text = controller ? "BACK  [" + back + "]" : "BACK  [ESC]";
-            guideNote.text = controller
-                ? "Survey controls use keyboard and mouse in this prototype."
-                : "Inspect the ship's instruments to begin your survey.";
+                if (label != null) label.text = controller ? "BACK  [" + back + "]" : "BACK  [ESC]";
+            guideNote.text = "DEFAULT CONTROLS / Your current bindings are in SETTINGS > KEYBINDS.";
+            // This short guide shows defaults. The remapping list shows the player's saved choices.
+            var guide = guideNote.transform.parent;
+            guide.Find("Control labels").GetComponent<TMP_Text>().text = controller ?
+                (scheme == 2 ? "LEFT STICK\nRIGHT STICK\nR1 / L1\nL2 / R2\nTRIANGLE\nL3\nOPTIONS" :
+                    "LEFT STICK\nRIGHT STICK\nRB / LB\nLT / RT\nY\nL3\nSTART") :
+                "W A S D\nMOUSE\nSPACE / CTRL\nQ / E\nR\nSHIFT\nESC";
+            guide.Find("Control descriptions").GetComponent<TMP_Text>().text =
+                "MOVE (ON FOOT + IN SHIP)\nLOOK (ON FOOT + IN SHIP)\nASCEND / DESCEND (IN SHIP)\nROLL (IN SHIP)\nREORIENT (IN SHIP)\nSPRINT (ON FOOT)\nPAUSE";
         }
     }
 }

@@ -33,6 +33,7 @@ public class GameOver : MonoBehaviour
 
         yield return new WaitForSeconds(4f);
 
-        SceneManager.LoadScene(sceneToLoad);
+        // The UI plays the signal failure, then opens the existing game-over scene.
+        SilentSuns.Menu.TerminalFailure.Begin(sceneToLoad);
     }
 }

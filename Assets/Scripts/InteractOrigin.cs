@@ -33,7 +33,9 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // start interaction
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        // Use the same remappable action as the settings screen.
+        var interact = SilentSuns.Menu.TerminalBindings.Controls?.FindAction("Interact");
+        if (interact != null && interact.WasPressedThisFrame())
         {
             if (currentInteractable != null)
             {
@@ -43,7 +45,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // while holding interact
-        if (Mouse.current.leftButton.isPressed && heldInteractable != null)
+        if (interact != null && interact.IsPressed() && heldInteractable != null)
         {
             // check if the object is still within range
             float distance = Vector3.Distance(
@@ -59,7 +61,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // on release interact
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
+        if (interact != null && interact.WasReleasedThisFrame())
         {
             if (heldInteractable != null)
             {

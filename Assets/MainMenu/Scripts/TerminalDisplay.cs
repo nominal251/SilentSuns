@@ -43,7 +43,7 @@ namespace SilentSuns.Menu
         public Renderer ShipScreen => shipScreen;
         public Material EffectMaterial => material;
         private readonly System.Random random = new System.Random();
-        private float Curvature => settings.curvature;
+        private float Curvature => TerminalSettings.EffectsSuspended ? 0 : settings.curvature;
 
         public Camera SourceCamera => sourceCamera;
         public float Illumination { get; private set; }
@@ -155,22 +155,32 @@ namespace SilentSuns.Menu
         // Copy DefaultCRT.asset settings to the shader that draws the screen.
         private void ApplyCRTSettings()
         {
+            reducedMotion = GamePreferences.ReducedMotion;
+            material.SetFloat("_ClearDisplay", TerminalSettings.EffectsSuspended ? 1 : 0);
             material.SetFloat("_Curvature", settings.curvature);
-            material.SetFloat("_ScanStrength", settings.scanlines);
+            material.SetFloat("_ScanStrength", settings.scanlines * GamePreferences.CRTIntensity);
             material.SetFloat("_ScanLines", settings.scanLineCount);
             material.SetFloat("_DisplayTime", reducedMotion ? 0f : Time.unscaledTime);
             material.SetFloat("_PhosphorStrength", settings.shadowMask);
-            material.SetFloat("_Glow", settings.glow);
+            material.SetFloat("_Glow", settings.glow * GamePreferences.CRTIntensity);
             material.SetFloat("_Vignette", settings.vignette);
             material.SetFloat("_Convergence", settings.convergence);
-            material.SetFloat("_Noise", settings.noise);
-            material.SetFloat("_Flicker", reducedMotion ? 0f : settings.flicker);
-            material.SetFloat("_InterferenceStrength", reducedMotion ? 0f : 1f);
+            material.SetFloat("_Noise", settings.noise * GamePreferences.CRTIntensity);
+            material.SetFloat("_Flicker", reducedMotion ? 0f : settings.flicker * GamePreferences.CRTIntensity);
+            material.SetFloat("_InterferenceStrength", reducedMotion ? 0f : GamePreferences.CRTIntensity);
             material.SetFloat("_Persistence", reducedMotion || !hasHistory ? 0f : settings.persistence);
         }
 
         private float UpdateGlitches()
         {
+            if (TerminalSettings.EffectsSuspended)
+            {
+                disturbanceEnd = 0;
+                ScheduleDisturbance();
+                material.SetFloat("_Disturbance", 0);
+                material.SetFloat("_DiagnosticGlitch", 0);
+                return 0;
+            }
             if (Illumination > .99f && standbyWarmup <= 0 && !reducedMotion && settings.glitchFrequency > 0f && Time.unscaledTime >= nextDisturbance)
             {
                 disturbanceDuration = .16f + (float)random.NextDouble() * .12f;
@@ -198,7 +208,8 @@ namespace SilentSuns.Menu
 
         private void UpdateScreenLight(float disturbance)
         {
-            float variation = reducedMotion ? 1f : 1f + Mathf.Sin(Time.unscaledTime * 1.37f) * Mathf.Sin(Time.unscaledTime * .31f) * settings.flicker;
+            float variation = reducedMotion || TerminalSettings.EffectsSuspended ? 1f :
+                1f + Mathf.Sin(Time.unscaledTime * 1.37f) * Mathf.Sin(Time.unscaledTime * .31f) * settings.flicker;
             float light = Illumination * variation * (1f - disturbance * .09f) * (1 - gameplayBlend) * signalLevel;
             // TerminalShipScreenLight draws the blue glow and text light on the existing casing.
             spill?.SetPower(light);

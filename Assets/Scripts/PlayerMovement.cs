@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rBody;
     private GameObject camera;
     private InputHandler inputHandler;
-    
+
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
 
@@ -104,8 +104,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleRotationGravity()
     {
-        yRotation += inputHandler.lookInput.x * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity;
-        cameraXRotation -= inputHandler.lookInput.y * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity;
+        yRotation += inputHandler.lookInput.x * mouseSens * inputHandler.lookSensitivity;
+        cameraXRotation -= inputHandler.lookInput.y * mouseSens * inputHandler.lookSensitivity;
         cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
 
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
@@ -134,8 +134,8 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(transform.forward), Time.deltaTime * reorientSpeed);
         }
 
-        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity, transform.right) * transform.rotation;
-        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens * SilentSuns.Menu.GamePreferences.MouseSensitivity, transform.up) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(-inputHandler.lookInput.y * mouseSens * inputHandler.lookSensitivity, transform.right) * transform.rotation;
+        transform.rotation = Quaternion.AngleAxis(inputHandler.lookInput.x * mouseSens * inputHandler.lookSensitivity, transform.up) * transform.rotation;
         transform.rotation = Quaternion.AngleAxis(inputHandler.rollInput * rollSpeed * Time.deltaTime, transform.forward) * transform.rotation;
     }
 
@@ -149,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetGravity(bool incomingState) //to do: smooth transition between states
     {
-        if(isGravityOn != incomingState)
+        if (isGravityOn != incomingState)
         {
             isGravityOn = incomingState;
             if (isGravityOn)

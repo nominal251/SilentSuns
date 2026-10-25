@@ -146,6 +146,22 @@ namespace SilentSuns.Menu.Tests
         }
 
         [UnityTest, Category("Menu")]
+        public IEnumerator ReducedEffectsKeepsTheFullSurveyHandoff()
+        {
+            yield return ReadyMain();
+            terminal.GetComponent<TerminalMenu>().SetReducedMotion(true);
+            float started = Time.unscaledTime;
+            TerminalShipIntro.BeginSurvey();
+            yield return new WaitForSecondsRealtime(1.2f);
+            Assert.That(TerminalShipIntro.IsActive, Is.True, "Reduced effects must not rush the camera into gameplay.");
+            Assert.That(TerminalPause.BlocksGameplayInput, Is.True);
+            float deadline = started + 10;
+            while (TerminalShipIntro.IsActive && Time.unscaledTime < deadline) yield return null;
+            Assert.That(TerminalShipIntro.IsActive, Is.False);
+            Assert.That(Time.unscaledTime - started, Is.InRange(6.1f, 8f));
+        }
+
+        [UnityTest, Category("Menu")]
         public IEnumerator NewSurveyRevealsShipMonitorAndOnlyThenShowsHint()
         {
             Camera originalCamera = Camera.main;
@@ -155,6 +171,9 @@ namespace SilentSuns.Menu.Tests
             Click("Boot/Skip Boot");
             yield return new WaitForSecondsRealtime(.35f);
             Click("Main Menu/Begin Survey");
+            Assert.That(Cursor.visible, Is.False, "Hide the system pointer as soon as Begin Survey is activated.");
+            if (!Application.isEditor)
+                Assert.That(Cursor.lockState, Is.EqualTo(CursorLockMode.Locked));
             float deadline = Time.realtimeSinceStartup + 30;
             while (SceneManager.GetActiveScene().name != "SampleScene" && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.That(TerminalShipIntro.IsActive, Is.True);
@@ -252,8 +271,9 @@ namespace SilentSuns.Menu.Tests
             effect.SetFloat("_DiagnosticGlitch", 0);
             pause.OpenSettings();
             yield return null;
-            Assert.That(pause.transform.Find("Layout/Settings/Settings Back/Label").GetComponent<TMP_Text>().text, Is.EqualTo("BACK  [ESC]"));
-            var slider = pause.transform.Find("Layout/Settings/Sound Effects").GetComponent<Slider>();
+            Assert.That(pause.transform.Find("Layout/Settings/Tabbed settings/BACK [ESC]/Label").GetComponent<TMP_Text>().text, Is.EqualTo("BACK [ESC]"));
+            var slider = SettingsSlider("AUDIO", "GAMEPLAY SOUND EFFECTS", pause.GetComponentInChildren<TerminalSettings>());
+            Canvas.ForceUpdateCanvases();
             var area = slider.handleRect.parent as RectTransform;
             var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
             pointer.pointerPressRaycast = new RaycastResult { module = pause.GetComponent<GraphicRaycaster>() };
@@ -275,7 +295,7 @@ namespace SilentSuns.Menu.Tests
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             var log = terminal.GetComponent<TerminalBootLog>();
             var output = terminal.Find("Boot/Boot output").GetComponent<TMP_Text>();
-            foreach (var expected in new[] { "MOTION DETECTED / ROOM EMPTY", "RELEASE REQUEST / ORIGIN INSIDE", "REPLY RECEIVED / UPLINK DISCONNECTED", "THIS TERMINAL / ROUTE IMPOSSIBLE", "02 OPERATORS / 01 CREDENTIAL", "RANGE 0.4 M / BEHIND OPERATOR", "SECOND OPERATOR / ACCESS GRANTED", "WARNING SUPPRESSED / DO NOT DISPLAY" })
+            foreach (var expected in new[] { "MOTION: 04 RETURNS / MANIFEST: 0", "RELEASE REQUEST / ORIGIN INSIDE", "RX: 128 BYTES / ANTENNA DISCONNECTED", "FRAME TIME: +00:08 / CLOCK SYNC: OK", "BODY COUNT: 02 / MANIFEST: 01", "RETURN 02: 0.4 M / REAR SENSOR", "INNER HANDLE ACTIVE / MANIFEST: 0", "0.0 KPA / MOTION: 06 RETURNS" })
             {
                 float deadline = Time.realtimeSinceStartup + 10;
                 while (!output.text.Contains(expected) && Time.realtimeSinceStartup < deadline) yield return null;

@@ -17,6 +17,7 @@ namespace SilentSuns.Menu
         {
             if (IsActive || !Application.CanStreamedLevelBeLoaded(scene))
                 return;
+            if (scene == "MainMenu") TerminalMenu.PrepareReturn();
             CreateCover();
             instance.StartCoroutine(instance.Handoff(scene, beforeLoad));
         }
@@ -82,7 +83,7 @@ namespace SilentSuns.Menu
             complete?.Invoke(result);
             yield return null;
             yield return Fade(1f, 0f, 0.75f);
-            Time.timeScale = previousScale;
+            Time.timeScale = TerminalShipIntro.IsActive ? 0 : previousScale;
             instance = null;
             Destroy(gameObject);
         }
@@ -95,10 +96,14 @@ namespace SilentSuns.Menu
             float previousScale = Time.timeScale;
             Time.timeScale = 0f;
             yield return SceneManager.LoadSceneAsync(scene);
+            if (scene == "MainMenu")
+                while (!TerminalShipIntro.Ready || TerminalMenu.Active == null ||
+                    TerminalMenu.Active.State != TerminalMenu.PowerState.MainMenu)
+                    yield return null;
             yield return null;
             yield return new WaitForSecondsRealtime(0.15f);
             yield return Fade(1f, 0f, 0.75f);
-            Time.timeScale = previousScale;
+            Time.timeScale = TerminalShipIntro.IsActive ? 0 : previousScale;
             instance = null;
             Destroy(gameObject);
         }

@@ -14,6 +14,7 @@ namespace SilentSuns.Menu
         private void Awake()
         {
             source = GetComponent<AudioSource>();
+            source.outputAudioMixerGroup = GameAudio.InterfaceGroup;
         }
 
         public void Stop() { source.Stop(); nextKey = 0f; }

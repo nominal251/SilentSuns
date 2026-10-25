@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcfdc02f8d97d7f40961dc0d4697a776, type: 3}
+  m_Name: TerminalUIAssets
+  m_EditorClassIdentifier: SilentSuns.Menu::SilentSuns.Menu.TerminalUIAssets
+  font: {fileID: 11400000, guid: 83e81fbb3a0ca5a41ba628f3cf7520d5, type: 2}
+  shuttle: {fileID: 21300000, guid: 6d6cfd5b90998934f8405042577cf454, type: 3}
+  disconnected: {fileID: 8300000, guid: e15afd905afd5564fb594f0c8539e1be, type: 3}
+  credits: {fileID: 4900000, guid: d3a36a05a6a2f044da42ef1833bfe7bb, type: 3}
+  crtMaterial: {fileID: 2100000, guid: fbfc680a4568da144b4d2e948cf68d3b, type: 2}
+  crtSettings: {fileID: 11400000, guid: 53154c23ff75a8a40811850cab6840de, type: 2}
+  version: 0.1.0
+  build: 20261025.122208
+  updated: Sun, 10/25/2026 @ 07:22 AM EST

@@ -2,6 +2,7 @@ using System.Net.Mime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(-50)]
 public class InputHandler : MonoBehaviour
 {
     [SerializeField] private InputActionAsset playerControls;
@@ -15,6 +16,8 @@ public class InputHandler : MonoBehaviour
 
     public Vector3 moveInput { get; private set; }
     public Vector2 lookInput { get; private set; }
+    private bool controllerLook;
+    public float lookSensitivity => controllerLook ? SilentSuns.Menu.GamePreferences.ControllerSensitivity : SilentSuns.Menu.GamePreferences.MouseSensitivity;
     public float rollInput { get; private set; }
     public bool reorientInput { get; private set; }
     public bool sprintInput { get; private set; }
@@ -24,7 +27,7 @@ public class InputHandler : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -35,6 +38,8 @@ public class InputHandler : MonoBehaviour
             return;
         }
 
+        // Settings edits this runtime copy and saves its binding overrides.
+        playerControls = SilentSuns.Menu.TerminalBindings.Initialize(playerControls);
         moveAction = playerControls.FindActionMap("Player").FindAction("Move");
         lookAction = playerControls.FindActionMap("Player").FindAction("Look");
         rollAction = playerControls.FindActionMap("Player").FindAction("Roll");
@@ -65,6 +70,21 @@ public class InputHandler : MonoBehaviour
     private void Update()
     {
         debugInput = debugAction.triggered;
+        // Apply controller settings here; mouse delta keeps its existing action scaling.
+        Vector2 controller = Gamepad.current != null ? Gamepad.current.rightStick.ReadUnprocessedValue() : Vector2.zero;
+        float deadZone = SilentSuns.Menu.GamePreferences.DeadZone;
+        moveInput = moveAction.ReadValue<Vector3>();
+        if (moveAction.activeControl?.device is Gamepad movePad &&
+            moveAction.activeControl.path.Contains("/leftStick/") && movePad.leftStick.ReadUnprocessedValue().magnitude <= deadZone)
+            moveInput = new Vector3(0, moveInput.y, 0);
+        if (controller.magnitude > deadZone)
+        {
+            controllerLook = true;
+            controller = controller.normalized * Mathf.InverseLerp(deadZone, 1, controller.magnitude);
+            lookInput = controller * (100f * Time.deltaTime);
+        }
+        else { controllerLook = false; lookInput = lookAction.ReadValue<Vector2>(); }
+        if (SilentSuns.Menu.GamePreferences.InvertLook) lookInput = new Vector2(lookInput.x, -lookInput.y);
     }
 
     private void OnEnable()
@@ -78,6 +98,8 @@ public class InputHandler : MonoBehaviour
         reorientAction.Enable();
         sprintAction.Enable();
         debugAction.Enable();
+        playerControls.FindAction("ControllerLook").Enable();
+        playerControls.FindAction("Interact").Enable();
     }
 
     private void OnDisable()
@@ -89,5 +111,6 @@ public class InputHandler : MonoBehaviour
         reorientAction?.Disable();
         sprintAction?.Disable();
         debugAction?.Disable();
+        if (instance == this) playerControls?.Disable();
     }
 }

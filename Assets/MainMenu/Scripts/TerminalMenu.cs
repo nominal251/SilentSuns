@@ -10,6 +10,14 @@ namespace SilentSuns.Menu
 {
     public class TerminalMenu : MonoBehaviour
     {
+        public static TerminalMenu Active { get; private set; }
+        private static bool returningToMenu;
+        public static void PrepareReturn() { returningToMenu = true; }
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetReturn() { returningToMenu = false; }
+        public bool IdleAllowed => State == PowerState.MainMenu && currentScreen == menuScreen && !waitingForRelease;
+        private TerminalScreensaver screensaver;
+        private void Awake() { Active = this; }
         // This script runs the UI. TerminalShipIntro handles the ship and player camera.
         [Header("Screens")]
         [SerializeField] private CanvasGroup standbyScreen;
@@ -97,7 +105,27 @@ namespace SilentSuns.Menu
             sourceCanvas.enabled = true;
             bootLog.Stop();
             FitCamera();
-            yield return WarmScreen();
+            TerminalTextScale.Install(transform);
+            GamePreferences.Changed += RefreshPreferences;
+            screensaver = gameObject.AddComponent<TerminalScreensaver>();
+            screensaver.Initialize(this, menuScreen);
+            foreach (var button in quitScreen.GetComponentsInChildren<TerminalButton>(true))
+                if (button.gameObject != cancelQuitButton) TerminalHoldConfirm.Attach(button.gameObject, ConfirmQuit);
+            if (returningToMenu)
+            {
+                // A session exit opens the choices directly. Cold startup is only for launching the game.
+                returningToMenu = false;
+                screenWarm = true;
+                display.SetDormant(false);
+                display.SetStandbyWarmup(0);
+                display.SetPower(1);
+                powerAudio?.PlayHum();
+                menuMusic.Play();
+                inputModule.enabled = true;
+                titleAnimation.ShowComplete();
+                OpenMainAfterBoot();
+            }
+            else yield return WarmScreen();
         }
 
         private IEnumerator WarmScreen()
@@ -231,11 +259,14 @@ namespace SilentSuns.Menu
         private void OnDestroy()
         {
             if (wakeMaterial != null) Destroy(wakeMaterial);
+            if (Active == this) Active = null;
+            GamePreferences.Changed -= RefreshPreferences;
         }
 
         private void Update()
         {
             if (!TerminalShipIntro.Ready || invitation == null) return;
+            if (TerminalModal.BlocksInput || TerminalDropdown.BlocksInput || TerminalBindings.Listening || Time.frameCount <= TerminalBindings.ConsumedFrame || TerminalExtras.ShuttingDown) return;
             if (Screen.width != lastWidth || Screen.height != lastHeight)
                 FitCamera();
             if (TerminalTransition.IsActive)
@@ -298,7 +329,7 @@ namespace SilentSuns.Menu
             currentScreen.interactable = true;
             wakeButton.GetComponent<Button>().interactable = true;
             inputModule.enabled = true;
-            EventSystem.current.SetSelectedGameObject(State == PowerState.WaitingForTouch ? wakeButton : startButton);
+            EventSystem.current.SetSelectedGameObject(State == PowerState.WaitingForTouch ? wakeButton : (returnSelection != null ? returnSelection : startButton));
         }
 
         private void FitCamera()
@@ -344,7 +375,7 @@ namespace SilentSuns.Menu
             float duration = screenWarm || GamePreferences.ReducedMotion ? 0.18f : WarmupDuration;
             for (float elapsed = 0; elapsed < duration; elapsed += Time.unscaledDeltaTime)
             {
-                float amount = screenWarm ? 1f : Mathf.SmoothStep(0f,1f,elapsed/duration);
+                float amount = screenWarm ? 1f : Mathf.SmoothStep(0f, 1f, elapsed / duration);
                 display.SetPower(amount);
                 yield return null;
             }
@@ -392,7 +423,7 @@ namespace SilentSuns.Menu
             bootLog.Stop();
             typingAudio.Stop();
             ChangeState(PowerState.MainMenu);
-            ShowScreen(menuScreen,startButton);
+            ShowScreen(menuScreen, startButton);
             WaitForRelease();
         }
 
@@ -428,12 +459,17 @@ namespace SilentSuns.Menu
 
         public void BackToMenu()
         {
-            PlayerPrefs.Save();
+            if (currentScreen == settingsScreen)
+            {
+                settings.RequestLeave(() => ShowScreen(menuScreen, returnSelection != null ? returnSelection : startButton));
+                return;
+            }
             ShowScreen(menuScreen, returnSelection != null ? returnSelection : startButton);
         }
 
         public void BeginSurvey()
         {
+            if (screensaver != null && screensaver.BlocksActivation) return;
             if (State != PowerState.MainMenu || waitingForRelease || currentScreen != menuScreen)
                 return;
             if (!Application.CanStreamedLevelBeLoaded(gameplayScene))
@@ -442,6 +478,8 @@ namespace SilentSuns.Menu
                 return;
             }
             ChangeState(PowerState.InGame);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             wakeButton.GetComponent<Button>().interactable = false;
             inputModule.enabled = false;
             menuMusic.FadeOut();
@@ -464,17 +502,19 @@ namespace SilentSuns.Menu
         public void ConfirmQuit()
         {
             if (State != PowerState.MainMenu || currentScreen != quitScreen) return;
+            var hold = quitScreen.GetComponentInChildren<TerminalHoldConfirm>();
+            if (hold != null && !hold.Completed) return;
             ExitRequested = true;
             ChangeState(PowerState.Exiting);
             inputModule.enabled = false;
             wakeButton.GetComponent<Button>().interactable = false;
             currentScreen.interactable = false;
-            menuMusic.Stop();
-            powerAudio?.Stop();
+            menuMusic.FadeOut();
+            powerAudio?.FadeOut(1.5f);
             typingAudio.Stop();
             GetComponent<AudioSource>().Stop();
             PlayerPrefs.Save();
-            Application.Quit();
+            TerminalExtras.Shutdown();
         }
 
         public void SetReducedMotion(bool value)
@@ -482,6 +522,20 @@ namespace SilentSuns.Menu
             titleAnimation.SetReducedMotion(value);
             display.ReducedMotion = value;
             GamePreferences.SetReducedMotion(value);
+        }
+
+        private void RefreshPreferences()
+        {
+            titleAnimation.SetReducedMotion(GamePreferences.ReducedMotion);
+            display.ReducedMotion = GamePreferences.ReducedMotion;
+            FitCamera();
+        }
+
+        public void WakeFromIdle(GameObject selection)
+        {
+            returnSelection = selection;
+            ShowScreen(menuScreen, selection != null ? selection : startButton);
+            WaitForRelease();
         }
 
         private void ShowScreen(CanvasGroup screen, GameObject selection)

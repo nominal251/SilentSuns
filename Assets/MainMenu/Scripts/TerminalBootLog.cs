@@ -46,25 +46,25 @@ namespace SilentSuns.Menu
             new Entry(6.1f, "[01.312] AIR.CYCLE               FILTER 02 / FLOW NOMINAL"),
             new Entry(6.6f, "[01.416] THERMAL                 COMPARTMENT LOOP / 294.1 K"),
             new Entry(7.2f, "[01.520] DOOR.CTRL               C07 SEALED / INTERLOCK SET"),
-            new Entry(7.45f, "[01.521] C07 SENSOR              MOTION DETECTED / ROOM EMPTY", anomaly: true),
+            new Entry(7.45f, "[01.521] C07 SENSOR              MOTION: 04 RETURNS / MANIFEST: 0", anomaly: true),
             new Entry(8.9f, "[01.522] C07 INTERLOCK           RELEASE REQUEST / ORIGIN INSIDE", anomaly: true),
-            new Entry(10.35f, "[01.521] C07 SENSOR              00 EVENTS / RECORD CLEARED"),
+            new Entry(10.35f, "[01.521] C07 SENSOR              DOOR OPEN / LATCH SENSOR: CLOSED"),
             new Entry(10.55f, @"A:\SYS> NET /POLL UPLINK", true),
             new Entry(11.7f, "[02.016] COMMS.0                 NO CARRIER / UPLINK DISCONNECTED"),
-            new Entry(12.2f, "[02.048] COMMS.0                 REPLY RECEIVED / UPLINK DISCONNECTED", anomaly: true),
-            new Entry(13.8f, "[02.049] REMOTE SOURCE           THIS TERMINAL / ROUTE IMPOSSIBLE", anomaly: true),
+            new Entry(12.2f, "[02.048] COMMS.0                 RX: 128 BYTES / ANTENNA DISCONNECTED", anomaly: true),
+            new Entry(13.8f, "[02.049] REMOTE SOURCE           FRAME TIME: +00:08 / CLOCK SYNC: OK", anomaly: true),
             new Entry(15f, @"A:\SYS> SESSION /ENUM LOCAL", true),
-            new Entry(16.1f, "[03.008] TTY01                   PID 0042 / OWNER LOCAL"),
-            new Entry(16.65f, "[03.008] TTY02                   PID 0042 / OWNER UNKNOWN", anomaly: true),
-            new Entry(17.8f, "[03.009] SESSION CONFLICT        02 OPERATORS / 01 CREDENTIAL", anomaly: true),
-            new Entry(19.2f, "[03.010] SECOND OPERATOR         RANGE 0.4 M / BEHIND OPERATOR", anomaly: true),
-            new Entry(20.85f, "[03.024] SESSION TABLE           01 LOCAL / 00 REMOTE"),
-            new Entry(21.1f, "[03.040] WATCHDOG                EXTRA SESSION REMOVED"),
-            new Entry(21.65f, "[03.041] ACCESS.CTRL             SECOND OPERATOR / ACCESS GRANTED", anomaly: true),
-            new Entry(23.35f, "[03.042] EVENT.LOG               WARNING SUPPRESSED / DO NOT DISPLAY", anomaly: true),
+            new Entry(16.1f, "[03.008] CABIN THERMAL           BODY COUNT: 01 / MANIFEST: 01"),
+            new Entry(16.65f, "[03.008] CABIN THERMAL           BODY COUNT: 02 / MANIFEST: 01", anomaly: true),
+            new Entry(17.8f, "[03.009] CABIN THERMAL           SECOND RETURN / 310.2 K", anomaly: true),
+            new Entry(19.2f, "[03.010] CABIN RANGE             RETURN 02: 0.4 M / REAR SENSOR", anomaly: true),
+            new Entry(20.85f, "[03.024] CABIN THERMAL           BODY COUNT: 01 / MANIFEST: 01"),
+            new Entry(21.1f, "[03.040] SENSOR SELF TEST        THERMAL ARRAY / PASS"),
+            new Entry(21.65f, "[03.041] C07 INTERLOCK           INNER HANDLE ACTIVE / MANIFEST: 0", anomaly: true),
+            new Entry(23.35f, "[03.042] C07 PRESSURE            0.0 KPA / MOTION: 06 RETURNS", anomaly: true),
             new Entry(24.7f, @"A:\SYS> LOAD SILENT.SUNS", true),
             new Entry(26f, "[04.016] SURVEY.EXE              LOCAL INTERFACE / READY"),
-            new Entry(26.4f, "[04.031] SAFETY                  ALL SYSTEMS NORMAL / NO ACTION REQUIRED"),
+            new Entry(26.4f, "[04.031] EVENT BUFFER            06 FLAGS / UPLOAD QUEUED"),
             new Entry(27f, "[04.032] INPUT                   OPERATOR CONTROL ENABLED"),
             new Entry(27.4f, @"A:\SYS> _")
         };
@@ -112,7 +112,7 @@ namespace SilentSuns.Menu
                 int count = entry.text.Length;
                 if (i == current && entry.command && !GamePreferences.ReducedMotion)
                     count = Mathf.Min(count, Mathf.FloorToInt((Elapsed - entry.time) * 32f));
-                bool anomaly = i == current && entry.anomaly;
+                bool anomaly = entry.anomaly && Elapsed - entry.time < 4f;
                 if (anomaly) buffer.Append("<color=#FFD3A0>");
                 buffer.Append(entry.text, 0, count);
                 if (anomaly) buffer.Append("</color>");

@@ -44,6 +44,7 @@ namespace SilentSuns.Menu.Tests
         [UnitySetUp]
         public IEnumerator OpenMenu()
         {
+            SavePolishPreferences();
             foreach (string key in new[] { "SilentSuns.Audio.FX", "SilentSuns.Audio.Music", "SilentSuns.Input.MouseSensitivity" })
             {
                 if (PlayerPrefs.HasKey(key)) savedFloats[key] = PlayerPrefs.GetFloat(key);
@@ -90,6 +91,10 @@ namespace SilentSuns.Menu.Tests
         [TearDown]
         public void RestorePreferences()
         {
+            if (TerminalModal.Current != null) TerminalModal.Current.Close();
+            GamePreferences.EndEdit();
+            TerminalBindings.EndEdit();
+            TerminalDisplayOptions.EndEdit();
             SceneManager.sceneLoaded -= IsolateUnwiredTrackers;
             TerminalPause pause = Object.FindFirstObjectByType<TerminalPause>();
             if (pause != null)
@@ -111,6 +116,7 @@ namespace SilentSuns.Menu.Tests
                 if (savedFloats.TryGetValue(key, out float value)) PlayerPrefs.SetFloat(key, value); else PlayerPrefs.DeleteKey(key);
             }
             savedFloats.Clear();
+            RestorePolishPreferences();
             if (hadCompleted) PlayerPrefs.SetInt("SilentSuns.Progress.Completed", oldCompleted); else PlayerPrefs.DeleteKey("SilentSuns.Progress.Completed");
             GameAudio.ApplyVolumes();
             PlayerPrefs.Save();
@@ -204,27 +210,28 @@ namespace SilentSuns.Menu.Tests
             yield return new WaitForSecondsRealtime(0.8f);
             Click("Main Menu/Terminal Settings");
             AssertScreen("Settings");
-            Slider volume = terminal.Find("Settings/Sound Effects").GetComponent<Slider>();
+            Slider volume = SettingsSlider("AUDIO", "GAMEPLAY SOUND EFFECTS");
             volume.value = 0.25f;
-            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("FX"));
+            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("Interface"));
             AssertMixer("FXVolume", 0.25f);
-            Assert.That(PlayerPrefs.GetFloat("SilentSuns.Audio.FX"), Is.EqualTo(0.25f));
-            terminal.Find("Settings/Music").GetComponent<Slider>().value = 0.4f;
+            Assert.That(PlayerPrefs.GetFloat("SilentSuns.Audio.FX", .65f), Is.Not.EqualTo(0.25f), "Preview must not save.");
+            SettingsSlider("AUDIO", "MUSIC").value = 0.4f;
             AssertMixer("MusicVolume", 0.4f);
-            terminal.Find("Settings/Mouse Sensitivity").GetComponent<Slider>().value = 1.6f;
+            SettingsSlider("GENERAL", "MOUSE SENSITIVITY").value = 1.6f;
             Assert.That(GamePreferences.MouseSensitivity, Is.EqualTo(1.6f));
             Assert.That(terminal.Find("Settings/Preview Audio"), Is.Null);
-            foreach (string category in new[] { "AUDIO", "CONTROLS", "DISPLAY & STARTUP" })
-                Assert.That(terminal.Find("Settings/" + category + " category").GetComponent<TMP_Text>().text, Is.EqualTo(category));
-            Assert.That(terminal.Find("Settings/Sound Effects label").GetComponent<TMP_Text>().text, Is.EqualTo("SOUND EFFECTS (SFX)"));
-            terminal.Find("Settings/Reduced Motion").GetComponent<Toggle>().isOn = true;
+            foreach (string category in new[] { "GENERAL", "VIDEO", "AUDIO", "KEYBINDS" })
+                Assert.That(terminal.Find("Settings/Tabbed settings/" + category), Is.Not.Null);
+            SettingsFlag("VIDEO", "REDUCED EFFECTS");
             Assert.That(terminal.Find("CRT Display").GetComponent<TerminalDisplay>().ReducedMotion, Is.True);
             Assert.That(terminal.Find("Settings").GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
-            terminal.Find("Settings/Play Boot").GetComponent<Toggle>().isOn = false;
+            SettingsFlag("GENERAL", "PLAY DIAGNOSTICS ON START");
             yield return new WaitForSecondsRealtime(0.25f);
-            Assert.That(volume.fillRect.rect.width / volume.fillRect.parent.GetComponent<RectTransform>().rect.width, Is.EqualTo(0.25f).Within(0.01f));
+            Assert.That(GamePreferences.FX, Is.EqualTo(0.25f).Within(0.01f));
             Capture("05-settings", 1920, 1080);
-            Click("Settings/Settings Back");
+            yield return Press(Key.Escape);
+            Assert.That(TerminalModal.Current, Is.Not.Null);
+            yield return ClickModalButton("APPLY SETTINGS");
             AssertScreen("Main Menu");
             yield return SceneManager.LoadSceneAsync("MainMenu");
             while (!TerminalShipIntro.Ready) yield return null;
@@ -234,7 +241,7 @@ namespace SilentSuns.Menu.Tests
             Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.MainMenu);
             AssertScreen("Main Menu");
-            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("FX"));
+            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("Interface"));
             AssertMixer("FXVolume", 0.25f);
         }
 
@@ -251,11 +258,15 @@ namespace SilentSuns.Menu.Tests
             Assert.That(progress.text, Does.EndWith("%"));
             Assert.That(progress.isTextOverflowing, Is.False);
             Assert.That(output.text, Does.StartWith(@"A:\SYS>").And.Not.Contain("ATTENTION"));
+            // Wait for the actual log lines. Rendering a capture can take longer on a fresh import.
+            float commandDeadline = Time.realtimeSinceStartup + 8f;
+            while (!output.text.Contains("BOOTSTRAP /LOCAL") && Time.realtimeSinceStartup < commandDeadline) yield return null;
+            Assert.That(output.text, Does.Contain("BOOTSTRAP /LOCAL"));
             Capture("10-command-prompt", 1920, 1080);
-            yield return new WaitForSecondsRealtime(5.4f);
-            Assert.That(output.text, Does.Contain("BOOTSTRAP /LOCAL").And.Contain("SERVICE /START SHIP"));
+            while (!output.text.Contains("SERVICE /START SHIP") && Time.realtimeSinceStartup < commandDeadline) yield return null;
+            Assert.That(output.text, Does.Contain("SERVICE /START SHIP"));
             Capture("11-post-output", 1920, 1080);
-            float deadline = Time.realtimeSinceStartup + 24f;
+            float deadline = Time.realtimeSinceStartup + TerminalBootLog.Duration + 4f;
             int lastPercent = 0;
             while (!terminal.Find("Main Menu").gameObject.activeSelf && Time.realtimeSinceStartup < deadline)
             {
@@ -290,17 +301,19 @@ namespace SilentSuns.Menu.Tests
             Assert.That(cursor.GetComponent<RectTransform>().anchoredPosition.x, Is.GreaterThan(title.textInfo.characterInfo[title.text.Length - 1].xAdvance));
 
             Click("Main Menu/Terminal Settings");
-            terminal.Find("Settings/Reduced Motion").GetComponent<Toggle>().isOn = true;
+            SettingsFlag("VIDEO", "REDUCED EFFECTS");
+            Assert.That(MainSettings.ApplyChanges(), Is.True);
             yield return null;
-            Click("Settings/Settings Back");
+            yield return Press(Key.Escape);
             Assert.That(title.maxVisibleCharacters, Is.EqualTo(title.text.Length));
             yield return new WaitForSecondsRealtime(0.7f);
             Assert.That(cursor.activeSelf, Is.True);
             Capture("09-title-complete", 1920, 1080);
             Click("Main Menu/Terminal Settings");
-            terminal.Find("Settings/Reduced Motion").GetComponent<Toggle>().isOn = false;
+            SettingsFlag("VIDEO", "REDUCED EFFECTS");
+            Assert.That(MainSettings.ApplyChanges(), Is.True);
             yield return null;
-            Click("Settings/Settings Back");
+            yield return Press(Key.Escape);
             Assert.That(cursor.activeSelf, Is.True);
             yield return new WaitForSecondsRealtime(0.6f);
             Assert.That(cursor.activeSelf, Is.False);
@@ -324,7 +337,7 @@ namespace SilentSuns.Menu.Tests
             Click("Main Menu/Terminal Settings");
             yield return null;
             Canvas.ForceUpdateCanvases();
-            Slider slider = terminal.Find("Settings/Sound Effects").GetComponent<Slider>();
+            Slider slider = SettingsSlider("AUDIO", "GAMEPLAY SOUND EFFECTS");
             TerminalDisplay display = terminal.Find("CRT Display").GetComponent<TerminalDisplay>();
             RectTransform area = slider.handleRect.parent.GetComponent<RectTransform>();
             PointerEventData pointer = new PointerEventData(EventSystem.current);
@@ -407,18 +420,19 @@ namespace SilentSuns.Menu.Tests
             CapturePause(pause);
             pause.OpenSettings();
             yield return null;
-            Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("Sound Effects"));
+            Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("GENERAL"));
             Transform settings = pause.transform.Find("Layout/Settings");
-            settings.Find("Sound Effects").GetComponent<Slider>().value = 0f;
-            settings.Find("Music").GetComponent<Slider>().value = 0.3f;
-            settings.Find("Mouse Sensitivity").GetComponent<Slider>().value = 2f;
-            settings.Find("Play Boot").GetComponent<Toggle>().isOn = false;
+            SettingsSlider("AUDIO", "GAMEPLAY SOUND EFFECTS", settings.GetComponent<TerminalSettings>()).value = 0f;
+            SettingsSlider("AUDIO", "MUSIC", settings.GetComponent<TerminalSettings>()).value = 0.3f;
+            SettingsSlider("GENERAL", "MOUSE SENSITIVITY", settings.GetComponent<TerminalSettings>()).value = 2f;
+            settings.GetComponent<TerminalSettings>().SetBoot(false);
             AssertMixer("FXVolume", 0f);
             AssertMixer("MusicVolume", 0.3f);
             Assert.That(Time.timeScale, Is.Zero);
             foreach (AudioSource source in Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 Assert.That(source.outputAudioMixerGroup, Is.Not.Null, source.name);
             CapturePause(pause, "13-pause-settings");
+            Assert.That(settings.GetComponent<TerminalSettings>().ApplyChanges(), Is.True);
             yield return Press(Key.Escape);
             Assert.That(pause.IsPaused, Is.True);
             Assert.That(settings.gameObject.activeSelf, Is.False);
@@ -455,6 +469,8 @@ namespace SilentSuns.Menu.Tests
             Assert.That(EventSystem.current.currentSelectedGameObject, Is.Null, "Cancel must not invent a Resume selection.");
             pause.AskReturnToMenu();
             pause.ConfirmLeave();
+            Assert.That(TerminalTransition.IsActive, Is.False, "A click must not leave the session.");
+            yield return HoldButton(pause.GetComponentInChildren<TerminalHoldConfirm>().gameObject);
             Assert.That(TerminalTransition.IsActive, Is.True);
             yield return WaitForTransition();
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
@@ -464,9 +480,8 @@ namespace SilentSuns.Menu.Tests
             Assert.That(TerminalPause.Available, Is.True);
             terminal = GameObject.Find("ARCA Terminal").transform;
             Assert.That(terminal.GetComponent<TerminalSessionRestoration>().IsActive, Is.False);
-            yield return WaitForInvitation();
-            Click("Standby/Wake screen");
-            yield return WaitForState(TerminalMenu.PowerState.MainMenu);
+            Assert.That(terminal.GetComponent<TerminalMenu>().State, Is.EqualTo(TerminalMenu.PowerState.MainMenu),
+                "Returning from gameplay must skip warm-up, the orb, and diagnostics.");
             AssertScreen("Main Menu");
             Assert.That(GamePreferences.PlayBoot, Is.False);
             Assert.That(GamePreferences.MouseSensitivity, Is.EqualTo(2f));
@@ -611,7 +626,7 @@ namespace SilentSuns.Menu.Tests
             var log = terminal.GetComponent<TerminalBootLog>();
             yield return new WaitForSecondsRealtime(21.3f);
             string text = terminal.Find("Boot/Boot output").GetComponent<TMP_Text>().text;
-            Assert.That(text, Does.Contain("TTY01").And.Contain("TTY02").And.Contain("01 LOCAL / 00 REMOTE"));
+            Assert.That(text, Does.Contain("BODY COUNT: 02").And.Contain("BODY COUNT: 01").And.Contain("SELF TEST"));
             Capture("15-session-enumeration", 1920, 1080);
             Assert.That(log.Running, Is.True);
             Click("Boot/Skip Boot");
@@ -652,7 +667,7 @@ namespace SilentSuns.Menu.Tests
             for (int i = 0; i < 6; i++) yield return Press(Key.Enter);
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             var menu = terminal.GetComponent<TerminalMenu>();
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Enter));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Enter));
             yield return null;
             yield return new WaitForSecondsRealtime(TerminalBootLog.Duration);
             yield return new WaitForSecondsRealtime(.5f);
@@ -661,7 +676,7 @@ namespace SilentSuns.Menu.Tests
             yield return new WaitForSecondsRealtime(.6f);
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
             Assert.That(TerminalShipIntro.Ready, Is.True);
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState());
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return new WaitForSecondsRealtime(.35f);
             Assert.That(terminal.Find("Main Menu").GetComponent<CanvasGroup>().interactable, Is.True);
             Assert.That(EventSystem.current.currentSelectedGameObject.name, Is.EqualTo("Begin Survey"));
@@ -678,44 +693,46 @@ namespace SilentSuns.Menu.Tests
             var sounds = terminal.GetComponent<TerminalInteractionAudio>();
             int count = sounds.AcceptedSounds;
             yield return Press(Key.DownArrow);
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+1));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 1));
             Assert.That(sounds.LastClip.name, Is.EqualTo("KeyboardPress"));
             yield return new WaitForSecondsRealtime(.1f);
             yield return Press(Key.Enter);
             AssertScreen("Settings");
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+2));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 2));
             yield return new WaitForSecondsRealtime(.1f);
-            Slider slider = terminal.Find("Settings/Sound Effects").GetComponent<Slider>();
+            Slider slider = SettingsSlider("AUDIO", "GAMEPLAY SOUND EFFECTS");
             float before = slider.value;
+            EventSystem.current.SetSelectedGameObject(slider.gameObject);
             yield return Press(Key.RightArrow);
             Assert.That(slider.value, Is.GreaterThan(before));
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+3));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 3));
             yield return new WaitForSecondsRealtime(.1f);
-            Click("Settings/Reduced Motion");
+            SettingsFlag("VIDEO", "REDUCED EFFECTS");
             Assert.That(sounds.LastClip.name, Is.EqualTo("MouseClick"));
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+4));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 4));
+            Assert.That(MainSettings.ApplyChanges(), Is.True);
             yield return new WaitForSecondsRealtime(.1f);
             yield return Press(Key.Escape);
             Assert.That(sounds.LastClip.name, Is.EqualTo("KeyboardPress"));
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+5));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 5));
             GameObject guide = terminal.Find("Main Menu/Operator Guide").gameObject;
-            ExecuteEvents.Execute(guide,new PointerEventData(EventSystem.current),ExecuteEvents.pointerEnterHandler);
+            ExecuteEvents.Execute(guide, new PointerEventData(EventSystem.current), ExecuteEvents.pointerEnterHandler);
             yield return new WaitForSecondsRealtime(.2f);
-            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count+5));
+            Assert.That(sounds.AcceptedSounds, Is.EqualTo(count + 5));
             Click("Main Menu/Operator Guide");
             Assert.That(sounds.LastClip.name, Is.EqualTo("MouseClick"));
             AssertScreen("Operator Guide");
             yield return new WaitForSecondsRealtime(.1f);
             yield return Press(Key.Escape);
             count = sounds.AcceptedSounds;
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.DownArrow));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.DownArrow));
             yield return new WaitForSecondsRealtime(1f);
-            InputSystem.QueueStateEvent(keyboard,new KeyboardState());
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
             yield return null;
-            Assert.That(sounds.AcceptedSounds-count, Is.InRange(1,8));
-            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("FX"));
+            Assert.That(sounds.AcceptedSounds - count, Is.InRange(1, 8));
+            Assert.That(terminal.GetComponent<AudioSource>().outputAudioMixerGroup.name, Is.EqualTo("Interface"));
             GamePreferences.SetFX(0f);
-            AssertMixer("FXVolume",0f);
+            AssertMixer("FXVolume", 0f);
         }
 
         [UnityTest]
@@ -734,8 +751,8 @@ namespace SilentSuns.Menu.Tests
             foreach (string field in new[] { "keyboardPress","mouseClick" })
                 SetPrivate(sounds,field,null);
             Assert.That(terminal.Find("CRT Display").GetComponent<TerminalDisplay>().ReducedMotion, Is.True);
-            AssertMixer("FXVolume",0f);
-            AssertMixer("MusicVolume",.23f);
+            AssertMixer("FXVolume", 0f);
+            AssertMixer("MusicVolume", .23f);
             yield return WaitForInvitation();
             yield return Press(Key.Enter);
             yield return WaitForState(TerminalMenu.PowerState.MainMenu);
@@ -752,7 +769,7 @@ namespace SilentSuns.Menu.Tests
 
         [UnityTest]
         [Category("Menu")]
-        public IEnumerator ExitProgramStopsAudio()
+        public IEnumerator ExitProgramRequiresHoldAndFadesAudio()
         {
             Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
@@ -760,9 +777,28 @@ namespace SilentSuns.Menu.Tests
             yield return new WaitForSecondsRealtime(.3f);
             Click("Main Menu/Exit Program");
             AssertScreen("Confirm Quit");
-            Capture("22-exit-confirmation",1920,1080);
+            Capture("22-exit-confirmation", 1920, 1080);
             yield return null;
             Click("Confirm Quit/Confirm Exit");
+            Assert.That(terminal.GetComponent<TerminalMenu>().ExitRequested, Is.False);
+            var confirm = terminal.Find("Confirm Quit/Confirm Exit").gameObject;
+            EventSystem.current.SetSelectedGameObject(confirm);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.Enter));
+            yield return new WaitForSecondsRealtime(.3f);
+            var hold = confirm.GetComponent<TerminalHoldConfirm>();
+            Assert.That(hold.Progress, Is.InRange(.1f, .8f));
+            var fill = confirm.transform.Find("Hold progress/White fill").GetComponent<Image>();
+            Assert.That(fill.color, Is.EqualTo(Color.white));
+            Assert.That(fill.rectTransform.anchorMax.x, Is.EqualTo(hold.Progress).Within(.01f));
+            Capture("polish-hold-progress", 1920, 1080);
+            EventSystem.current.SetSelectedGameObject(terminal.Find("Confirm Quit/Cancel Quit").gameObject);
+            yield return new WaitForSecondsRealtime(1);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+            yield return null;
+            Assert.That(terminal.GetComponent<TerminalMenu>().ExitRequested, Is.False, "Moving away must cancel the hold.");
+            Assert.That(fill.rectTransform.anchorMax.x, Is.Zero);
+            yield return HoldButton(terminal.Find("Confirm Quit/Confirm Exit").gameObject);
+            yield return new WaitForSecondsRealtime(1.7f);
             var menu = terminal.GetComponent<TerminalMenu>();
             Assert.That(menu.ExitRequested, Is.True);
             Assert.That(menu.State, Is.EqualTo(TerminalMenu.PowerState.Exiting));
@@ -889,14 +925,19 @@ namespace SilentSuns.Menu.Tests
         // Hidden panels must not block the visible button's pointer event.
         private void Click(string path)
         {
-            Canvas.ForceUpdateCanvases();
             GameObject target = terminal.Find(path).gameObject;
+            Click(target);
+        }
+
+        private void Click(GameObject target)
+        {
+            Canvas.ForceUpdateCanvases();
             RectTransform rect = target.GetComponent<RectTransform>();
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = terminal.Find("CRT Display").GetComponent<TerminalDisplay>().ContentToScreenPoint(rect.TransformPoint(rect.rect.center));
             List<RaycastResult> results = new List<RaycastResult>();
             EventSystem.current.RaycastAll(pointer, results);
-            Assert.That(results.Count, Is.GreaterThan(0), path + " must receive pointer input");
+            Assert.That(results.Count, Is.GreaterThan(0), target.name + " must receive pointer input");
             Assert.That(results[0].gameObject, Is.EqualTo(target));
             ExecuteEvents.Execute(target, pointer, ExecuteEvents.pointerClickHandler);
         }
@@ -907,6 +948,8 @@ namespace SilentSuns.Menu.Tests
             int visible = 0;
             foreach (CanvasGroup group in terminal.GetComponentsInChildren<CanvasGroup>(true))
             {
+                // Nested groups can dim an individual setting; they are not separate menu screens.
+                if (group.transform.parent != terminal) continue;
                 if (group.gameObject.activeSelf)
                 {
                     visible++;
@@ -920,7 +963,7 @@ namespace SilentSuns.Menu.Tests
         }
 
         // Optional captures render the real scene through URP, outside the asset folders.
-        private void Capture(string name, int width, int height, bool fit = true, System.Action<Texture2D,Camera> inspect = null)
+        private void Capture(string name, int width, int height, bool fit = true, System.Action<Texture2D, Camera> inspect = null)
         {
             string folder = System.Environment.GetEnvironmentVariable("SILENT_SUNS_MENU_CAPTURES");
             if (string.IsNullOrEmpty(folder) && inspect == null)
@@ -942,7 +985,7 @@ namespace SilentSuns.Menu.Tests
             Texture2D image = new Texture2D(width, height, TextureFormat.RGB24, false);
             image.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             image.Apply();
-            inspect?.Invoke(image,camera);
+            inspect?.Invoke(image, camera);
             if (!string.IsNullOrEmpty(folder))
             {
                 Directory.CreateDirectory(folder);

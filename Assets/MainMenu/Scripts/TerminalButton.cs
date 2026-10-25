@@ -22,6 +22,7 @@ namespace SilentSuns.Menu
 
         public override void OnPointerClick(PointerEventData eventData)
         {
+            if (TerminalBindings.Listening || Time.frameCount <= TerminalBindings.ConsumedFrame) return;
             if (!IsActive() || !IsInteractable() || eventData.button != PointerEventData.InputButton.Left)
                 return;
             TerminalInteractionAudio.Instance?.Mouse();
@@ -30,6 +31,7 @@ namespace SilentSuns.Menu
 
         public override void OnSubmit(BaseEventData eventData)
         {
+            if (TerminalBindings.Listening || Time.frameCount <= TerminalBindings.ConsumedFrame) return;
             if (!IsActive() || !IsInteractable())
                 return;
             TerminalInteractionAudio.Instance?.Keyboard();

@@ -69,3 +69,13 @@ Assets/Signals/signal3/signal3.mp3
 Assets/Signals/signal4/signal4.mp3
 Creator, original source, and license are not recorded in the repository or embedded
 audio tags. Ask the team that added them; do not assume the menu sound licenses apply.
+
+ControllerDisconnected.ogg
+Creator: Kenney
+Pack: Interface Sounds 1.0
+Source: https://kenney.nl/assets/interface-sounds
+Download: https://kenney.nl/media/pages/assets/interface-sounds/fa43c1dd4d-1677589452/kenney_interface-sounds.zip
+Original file: Audio/error_006.ogg
+License: CC0 1.0 Universal, https://creativecommons.org/publicdomain/zero/1.0/
+Changes: None. Playback volume is reduced in Unity.
+License copy: Assets/MainMenu/Licenses/Kenney.txt

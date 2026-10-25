@@ -177,8 +177,8 @@ namespace SilentSuns.Menu.Editor
 
             CanvasGroup guidePanel = Panel(root.transform, "Operator Guide");
             Heading(guidePanel.transform, "OPERATOR GUIDE", "CURRENT SURVEY PROTOTYPE");
-            Label(guidePanel.transform, "Control labels", "W A S D\nMOUSE\nSPACE / CTRL\nQ / E\nR\nESC", 100, 316, 440, 260, 32, Accent);
-            Label(guidePanel.transform, "Control descriptions", "MOVE\nLOOK\nASCEND / DESCEND\nROLL\nREORIENT\nPAUSE", 560, 316, 900, 260, 32, Paper);
+            Label(guidePanel.transform, "Control labels", "W A S D\nMOUSE\nSPACE / CTRL\nQ / E\nR\nSHIFT\nESC", 100, 316, 440, 260, 32, Accent);
+            Label(guidePanel.transform, "Control descriptions", "MOVE (ON FOOT + IN SHIP)\nLOOK (ON FOOT + IN SHIP)\nASCEND / DESCEND (IN SHIP)\nROLL (IN SHIP)\nREORIENT (IN SHIP)\nSPRINT (ON FOOT)\nPAUSE", 560, 316, 900, 260, 32, Paper);
             TMP_Text guideNote = Label(guidePanel.transform, "Guide note", "Inspect the ship's instruments to begin your survey.", 100, 624, 1360, 40, 24, Dim);
             UIButton guideBack = Button(guidePanel.transform, "Guide Back", "BACK  [ESC]", 100, 710, 500, 54);
             UnityEventTools.AddPersistentListener(guideBack.onClick, menu.BackToMenu);

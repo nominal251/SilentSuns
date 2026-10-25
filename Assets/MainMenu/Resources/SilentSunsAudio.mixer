@@ -1,12 +1,26 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!244 &-7271319829444256663
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name:
+  m_EffectID: f4ef787274d41984dba47b0c87f373ad
+  m_EffectName: Attenuation
+  m_MixLevel: 917d5a94e5e94e245ae638d58e8430e5
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-6011257051423959264
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name:
   m_EffectID: a813abf01062f0d4ab5dfdf1b6790318
   m_EffectName: Attenuation
   m_MixLevel: 83e78f574d326ca46951e6f7bbc65057
@@ -20,7 +34,7 @@ AudioMixerEffectController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name:
   m_EffectID: 34962e61c9d6e5d4baceeedb0578969e
   m_EffectName: Attenuation
   m_MixLevel: 8e71c761cbf0e074b9940f0119691203
@@ -46,6 +60,8 @@ AudioMixerController:
   m_ExposedParameters:
   - guid: e4b191d8e64fc0b4fa739887b376a53c
     name: FXVolume
+  - guid: 1120a37709bdfcd47af02e9f72bb4fe9
+    name: InterfaceVolume
   - guid: acd924de66ecf4c46b350a0499e32caa
     name: MusicVolume
   m_AudioMixerGroupViews: []
@@ -63,6 +79,7 @@ AudioMixerGroupController:
   m_Children:
   - {fileID: 8198602535400912438}
   - {fileID: 5535162558204041448}
+  - {fileID: 5756744278484132601}
   m_Volume: 38b75b91d106c424bb139f33690458a9
   m_Pitch: 79e7b7d67bd0d4f46997750a307462e6
   m_Send: 00000000000000000000000000000000
@@ -78,7 +95,7 @@ AudioMixerEffectController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name:
   m_EffectID: a31f3c9387fdf564e89775644a2b01dd
   m_EffectName: Attenuation
   m_MixLevel: 5d35c93542da2be4591bdefbc3ebe1ea
@@ -112,6 +129,25 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -6011257051423959264}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!243 &5756744278484132601
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Interface
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 01a1397cb08e5a044b76c5fdd905b1bf
+  m_Children: []
+  m_Volume: 1120a37709bdfcd47af02e9f72bb4fe9
+  m_Pitch: 20fd8fc1efae4a94993cbbc55b202520
+  m_Send: 00000000000000000000000000000000
+  m_Effects:
+  - {fileID: -7271319829444256663}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0

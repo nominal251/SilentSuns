@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dfe59067e891d243a86992c1ec9eb34, type: 3}
   m_Name: DefaultCRT
   m_EditorClassIdentifier: SilentSuns.Menu::SilentSuns.Menu.TerminalCRTSettings
-  scanlines: 0.52
-  scanLineCount: 360
+  scanlines: 0.62
+  scanLineCount: 420
   glow: 0.22
   shadowMask: 0
   persistence: 0.045

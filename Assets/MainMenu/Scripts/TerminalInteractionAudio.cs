@@ -20,7 +20,7 @@ namespace SilentSuns.Menu
             source = GetComponent<AudioSource>();
             source.playOnAwake = false;
             source.ignoreListenerPause = true;
-            source.outputAudioMixerGroup = Resources.Load<UnityEngine.Audio.AudioMixer>("SilentSunsAudio").FindMatchingGroups("FX")[0];
+            source.outputAudioMixerGroup = GameAudio.InterfaceGroup;
         }
 
         public void Mouse() { Play(mouseClick); }

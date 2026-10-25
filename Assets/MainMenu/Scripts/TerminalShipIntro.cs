@@ -37,8 +37,9 @@ namespace SilentSuns.Menu
         public Renderer Screen { get; private set; }
 
         private const float HandoffDuration = 6.2f;
-        private const float ReducedHandoffDuration = .8f;
+        private const float RecoveryRamp = .18f;
         private const string TelescopeScreenPath = "Telescope/ProbeLauncherScreen";
+        private readonly System.Collections.Generic.List<(float end, HandoffLook look)> recovery = new System.Collections.Generic.List<(float, HandoffLook)>();
 
         // These four settings change together during the flickering transition.
         private struct HandoffLook
@@ -70,6 +71,11 @@ namespace SilentSuns.Menu
         // Unity calls this after loading a scene. Starting SampleScene by itself skips the intro.
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            if (scene.name != "SampleScene" && scene.name != "MainMenu" && active != null)
+            {
+                Destroy(active.gameObject);
+                active = null;
+            }
             if (scene.name == "SampleScene" && active != null)
             {
                 if (!active.ready) active.SetUpShipScreen();
@@ -170,9 +176,11 @@ namespace SilentSuns.Menu
         {
             if (!Ready || active.handingOff) return;
             var self = active;
+            // Settings may close after the scene has already removed its screen and camera.
+            if (self.Screen == null || self.playerCamera == null || self.display == null) return;
             Vector3 normal = -Vector3.Cross(self.display.ScreenRight, self.display.ScreenUp).normalized;
             float tangent = Mathf.Tan(self.playerCamera.fieldOfView * .5f * Mathf.Deg2Rad);
-            float distance = Mathf.Max(self.display.ScreenUp.magnitude * .5f / tangent, self.display.ScreenRight.magnitude * .5f / (tangent * self.playerCamera.aspect)) * 1.12f;
+            float distance = Mathf.Max(self.display.ScreenUp.magnitude * .5f / tangent, self.display.ScreenRight.magnitude * .5f / (tangent * self.playerCamera.aspect)) * (1.06f + GamePreferences.SafeArea * 2);
             self.playerCamera.transform.SetPositionAndRotation(self.Screen.bounds.center + normal * distance, Quaternion.LookRotation(-normal, self.display.ScreenUp.normalized));
         }
 
@@ -195,7 +203,9 @@ namespace SilentSuns.Menu
             Quaternion rotation = playerCamera.transform.localRotation;
             float fov = playerCamera.fieldOfView;
             bool reduced = GamePreferences.ReducedMotion;
-            float duration = reduced ? ReducedHandoffDuration : HandoffDuration;
+            // Reduced effects changes the flicker, not the time needed to enter the ship.
+            float duration = HandoffDuration;
+            PlanRecovery();
             for (float t = 0; t < duration; t += Time.unscaledDeltaTime)
             {
                 float phase = t / duration;
@@ -221,38 +231,38 @@ namespace SilentSuns.Menu
         }
 
         // Phase goes from 0 to 1 over the transition. Each stage is one failed recovery attempt.
-        private static HandoffLook GetHandoffLook(float phase)
+        private HandoffLook GetHandoffLook(float phase)
         {
-            if (phase < .10f)
-                return new HandoffLook(telescopeVisibility: 0, glitchStrength: .25f,
-                    screenBrightness: .85f, roomBrightness: 0);
-            if (phase < .21f)
-                return new HandoffLook(telescopeVisibility: 0, glitchStrength: 1,
-                    screenBrightness: .08f, roomBrightness: .005f);
-            if (phase < .30f)
-                return new HandoffLook(telescopeVisibility: .72f, glitchStrength: .7f,
-                    screenBrightness: .6f, roomBrightness: .12f);
-            if (phase < .40f)
-                return new HandoffLook(telescopeVisibility: 0, glitchStrength: .85f,
-                    screenBrightness: .02f, roomBrightness: .005f);
-            if (phase < .54f)
-                return new HandoffLook(telescopeVisibility: .92f, glitchStrength: .8f,
-                    screenBrightness: .85f, roomBrightness: .23f);
-            if (phase < .62f)
-                return new HandoffLook(telescopeVisibility: .08f, glitchStrength: .9f,
-                    screenBrightness: .035f, roomBrightness: .015f);
-            if (phase < .73f)
-                return new HandoffLook(telescopeVisibility: 1, glitchStrength: .62f,
-                    screenBrightness: .7f, roomBrightness: .13f);
-            if (phase < .80f)
-                return new HandoffLook(telescopeVisibility: .2f, glitchStrength: .7f,
-                    screenBrightness: .08f, roomBrightness: .025f);
-            if (phase < .88f)
+            if (phase < RecoveryRamp)
             {
-                float lockIn = Mathf.InverseLerp(.80f, .88f, phase);
-                return new HandoffLook(1, Mathf.Lerp(.4f, 0, lockIn), 1, Mathf.Lerp(.22f, .35f, lockIn));
+                float ramp = Mathf.SmoothStep(0, 1, phase / RecoveryRamp);
+                return new HandoffLook(0, ramp * .7f, Mathf.Lerp(1, .65f, ramp), ramp * .015f);
             }
-            return new HandoffLook(1, 0, 1, Mathf.SmoothStep(.35f, 1, Mathf.InverseLerp(.88f, 1, phase)));
+            foreach (var beat in recovery)
+                if (phase < beat.end) return beat.look;
+            float settle = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.83f, 1, phase));
+            return new HandoffLook(1, (1 - settle) * .25f, 1, Mathf.Lerp(.18f, 1, settle));
+        }
+
+        private void PlanRecovery()
+        {
+            recovery.Clear();
+            float end = RecoveryRamp;
+            int attempt = 0;
+            // Pick each attempt once, not every frame. Screen and lamps share the same cue.
+            while (end < .83f)
+            {
+                // Each attempt gets a different length, but always loses power again.
+                // This keeps the whole transition readable even with an unlucky random seed.
+                float visible = attempt == 2 ? .97f : Random.Range(.68f, 1);
+                end = Mathf.Min(.83f, end + Random.Range(.055f, .115f));
+                recovery.Add((end, new HandoffLook(visible, Random.Range(.6f, 1),
+                    Random.Range(.5f, .95f), Random.Range(.11f, .23f))));
+                end = Mathf.Min(.83f, end + Random.Range(.04f, .085f));
+                recovery.Add((end, new HandoffLook(Random.Range(0, .14f), Random.Range(.5f, 1),
+                    Random.Range(.015f, .10f), Random.Range(0, .02f))));
+                attempt++;
+            }
         }
 
         // Restore the things we temporarily changed. PlayerMovement and InteractOrigin

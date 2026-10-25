@@ -34,17 +34,18 @@ Shader "Silent Suns/Ship Screen Spill"
                 float edge=max(max(abs(p.x)-1,abs(p.y)-1),0);
                 float3 front=-cross(_ScreenRight.xyz,_ScreenUp.xyz);
                 float depth=abs(dot(delta,front));
-                float falloff=exp2(-edge*4-depth*16);
+                float falloff=exp2(-edge*2.8-depth*10);
                 half3 blue=0; float white=0;
                 // Integrate luminous strokes from the whole display; never project sharp letter shapes.
                 [unroll] for(int y=0;y<3;y++) [unroll] for(int x=0;x<4;x++)
                 {
                     float2 uv=(float2(x,y)+.5)/float2(4,3);
-                    float weight=rcp(1+dot(uv*2-1-p,uv*2-1-p));
+                    float weight=rsqrt(1+dot(uv*2-1-p,uv*2-1-p));
                     blue+=SAMPLE_TEXTURE2D_LOD(_TerminalTexture,sampler_TerminalTexture,uv,_LightMip).rgb*weight;
                     white+=SAMPLE_TEXTURE2D_LOD(_TextLightTexture,sampler_TextLightTexture,uv,_LightMip).r*(.4+.6*weight);
                 }
-                half3 reflected=(blue*.045+white*.35)*falloff;
+                // A broad reflected wash follows luminous text even on the far edges.
+                half3 reflected=(blue*.05+white*.43)*falloff;
                 reflected+=half3(.002,.012,.065)*_Invitation*exp2(-edge*9-depth*12);
                 reflected*=_Power;
                 return half4(reflected,0);

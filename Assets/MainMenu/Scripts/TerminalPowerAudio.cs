@@ -15,7 +15,12 @@ namespace SilentSuns.Menu
 
         public bool Running => hum != null && hum.isPlaying;
 
-        private void Awake() { Stop(); }
+        private void Awake()
+        {
+            if (startup != null) startup.outputAudioMixerGroup = GameAudio.InterfaceGroup;
+            if (hum != null) hum.outputAudioMixerGroup = GameAudio.InterfaceGroup;
+            Stop();
+        }
 
         public void PowerOn()
         {
@@ -39,6 +44,13 @@ namespace SilentSuns.Menu
         {
             target = 0f;
             speed = 1f / Mathf.Max(.01f, duration);
+        }
+        public void PlayHum()
+        {
+            Stop();
+            if (hum != null && hum.clip != null) hum.Play();
+            target = 1;
+            speed = 1 / .35f;
         }
 
         private void Update()

@@ -7,6 +7,15 @@ namespace SilentSuns.Menu
     public class GameAudio : MonoBehaviour
     {
         private static AudioMixer mixer;
+        public static AudioMixerGroup InterfaceGroup
+        {
+            get
+            {
+                if (mixer == null) mixer = Resources.Load<AudioMixer>("SilentSunsAudio");
+                var groups = mixer.FindMatchingGroups("Interface");
+                return groups.Length > 0 ? groups[0] : null;
+            }
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
@@ -41,6 +50,7 @@ namespace SilentSuns.Menu
                 return;
             mixer.SetFloat("FXVolume", Decibels(GamePreferences.FX));
             mixer.SetFloat("MusicVolume", Decibels(GamePreferences.Music));
+            mixer.SetFloat("InterfaceVolume", Decibels(GamePreferences.InterfaceVolume));
         }
 
         // A zero slider value is silence; the remaining range follows perceived loudness.
