@@ -749,6 +749,7 @@ GameObject:
   m_Component:
   - component: {fileID: 63704302}
   - component: {fileID: 63704303}
+  - component: {fileID: 63704305}
   - component: {fileID: 63704304}
   m_Layer: 0
   m_Name: ScreenZoneObjectiveTracker
@@ -799,6 +800,22 @@ MonoBehaviour:
   debugButton: {fileID: 1083703137}
   victoryScene: VictoryScene
   blinkyLight: {fileID: 63704304}
+  objectiveSystem: {fileID: 63704305}
+--- !u!114 &63704305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63704300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c90213570e204148bf0eab39b3083fc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveSystem
+  objectives: []
+  collectOnAwake: 0
+  suspended: 1
 --- !u!114 &63704304
 MonoBehaviour:
   m_ObjectHideFlags: 0

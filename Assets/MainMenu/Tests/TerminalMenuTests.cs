@@ -526,9 +526,10 @@ namespace SilentSuns.Menu.Tests
             yield return null;
         }
 
-        // Complete real objectives through the existing tracker, then reload the menu.
+        // Complete the planet surveys, use cryosleep, then reload the menu.
         [UnityTest]
         [Category("Menu")]
+        [Category("Objectives")]
         public IEnumerator CompletionPersistsAfterVictory()
         {
             Assert.That(GameProgress.HasCompletedGame, Is.False);

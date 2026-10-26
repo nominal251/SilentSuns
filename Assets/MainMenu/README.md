@@ -44,7 +44,8 @@ Paths below are inside `Assets/MainMenu`.
 
 - Loading the telescope menu keeps the game in Boot. Begin Survey starts a fresh run; finishing the camera handoff calls `NotifySystemLoaded`.
 - Starting or restarting resets resources and event history. Returning to the menu switches back to Boot. Pause and scene transitions suspend normal event rolls.
-- The objective tracker marks the system complete. The current prototype submits the catalog and spends one nitrogen canister when the cryopod is used, then opens VictoryScene. Repeated submission does not add weirdness twice.
+- Xavier's `ObjectiveSystem` tracks the four planet surveys through `PlanetSurveyObjective`. `ObjectiveTracker` keeps the existing screen and cryopod connections; it reads completion from that system. Objectives wait for the intro to finish, pause with the menus, and reset on a new run. Only the registered planet surveys unlock the catalog; unrelated collection objectives do not.
+- Finishing the survey marks the system complete. The current prototype submits the catalog and spends one nitrogen canister when the cryopod is used, then opens VictoryScene. Repeated submission does not add weirdness twice.
 - Empty oxygen or hull starts the existing failure screen. The menu does not drain oxygen itself; the gameplay oxygen system owns that timer.
 - Controls with an `EventTrigger` fire it once per interaction and pass the player view as the event source. Triggers find the shared EventManager if none is assigned.
 - Put production event definitions on the prefab's EventManager. The cube remains in EventsTesting. Save/restore and procedural system generation are still separate team work; Resume stays unavailable. `SystemLoadRequested` currently reloads SampleScene when advancing a system.
