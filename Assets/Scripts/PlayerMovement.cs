@@ -28,7 +28,27 @@ public class PlayerMovement : MonoBehaviour
     private float cameraXRotation = 0f;
 
     private bool debugDeteced = false;
-    private float maxVelocity = 0f;
+    [Header("Oxygen Parameters")]
+    [SerializeField, Min(0)] private float oxygenRegenRate = 10f;
+    [SerializeField, Min(1)] private float maxTotalDistance = 900f;
+    private Transform currentOxygenStation;
+    private Vector3 previousPosition;
+    private float totalDistanceTraveled;
+    private bool wasInsideCircle = true;
+    private GameManager game;
+    private ResourceManager resources;
+
+    public bool IsOnFoot => isGravityOn;
+    public Transform CurrentOxygenStation => currentOxygenStation;
+    // Keep the distance units from Drew's system, using Danny's resource as the source of truth.
+    private float SecondsPerUnit => resources != null ? resources.OxygenCapacity / maxTotalDistance : 1f;
+    public float OxygenRemaining => resources != null
+        ? Mathf.Clamp01(resources.OxygenSeconds / Mathf.Max(.001f, resources.OxygenCapacity)) * maxTotalDistance
+        : Mathf.Max(0, maxTotalDistance - totalDistanceTraveled);
+    public float SafeRadius => OxygenRemaining;
+    public bool CanUseSuitOxygen => isGravityOn && !SilentSuns.Menu.TerminalPause.BlocksGameplayInput &&
+        (game == null || game.Phase == GameManager.GamePhase.PlanetaryExploration ||
+         game.Phase == GameManager.GamePhase.SystemExploration || game.Phase == GameManager.GamePhase.SystemComplete);
 
 
     private void Awake()
@@ -41,6 +61,10 @@ public class PlayerMovement : MonoBehaviour
     {
         camera = transform.Find("Player Camera").gameObject;
         inputHandler = InputHandler.instance;
+        game = SilentSuns.Menu.TerminalGameSession.Manager;
+        resources = game != null ? game.Resources : null;
+        if (game != null) game.RunStarted += ResetOxygenForNewRun;
+        previousPosition = rBody.position;
 
         if (isGravityOn)
         {
@@ -58,7 +82,10 @@ public class PlayerMovement : MonoBehaviour
     {
         // Mouse look uses raw input, so it also needs to stop while the menu is open.
         if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        {
+            previousPosition = rBody.position;
             return;
+        }
 
         if (inputHandler.debugInput)
         {
@@ -68,12 +95,6 @@ public class PlayerMovement : MonoBehaviour
         if (isGravityOn)
         {
             HandleRotationGravity();
-
-            if (rBody.linearVelocity.magnitude > maxVelocity)
-            {
-                maxVelocity = rBody.linearVelocity.magnitude;
-                print($"Max survivable distance is {maxVelocity * 150} units.\n");
-            }
         }
         else
         {
@@ -83,6 +104,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        TrackDistance();
+        CheckSafeCircle();
         if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
             return;
 
@@ -152,6 +175,8 @@ public class PlayerMovement : MonoBehaviour
         if (isGravityOn != incomingState)
         {
             isGravityOn = incomingState;
+            previousPosition = rBody.position;
+            if (!isGravityOn) currentOxygenStation = null;
             if (isGravityOn)
             {
                 rBody.useGravity = isGravityOn;
@@ -163,5 +188,59 @@ public class PlayerMovement : MonoBehaviour
                 rBody.constraints = RigidbodyConstraints.None;
             }
         }
+    }
+
+    private void TrackDistance()
+    {
+        float distanceMoved = Vector3.Distance(previousPosition, rBody.position);
+        previousPosition = rBody.position;
+        if (!CanUseSuitOxygen) return;
+        if (resources != null)
+            resources.DrainOxygen(distanceMoved * SecondsPerUnit);
+        else
+        {
+            totalDistanceTraveled = Mathf.Clamp(totalDistanceTraveled + distanceMoved, 0, maxTotalDistance);
+            if (OxygenRemaining <= 0) SilentSuns.Menu.TerminalFailure.Begin("GameOverScene");
+        }
+    }
+
+    // The station calls this once per physics step while the player is inside its trigger.
+    public void ResetDistance()
+    {
+        if (!CanUseSuitOxygen || OxygenRemaining <= 0) return;
+        float amount = oxygenRegenRate * Time.fixedDeltaTime;
+        if (resources != null)
+            resources.AddOxygen(Mathf.Min(amount * SecondsPerUnit, Mathf.Max(0, resources.OxygenCapacity - resources.OxygenSeconds)));
+        else
+            totalDistanceTraveled = Mathf.Max(0, totalDistanceTraveled - amount);
+    }
+
+    public void SetOxygenStation(Transform station)
+    {
+        if (!CanUseSuitOxygen || currentOxygenStation == station) return;
+        currentOxygenStation = station;
+        wasInsideCircle = true;
+    }
+
+    private void CheckSafeCircle()
+    {
+        if (!CanUseSuitOxygen || currentOxygenStation == null) return;
+        Vector3 offset = rBody.position - currentOxygenStation.position;
+        bool inside = new Vector2(offset.x, offset.z).magnitude <= SafeRadius;
+        if (!inside && wasInsideCircle) Debug.LogWarning("Outside oxygen return range.");
+        wasInsideCircle = inside;
+    }
+
+    private void ResetOxygenForNewRun()
+    {
+        totalDistanceTraveled = 0;
+        currentOxygenStation = null;
+        wasInsideCircle = true;
+        previousPosition = rBody.position;
+    }
+
+    private void OnDestroy()
+    {
+        if (game != null) game.RunStarted -= ResetOxygenForNewRun;
     }
 }

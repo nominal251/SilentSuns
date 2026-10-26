@@ -60,7 +60,7 @@ namespace SilentSuns.Menu
             face.material = failure.wake;
             failure.wake.SetFloat("_Reveal", 1);
             TerminalUI.Text("Invitation", face.transform, "still there?", .25f, .52f, .5f, .08f, 38).alignment = TMPro.TextAlignmentOptions.Center;
-            TerminalUI.Button(face.transform, "TRY AGAIN / RESTART SURVEY", .28f, .69f, .44f, .09f, () => failure.Leave("SampleScene"));
+            TerminalUI.Button(face.transform, "TRY AGAIN / RESTART SURVEY", .28f, .69f, .44f, .09f, () => failure.Leave(TerminalGameSession.RestartScene));
             TerminalUI.Button(face.transform, "COME BACK / MAIN MENU", .28f, .81f, .44f, .09f, () => failure.Leave("MainMenu"));
         }
         public static void Begin(string destination)
@@ -112,7 +112,7 @@ namespace SilentSuns.Menu
         private void Leave(string scene)
         {
             Active = false;
-            TerminalTransition.LoadScene(scene, scene == "SampleScene" ? TerminalGameSession.StartNewRun : null);
+            TerminalTransition.LoadScene(scene, scene != "MainMenu" ? TerminalGameSession.StartNewRun : null);
         }
         private void OnDestroy()
         {

@@ -14,6 +14,9 @@ namespace SilentSuns.Menu
         private bool sceneAlreadyLoading;
         private bool failurePending;
 
+        public static string RestartScene { get; private set; } = "SampleScene";
+        public static bool IsSurveyScene(string name) => name == "SampleScene" || name == "PlanetSurfaceTest" || name == "ObjectiveCheck";
+
         public static GameManager Manager => instance != null ? instance.game : null;
         public static EventManager Events => instance != null ? instance.events : null;
 
@@ -48,27 +51,31 @@ namespace SilentSuns.Menu
             if (scene.name == "MainMenu")
             {
                 var session = EnsureSession();
+                RestartScene = "SampleScene";
                 session.waitingForIntro = true;
                 session.introShipLoaded = false;
                 session.failurePending = false;
                 session.game.ReturnToBoot();
                 session.events.Suspended = true;
             }
-            else if (scene.name == "SampleScene")
+            else if (IsSurveyScene(scene.name))
             {
                 var session = EnsureSession();
                 // MainMenu loads this scene early so it can use the telescope screen.
                 // That does not start the run. Begin Survey and the handoff do that.
-                if (session.waitingForIntro && !session.introShipLoaded)
+                if (scene.name == "SampleScene" && session.waitingForIntro && !session.introShipLoaded)
                 {
                     session.introShipLoaded = true;
                     return;
                 }
                 session.waitingForIntro = false;
+                RestartScene = scene.name;
                 if (session.game.Phase == GameManager.GamePhase.Boot ||
                     session.game.Phase == GameManager.GamePhase.Ending)
                     StartNewRun();
                 ShipReady();
+                if (scene.name != "SampleScene") session.game.EnterPlanetaryExploration();
+                else session.game.ReturnToSystemExploration();
             }
             else if (scene.name == "GameOverScene" || scene.name == "VictoryScene")
                 EndRun();

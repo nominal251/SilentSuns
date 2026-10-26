@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/VictoryScene.unity
     guid: a9157d7915f963c4bab379e1408423b3
+  - enabled: 1
+    path: Assets/Scenes/PlanetSurfaceTest.unity
+    guid: ee08cb7542d979e449b6590ff6b4f7b4
+  - enabled: 1
+    path: Assets/Scenes/ObjectiveCheck.unity
+    guid: 796cddaa0051cb14592b9e2c38d43dd2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

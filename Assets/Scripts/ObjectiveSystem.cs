@@ -8,6 +8,7 @@ public class ObjectiveSystem : MonoBehaviour
     [SerializeField] private bool collectOnAwake = true;
     [SerializeField] private bool suspended;
     private bool completionReported;
+    private GameManager game;
 
     public IReadOnlyList<Objective> Objectives => objectives;
     public bool Suspended => suspended;
@@ -20,13 +21,32 @@ public class ObjectiveSystem : MonoBehaviour
     {
         // Test scenes can collect everything. The ship registers its four surveys explicitly.
         objectives.Clear();
+        if (collectOnAwake) suspended = true;
         if (collectOnAwake)
             foreach (Objective objective in FindObjectsByType<Objective>(FindObjectsSortMode.None))
                 Register(objective);
     }
 
+    private void Start()
+    {
+        if (!collectOnAwake) return;
+        game = SilentSuns.Menu.TerminalGameSession.Manager;
+        if (game != null) game.RunStarted += ResetObjectives;
+    }
+
+    private void Update()
+    {
+        // The ship tracker handles its own group. Standalone surface objectives use the same menu gate.
+        if (!collectOnAwake) return;
+        var game = SilentSuns.Menu.TerminalGameSession.Manager;
+        bool playing = game == null || game.Phase == GameManager.GamePhase.PlanetaryExploration ||
+            game.Phase == GameManager.GamePhase.SystemExploration || game.Phase == GameManager.GamePhase.SystemComplete;
+        SetSuspended(!playing || SilentSuns.Menu.TerminalPause.BlocksGameplayInput);
+    }
+
     private void OnDestroy()
     {
+        if (game != null) game.RunStarted -= ResetObjectives;
         foreach (Objective objective in objectives)
             if (objective != null)
                 objective.Completed -= HandleObjectiveCompleted;
@@ -59,6 +79,7 @@ public class ObjectiveSystem : MonoBehaviour
 
     public void ResetObjectives()
     {
+        if (collectOnAwake) suspended = true;
         completionReported = false;
         foreach (Objective objective in objectives)
         {

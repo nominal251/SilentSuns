@@ -79,7 +79,7 @@ namespace SilentSuns.Menu
         }
         private void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name == "SampleScene")
+            if (TerminalGameSession.IsSurveyScene(scene.name))
             {
                 sessionScene = scene.name;
                 playedSeconds = 0;

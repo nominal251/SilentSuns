@@ -62,7 +62,7 @@ namespace SilentSuns.Menu
 
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name != "SampleScene" || instance != null)
+            if (!TerminalGameSession.IsSurveyScene(scene.name) || instance != null)
                 return;
             GameObject prefab = Resources.Load<GameObject>("SilentSunsPause");
             if (prefab != null)
@@ -76,21 +76,26 @@ namespace SilentSuns.Menu
             confirmationPanel.SetActive(false);
             settingsPanel.SetActive(false);
             visibility.alpha = 0f;
-            if (EventSystem.current == null)
-            {
-                GameObject events = new GameObject("Pause Input", typeof(EventSystem), typeof(InputSystemUIInputModule));
-                events.transform.SetParent(transform, false);
-                events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
-            }
+            EnsureInputSystem();
             SetInputScheme(0);
             TerminalTextScale.Install(transform);
             foreach (var button in confirmationPanel.GetComponentsInChildren<TerminalButton>(true))
                 if (button.gameObject != cancelButton) TerminalHoldConfirm.Attach(button.gameObject, ConfirmLeave);
         }
 
+        // The telescope's temporary input object can disappear after a scene change.
+        private void EnsureInputSystem()
+        {
+            if (EventSystem.current != null) return;
+            GameObject events = new GameObject("Pause Input", typeof(EventSystem), typeof(InputSystemUIInputModule));
+            events.transform.SetParent(transform, false);
+            events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
+        }
+
         // Escape and the controller's menu button toggle pause. P has no pause binding.
         private void Update()
         {
+            EnsureInputSystem();
             if (closing || TerminalTransition.IsActive || TerminalShipIntro.IsActive || TerminalModal.BlocksInput || TerminalDropdown.BlocksInput ||
                 TerminalBindings.Listening || Time.frameCount <= TerminalBindings.ConsumedFrame || TerminalFailure.Active || TerminalExtras.ShuttingDown)
                 return;
@@ -176,6 +181,7 @@ namespace SilentSuns.Menu
         {
             if (paused || TerminalTransition.IsActive || TerminalShipIntro.IsActive)
                 return;
+            EnsureInputSystem();
             // Menu sounds still play while AudioListener.pause stops gameplay sounds.
             GetComponent<TerminalInteractionAudio>().TakeFocus();
             previousTimeScale = Time.timeScale;

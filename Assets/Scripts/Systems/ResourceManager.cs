@@ -15,6 +15,7 @@ public class ResourceManager : MonoBehaviour
 
     public int NitrogenCanisters { get; private set; }
     public float OxygenSeconds { get; private set; }
+    public float OxygenCapacity => Mathf.Max(0, startingOxygenSeconds);
     public int ShipParts { get; private set; }
     public float ParanormalEnergy { get; private set; }
     public int HullPips { get; private set; }
