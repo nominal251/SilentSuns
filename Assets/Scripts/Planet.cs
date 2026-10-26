@@ -9,6 +9,35 @@ public class Planet : MonoBehaviour
     public float sineFreq;
     public float sineOffset;
 
+    [Header("Parameters for Spectrogram")]
+    public Sprite spectrogramImage;
+    public AudioClip spectrogramAudio;
+
+    [Header("Parameters for Comp Scanner (Placeholder)")]
+    public string atmoText1;
+    public string atmoText2;
+    public string compText1;
+    public string compText2;
+
+    [Header("Objective Completion Trackers")]
+    // OBJECTIVE COMPLETION TRACKERS
+    public bool waveformComplete = false;
+    //public bool imageComplete = false;
+    public bool compComplete = false;
+    //public bool probeComplete = false;
+
+    [Header("Anomaly Planet Settings")]
+    public bool isAnomaly = false;
+    public GameObject enemy;
+
+    private void Update()
+    {
+        if (isAnomaly && waveformComplete && compComplete)
+        {
+            enemy.SetActive(true);
+        }
+    }
+
     public float Radius
     {
         get
