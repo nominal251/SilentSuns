@@ -20,15 +20,22 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float maxCameraAngle = 85f;
 
+    [Header("Oxygen Parameters")]
+    [SerializeField] private float oxygenRegenRate = 10f;
+    [SerializeField] private float maxTotalDistance = 900f;
+
     private Rigidbody rBody;
     private GameObject camera;
     private InputHandler inputHandler;
-    
+
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
 
     private bool debugDeteced = false;
     private float maxVelocity = 0f;
+
+    private float totalDistanceTraveled = 0f;
+    private Vector3 previousPosition;
 
 
     private void Awake()
@@ -41,6 +48,8 @@ public class PlayerMovement : MonoBehaviour
     {
         camera = transform.Find("Player Camera").gameObject;
         inputHandler = InputHandler.instance;
+
+        previousPosition = rBody.position;
 
         if (isGravityOn)
         {
@@ -65,11 +74,11 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleRotationGravity();
 
-            if (rBody.linearVelocity.magnitude > maxVelocity)
-            {
-                maxVelocity = rBody.linearVelocity.magnitude;
-                print($"Max survivable distance is {maxVelocity * 150} units.\n");
-            }
+            //if (rBody.linearVelocity.magnitude > maxVelocity)
+            //{
+            //    maxVelocity = rBody.linearVelocity.magnitude;
+            //    print($"Max survivable distance is {maxVelocity * 150} units.\n");
+            //}
         }
         else
         {
@@ -79,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        TrackDistance();
+
         if (debugDeteced)
         {
             SetGravity(!isGravityOn);
@@ -142,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void SetGravity(bool incomingState) //to do: smooth transition between states
     {
-        if(isGravityOn != incomingState)
+        if (isGravityOn != incomingState)
         {
             isGravityOn = incomingState;
             if (isGravityOn)
@@ -156,5 +167,33 @@ public class PlayerMovement : MonoBehaviour
                 rBody.constraints = RigidbodyConstraints.None;
             }
         }
+    }
+
+    private void TrackDistance()
+    {
+        totalDistanceTraveled = Mathf.Clamp(totalDistanceTraveled, 0f, maxTotalDistance);
+
+        float distanceMoved = Vector3.Distance(previousPosition, rBody.position);
+
+        totalDistanceTraveled += distanceMoved;
+
+        previousPosition = rBody.position;
+
+        if (totalDistanceTraveled >= maxTotalDistance)
+        {
+            OxygenDepleted();
+        }
+
+        Debug.Log(totalDistanceTraveled);
+    }
+
+    public void ResetDistance()
+    {
+        totalDistanceTraveled -= Time.deltaTime * oxygenRegenRate;
+    }
+
+    private void OxygenDepleted()
+    {
+        //here we can have code for different screen effects as well as calling the death script
     }
 }
