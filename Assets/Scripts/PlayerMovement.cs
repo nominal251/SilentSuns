@@ -23,6 +23,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Oxygen Parameters")]
     [SerializeField] private float oxygenRegenRate = 10f;
     [SerializeField] private float maxTotalDistance = 900f;
+    //NEW
+    private Transform currentOxygenStation;
+    private bool wasInsideCircle = true;
+    public Transform CurrentOxygenStation => currentOxygenStation;
+    public float OxygenRemaining => maxTotalDistance - totalDistanceTraveled;
+    public float SafeRadius => Mathf.Max(0f, OxygenRemaining) * 1;
+    //NEW
 
     private Rigidbody rBody;
     private GameObject camera;
@@ -89,6 +96,8 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         TrackDistance();
+        TrackDistance();
+        CheckSafeCircle();
 
         if (debugDeteced)
         {
@@ -195,5 +204,28 @@ public class PlayerMovement : MonoBehaviour
     private void OxygenDepleted()
     {
         //here we can have code for different screen effects as well as calling the death script
+    }
+
+    public void SetOxygenStation(Transform station)
+    {
+        if (currentOxygenStation != station)
+        {
+            currentOxygenStation = station;
+            wasInsideCircle = true;
+        }
+    }
+
+    private void CheckSafeCircle()
+    {
+        if (currentOxygenStation == null) return;
+
+        bool inside = Vector3.Distance(rBody.position, currentOxygenStation.position) <= SafeRadius;
+
+        //Fires once you leave the oxygen circle
+        if (!inside && wasInsideCircle)
+        {
+            Debug.LogWarning("YOU ARE NOT GOING TO MAKE IT BACK");
+        }
+        wasInsideCircle = inside;
     }
 }

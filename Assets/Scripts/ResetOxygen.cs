@@ -15,6 +15,7 @@ public class ResetOxygen : MonoBehaviour
         //Debug.Log(collision.gameObject.name);
         if (collision.gameObject.name == "Player Body")
         {
+            playerMovement.SetOxygenStation(transform);
             playerMovement.ResetDistance();
         }
     }
