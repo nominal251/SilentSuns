@@ -226,6 +226,7 @@ namespace SilentSuns.Menu
                 yield return null;
             }
             ReleaseControl();
+            TerminalGameSession.ShipReady();
             yield return ShowHint();
             Destroy(gameObject);
         }

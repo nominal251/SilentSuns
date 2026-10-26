@@ -1989,7 +1989,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0577de891134f344bad4613a0a6d23a7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DevTestEvent
+  m_EditorClassIdentifier: SilentSuns.Systems::DevTestEvent
   eventManager: {fileID: 1729883383}
   playerController: {fileID: 281160889}
   testTriggerId: DevTest
@@ -2252,7 +2252,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2976d5b365b65b84fb1be5d899975e87, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EventManager
+  m_EditorClassIdentifier: SilentSuns.Systems::EventManager
   gameManager: {fileID: 2078727330}
   eventDefinitions:
   - {fileID: 11400000, guid: 98fba13922ee2b34da891047acf17535, type: 2}
@@ -2675,7 +2675,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef82486a21d8694479cc7f8f44be34e8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  m_EditorClassIdentifier: SilentSuns.Systems::GameManager
   currentSystemNumber: 0
   startingWeirdness: 0
   weirdnessPerCompletedSystem: 5

@@ -74,7 +74,6 @@ namespace SilentSuns.Menu.Tests
             keyboard = InputSystem.AddDevice<Keyboard>();
             mouse = InputSystem.AddDevice<Mouse>();
             gamepad = InputSystem.AddDevice<Gamepad>();
-            SceneManager.sceneLoaded += IsolateUnwiredTrackers;
             yield return SceneManager.LoadSceneAsync("MainMenu");
             float startupDeadline = Time.realtimeSinceStartup + 30;
             while (!TerminalShipIntro.Ready && Time.realtimeSinceStartup < startupDeadline) yield return null;
@@ -95,7 +94,6 @@ namespace SilentSuns.Menu.Tests
             GamePreferences.EndEdit();
             TerminalBindings.EndEdit();
             TerminalDisplayOptions.EndEdit();
-            SceneManager.sceneLoaded -= IsolateUnwiredTrackers;
             TerminalPause pause = Object.FindFirstObjectByType<TerminalPause>();
             if (pause != null)
                 pause.Resume();
@@ -363,7 +361,7 @@ namespace SilentSuns.Menu.Tests
             yield return new WaitForSecondsRealtime(0.3f);
             Click("Main Menu/Begin Survey");
             float deadline = Time.realtimeSinceStartup + 30f;
-            while (SceneManager.GetActiveScene().name != "SampleScene" && Time.realtimeSinceStartup < deadline)
+            while (TerminalShipIntro.IsActive && Time.realtimeSinceStartup < deadline)
                 yield return null;
             yield return null;
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
@@ -550,6 +548,8 @@ namespace SilentSuns.Menu.Tests
             while (SceneManager.GetActiveScene().name != "VictoryScene" && Time.realtimeSinceStartup < deadline)
                 yield return null;
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("VictoryScene"));
+            Assert.That(TerminalGameSession.Manager.Phase, Is.EqualTo(GameManager.GamePhase.Ending));
+            Assert.That(TerminalGameSession.Manager.Resources.NitrogenCanisters, Is.EqualTo(2));
             Assert.That(GameProgress.HasCompletedGame, Is.True);
             yield return SceneManager.LoadSceneAsync("MainMenu");
             while (!TerminalShipIntro.Ready) yield return null;
@@ -840,17 +840,6 @@ namespace SilentSuns.Menu.Tests
             instance.GetType().GetField(name, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(instance, value);
         }
 
-        // These two existing broken trackers are excluded only during the pause integration check.
-        private void IsolateUnwiredTrackers(Scene scene, LoadSceneMode mode)
-        {
-            if (scene.name != "SampleScene")
-                return;
-            foreach (MonoBehaviour component in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
-            {
-                if (component.GetType().Name == "ObjectiveTracker" && component.GetType().GetField("objText").GetValue(component) == null)
-                    component.enabled = false;
-            }
-        }
 
         private void CapturePause(TerminalPause pause, string name = "12-survey-pause")
         {
@@ -880,10 +869,9 @@ namespace SilentSuns.Menu.Tests
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         }
 
-        // Keep the prototype's own startup errors visible, separate from menu-only checks.
+        // Run the real prototype without disabling any scene components.
         [UnityTest]
-        [Category("PrototypeIntegration")]
-        [Explicit("SampleScene has two extra ObjectiveTracker components with missing text and button references.")]
+        [Category("Menu")]
         public IEnumerator BeginSurveyLoadsPrototype()
         {
             Click("Standby/Wake screen");
@@ -893,7 +881,7 @@ namespace SilentSuns.Menu.Tests
             Click("Main Menu/Begin Survey");
             AssertScreen("Loading");
             float deadline = Time.realtimeSinceStartup + 30f;
-            while (SceneManager.GetActiveScene().name != "SampleScene" && Time.realtimeSinceStartup < deadline)
+            while (TerminalShipIntro.IsActive && Time.realtimeSinceStartup < deadline)
                 yield return null;
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
             yield return null;

@@ -2,6 +2,7 @@
     "name": "SilentSuns.Menu.Tests",
     "references": [
         "SilentSuns.Menu",
+        "SilentSuns.Systems",
         "Unity.TextMeshPro",
         "Unity.InputSystem",
         "Unity.ugui",

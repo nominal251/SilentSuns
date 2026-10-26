@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7151f09eeadeefe48a23b2fae0e0a011, type: 3}
   m_Name: SpookyCube
-  m_EditorClassIdentifier: Assembly-CSharp::GameEventDefinition
+  m_EditorClassIdentifier: SilentSuns.Systems::GameEventDefinition
   eventId: Spook_Cube_Test
   categories: 01000000
   designerNotes: 

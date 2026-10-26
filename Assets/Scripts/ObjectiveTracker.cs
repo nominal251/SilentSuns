@@ -38,6 +38,7 @@ public class ObjectiveTracker : MonoBehaviour
 
     void Update()
     {
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput) return;
         if (debugButton.activated)
             debugComplete = true;
 
@@ -45,6 +46,14 @@ public class ObjectiveTracker : MonoBehaviour
 
         if (cryoButton.activated && allObjectivesComplete)
         {
+            var game = SilentSuns.Menu.TerminalGameSession.Manager;
+            if (game != null)
+            {
+                // This prototype ends after one system. Submit it and pay for cryosleep.
+                game.SubmitCatalog();
+                if (!game.EnterCryosleep()) return;
+                game.SetEnding();
+            }
             // Only a completed survey earns the permanent completion flag.
             if (!debugComplete)
                 SilentSuns.Menu.GameProgress.MarkCompleted();
@@ -141,5 +150,7 @@ public class ObjectiveTracker : MonoBehaviour
             p4String;
 
         objText.text = "Bodies Surveyed:\n" + stats;
+        if (allObjectivesComplete)
+            SilentSuns.Menu.TerminalGameSession.Manager?.MarkCatalogReady();
     }
 }

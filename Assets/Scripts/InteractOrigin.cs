@@ -41,6 +41,9 @@ public class InteractOrigin : MonoBehaviour
             {
                 currentInteractable.Interact();
                 heldInteractable = currentInteractable;
+                // Controls with an EventTrigger roll once when pressed, not every held frame.
+                var eventTrigger = ((MonoBehaviour)currentInteractable).GetComponent<EventTrigger>();
+                if (eventTrigger != null) eventTrigger.Fire(transform);
             }
         }
 

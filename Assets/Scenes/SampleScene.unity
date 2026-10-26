@@ -2387,7 +2387,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 200599906}
-  - component: {fileID: 200599905}
   - component: {fileID: 200599904}
   m_Layer: 0
   m_Name: ScreenZoneTelescope
@@ -2411,28 +2410,6 @@ MonoBehaviour:
   light: {fileID: 0}
   blink: 0
   blinkInterval: 0.75
---- !u!114 &200599905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200599903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 963035025}
-  planet2: {fileID: 239383531}
-  planet3: {fileID: 260379923}
-  planet4: {fileID: 913949520}
-  objText: {fileID: 0}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 0}
-  debugButton: {fileID: 0}
-  victoryScene: VictoryScene
-  blinkyLight: {fileID: 200599904}
 --- !u!4 &200599906
 Transform:
   m_ObjectHideFlags: 0
@@ -22212,7 +22189,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2059327823}
-  - component: {fileID: 2059327822}
   - component: {fileID: 2059327821}
   m_Layer: 0
   m_Name: ScreenZoneProbeLauncher
@@ -22236,28 +22212,6 @@ MonoBehaviour:
   light: {fileID: 0}
   blink: 0
   blinkInterval: 0.75
---- !u!114 &2059327822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059327820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 963035025}
-  planet2: {fileID: 239383531}
-  planet3: {fileID: 260379923}
-  planet4: {fileID: 913949520}
-  objText: {fileID: 0}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 0}
-  debugButton: {fileID: 0}
-  victoryScene: VictoryScene
-  blinkyLight: {fileID: 2059327821}
 --- !u!4 &2059327823
 Transform:
   m_ObjectHideFlags: 0

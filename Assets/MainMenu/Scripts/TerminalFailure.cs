@@ -67,6 +67,7 @@ namespace SilentSuns.Menu
         {
             if (Active)
                 return;
+            TerminalGameSession.EndRun();
             Active = true;
             var root = new GameObject("Failure transition", typeof(Canvas), typeof(CanvasScaler));
             root.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
@@ -111,7 +112,7 @@ namespace SilentSuns.Menu
         private void Leave(string scene)
         {
             Active = false;
-            TerminalTransition.LoadScene(scene);
+            TerminalTransition.LoadScene(scene, scene == "SampleScene" ? TerminalGameSession.StartNewRun : null);
         }
         private void OnDestroy()
         {

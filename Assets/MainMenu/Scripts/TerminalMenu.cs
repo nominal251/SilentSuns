@@ -477,6 +477,7 @@ namespace SilentSuns.Menu
                 Debug.LogError("The menu destination is not enabled in Build Profiles: " + gameplayScene, this);
                 return;
             }
+            TerminalGameSession.StartNewRun();
             ChangeState(PowerState.InGame);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

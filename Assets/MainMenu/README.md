@@ -40,6 +40,15 @@ Paths below are inside `Assets/MainMenu`.
 - `TerminalSettings` saves through `GamePreferences`. `GameAudio` applies the audio settings to `Resources/SilentSunsAudio.mixer`. Put music in **Music**, gameplay effects in **FX**, and menu sounds in **Interface**.
 - `ObjectiveTracker` saves the completion flag through `GameProgress`. This is not a gameplay save. Resume stays unavailable until the team connects `SessionSaveProvider`.
 
+`TerminalGameSession` connects the menus to `GameManager`, `ResourceManager`, and `EventManager`. The shared objects are in `Resources/SurveySystems.prefab` and survive scene changes.
+
+- Loading the telescope menu keeps the game in Boot. Begin Survey starts a fresh run; finishing the camera handoff calls `NotifySystemLoaded`.
+- Starting or restarting resets resources and event history. Returning to the menu switches back to Boot. Pause and scene transitions suspend normal event rolls.
+- The objective tracker marks the system complete. The current prototype submits the catalog and spends one nitrogen canister when the cryopod is used, then opens VictoryScene. Repeated submission does not add weirdness twice.
+- Empty oxygen or hull starts the existing failure screen. The menu does not drain oxygen itself; the gameplay oxygen system owns that timer.
+- Controls with an `EventTrigger` fire it once per interaction and pass the player view as the event source. Triggers find the shared EventManager if none is assigned.
+- Put production event definitions on the prefab's EventManager. The cube remains in EventsTesting. Save/restore and procedural system generation are still separate team work; Resume stays unavailable. `SystemLoadRequested` currently reloads SampleScene when advancing a system.
+
 Pause opens without a selected button. Mouse hover highlights a button; arrows or the controller start keyboard-style selection. ESC from Settings goes back to pause.
 Returning from gameplay opens the main-menu choices directly, without warm-up, the orb, or diagnostics. Begin Survey hides and locks the mouse pointer immediately.
 
@@ -84,7 +93,7 @@ Keep public button methods and Inspector field names unless you also update thei
 
 The graphics math lives in `TerminalDisplay` and `Shaders`. You do not need to change it to edit text, settings, or timing.
 
-Run the **Menu** Play Mode tests in Unity's Test Runner after changes. They cover boot timing, settings, navigation, the telescope handoff, lighting restoration, and pause input. Two unrelated prototype ObjectiveTrackers have missing references; tests disable those only during testing.
+Run the **Menu** Play Mode tests in Unity's Test Runner after changes. They cover boot timing, settings, navigation, the telescope handoff, lighting restoration, and pause input. The scene checks run with the real objective tracker enabled; no tracker errors are hidden by the tests.
 
 ## Audio credits
 

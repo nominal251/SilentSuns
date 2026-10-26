@@ -16,6 +16,13 @@ public class EventTrigger : MonoBehaviour
     //Attempts the configured specific event and any enabled category rolls
     public void Fire()
     {
+        Fire(transform);
+    }
+
+    // InteractOrigin supplies the player's view so events know who used this control.
+    public void Fire(Transform source)
+    {
+        if (eventManager == null) eventManager = FindAnyObjectByType<EventManager>();
         if (eventManager == null)
         {
             Debug.LogWarning("[EventTrigger] Trigger failed | EventManager is not assigned", this);
@@ -26,19 +33,19 @@ public class EventTrigger : MonoBehaviour
 
         if (specificEvent != null)
         {
-            bool success = eventManager.TryPlaySpecific(specificEvent, triggerId, transform);
+            bool success = eventManager.TryPlaySpecific(specificEvent, triggerId, source);
             Debug.Log($"[EventTrigger] Specific event result | Event: {specificEvent.eventId} | Success: {success}");
         }
 
         if (rollForCategory)
         {
-            bool success = eventManager.TryTriggerCategory(categoryToRoll, triggerId, transform);
+            bool success = eventManager.TryTriggerCategory(categoryToRoll, triggerId, source);
             Debug.Log($"[EventTrigger] Category roll result | Category: {categoryToRoll} | Success: {success}");
         }
 
         if (alsoRollForSpook)
         {
-            bool success = eventManager.TryTriggerSpook(triggerId, transform);
+            bool success = eventManager.TryTriggerSpook(triggerId, source);
             Debug.Log($"[EventTrigger] Spook roll result | Success: {success}");
         }
     }

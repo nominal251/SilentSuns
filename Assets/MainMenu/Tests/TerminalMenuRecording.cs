@@ -27,7 +27,6 @@ namespace SilentSuns.Menu.Tests
             string path = System.Environment.GetEnvironmentVariable("SILENT_SUNS_MENU_VIDEO");
             if (string.IsNullOrEmpty(path)) Assert.Ignore("Set SILENT_SUNS_MENU_VIDEO to record the runtime.");
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            SceneManager.sceneLoaded += IsolateUnwiredTrackers;
             int originalRate = Time.captureFramerate;
             Time.captureFramerate = 30;
             var video = new VideoTrackAttributes { frameRate = new MediaRational(30), width = 1280, height = 720, includeAlpha = false, bitRateMode = VideoBitrateMode.High };

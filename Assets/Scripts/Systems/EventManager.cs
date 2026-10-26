@@ -28,6 +28,24 @@ public class EventManager : MonoBehaviour
     //Returns the event definitions currently registered with this manager
     public IReadOnlyList<GameEventDefinition> EventDefinitions => eventDefinitions;
 
+    // The menu pauses event rolls while the player is in menus or changing scenes.
+    public bool Suspended { get; set; }
+
+    private void Awake()
+    {
+        if (gameManager == null) gameManager = GetComponent<GameManager>();
+    }
+
+    private void OnEnable()
+    {
+        if (gameManager != null) gameManager.RunStarted += ClearRunHistory;
+    }
+
+    private void OnDisable()
+    {
+        if (gameManager != null) gameManager.RunStarted -= ClearRunHistory;
+    }
+
     //Attempts to play a specific event 
     public bool TryPlaySpecific(GameEventDefinition definition, string triggerId, Transform source = null)
     {
@@ -47,6 +65,7 @@ public class EventManager : MonoBehaviour
     //Rolls for a random eligible event in the requested category as it normally would
     public bool TryTriggerCategory(GameEventCategory category, string triggerId, Transform source = null)
     {
+        if (Suspended || Time.timeScale <= 0) return false;
         EnsureSystemTracking();
 
         Debug.Log($"[EventManager] NORMAL CATEGORY ROLL | Category: {category} | Trigger: {triggerId}");
@@ -294,6 +313,7 @@ public class EventManager : MonoBehaviour
     //Checks every normal gameplay restriction and reports the reason an event is blocked
     private bool IsEligible(GameEventDefinition definition, string triggerId, bool logDetails)
     {
+        if (Suspended || Time.timeScale <= 0) return false;
         if (definition == null)
         {
             if (logDetails) Debug.LogWarning("[EventManager] Eligibility failed | Definition is null");

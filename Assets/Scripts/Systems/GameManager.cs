@@ -2,6 +2,7 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(ResourceManager))]
 public class GameManager : MonoBehaviour
 {
     public enum GamePhase
@@ -25,7 +26,10 @@ public class GameManager : MonoBehaviour
     public int CurrentSystemNumber => currentSystemNumber;
     public float Weirdness { get; private set; }
     public ResourceManager Resources => resourceManager;
+    public bool CatalogSubmitted { get; private set; }
+    private bool cryosleepPending;
 
+    public event Action RunStarted;
     public event Action<GamePhase> PhaseChanged;
     public event Action<int> SystemLoadRequested;
     public event Action<int> SystemStarted;
@@ -35,7 +39,16 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        if (resourceManager == null) resourceManager = GetComponent<ResourceManager>();
         Weirdness = Mathf.Clamp(startingWeirdness, 0f, 100f);
+    }
+
+    // Returning to the menu ends the run. Resources reset when the next run starts.
+    public void ReturnToBoot()
+    {
+        CatalogSubmitted = false;
+        cryosleepPending = false;
+        SetPhase(GamePhase.Boot);
     }
 
     // Call once from a bootstrapper when a new session begins
@@ -50,12 +63,14 @@ public class GameManager : MonoBehaviour
         }
 
         currentSystemNumber = 1;
+        CatalogSubmitted = false;
         Weirdness = Mathf.Clamp(startingWeirdness, 0f, 100f);
         WeirdnessChanged?.Invoke(Weirdness);
 
         if (resetResourcesAtRunStart && resourceManager != null)
             resourceManager.ResetForNewRun();
 
+        RunStarted?.Invoke();
         RequestSystemLoad();
     }
 
@@ -72,6 +87,7 @@ public class GameManager : MonoBehaviour
             return;
 
         SetPhase(GamePhase.SystemExploration);
+        CatalogSubmitted = false;
         SystemStarted?.Invoke(currentSystemNumber);
     }
 
@@ -87,9 +103,10 @@ public class GameManager : MonoBehaviour
     //Call from the master computer's submit action
     public bool SubmitCatalog()
     {
-        if (Phase != GamePhase.SystemComplete)
+        if (Phase != GamePhase.SystemComplete || CatalogSubmitted)
             return false;
 
+        CatalogSubmitted = true;
         Weirdness = Mathf.Clamp(
             Weirdness + weirdnessPerCompletedSystem,
             0f,
@@ -105,12 +122,13 @@ public class GameManager : MonoBehaviour
     //The nitrogen cost is paid here
     public bool EnterCryosleep()
     {
-        if (Phase != GamePhase.SystemComplete || resourceManager == null)
+        if (Phase != GamePhase.SystemComplete || !CatalogSubmitted || resourceManager == null)
             return false;
 
         if (!resourceManager.TryConsumeNitrogen(1))
             return false;
 
+        cryosleepPending = true;
         CryosleepEntered?.Invoke(currentSystemNumber);
 
         //Loading Screen after it's done
@@ -122,9 +140,10 @@ public class GameManager : MonoBehaviour
     //Call after the cryosleep and any dream sequences finish; Since cryosleep dreams are backlogged
     public void FinishCryosleepTransition()
     {
-        if (Phase != GamePhase.LoadingScreen)
+        if (Phase != GamePhase.LoadingScreen || !cryosleepPending)
             return;
 
+        cryosleepPending = false;
         currentSystemNumber++;
         SystemLoadRequested?.Invoke(currentSystemNumber);
     }
