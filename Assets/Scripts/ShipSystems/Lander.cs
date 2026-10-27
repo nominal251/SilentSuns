@@ -8,16 +8,19 @@ public class Lander : MonoBehaviour
     public PlanetManager planetManager;
     public TextMeshPro statusText;
     // Update is called once per frame
+
+    private bool alreadyLanded = false;
+
     void Update()
     {
-        if (landerButton.activated)
+        if (landerButton.activated && !alreadyLanded)
         {
-            if (planetManager.CurrentPlanet != null)
+            Planet planet = planetManager.CurrentPlanet;
+
+            if (planet != null && planet.isLandable && planet.landingReady)
             {
-                if (planetManager.CurrentPlanet.isLandable && planetManager.CurrentPlanet.landingReady == true)
-                {
-                    SceneManager.LoadScene(planetManager.CurrentPlanet.surfaceScene);
-                }
+                alreadyLanded = true;
+                SceneSwap.GoToSurface(planet.surfaceScene);
             }
         }
 

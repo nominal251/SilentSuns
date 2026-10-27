@@ -768,7 +768,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7059168325413779607}
   - {fileID: 1083703136}
   - {fileID: 1920799891}
   - {fileID: 1447267488}
@@ -942,76 +941,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!1 &76204129
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 76204130}
-  - component: {fileID: 76204132}
-  - component: {fileID: 76204131}
-  m_Layer: 0
-  m_Name: ProgressTracker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &76204130
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 76204129}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 186.28564, y: -0, z: 117.88611}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &76204131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 76204129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: badd30256947d3349aaa942e3584809c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BlinkyLight
-  light: {fileID: 1429475549}
-  blink: 0
-  blinkInterval: 0.75
---- !u!114 &76204132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 76204129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 963035025}
-  planet2: {fileID: 239383531}
-  planet3: {fileID: 260379923}
-  planet4: {fileID: 913949520}
-  objText: {fileID: 1902764788}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 4170078813923749780}
-  debugButton: {fileID: 1083703137}
-  victoryScene: VictoryScene
-  blinkyLight: {fileID: 76204131}
 --- !u!1 &76305785
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,6 +1509,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 107294288}
+  - component: {fileID: 107294289}
+  - component: {fileID: 107294290}
   m_Layer: 0
   m_Name: ObjectiveTracker
   m_TagString: Untagged
@@ -1600,10 +1531,48 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7059168325413779607}
   - {fileID: 1995284309}
   - {fileID: 2099611148}
   m_Father: {fileID: 1502069181}
   m_LocalEulerAnglesHint: {x: 0, y: -180, z: -13.396}
+--- !u!114 &107294289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107294287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95eea30e565ba0a40b8cf61712ba99a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
+  planet1: {fileID: 963035025}
+  planet2: {fileID: 239383531}
+  planet3: {fileID: 260379923}
+  planet4: {fileID: 913949520}
+  objText: {fileID: 1902764788}
+  allObjectivesComplete: 0
+  cryoButton: {fileID: 4170078813923749780}
+  debugButton: {fileID: 1083703137}
+  victoryScene: VictoryScene
+  blinkyLight: {fileID: 107294290}
+--- !u!114 &107294290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107294287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: badd30256947d3349aaa942e3584809c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlinkyLight
+  light: {fileID: 1429475549}
+  blink: 0
+  blinkInterval: 0.75
 --- !u!1 &115683933
 GameObject:
   m_ObjectHideFlags: 0
@@ -25134,14 +25103,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5927423397836424859}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000029504297, y: -1, z: -0.0000030696388, w: 8.384403e-12}
-  m_LocalPosition: {x: -161.19365, y: -21.453001, z: 6.731}
-  m_LocalScale: {x: 0.09240763, y: 0.21021812, z: 0.20594953}
+  m_LocalRotation: {x: -0.0000027162139, y: -0.0000032935625, z: 0.11664246, w: 0.993174}
+  m_LocalPosition: {x: -0.5162411, y: 1.8466395, z: 0.78499967}
+  m_LocalScale: {x: 0.09240761, y: 0.21021812, z: 0.20594949}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5428206915602978869}
   - {fileID: 1429475552}
-  m_Father: {fileID: 63704302}
+  m_Father: {fileID: 107294288}
   m_LocalEulerAnglesHint: {x: -180, y: 0, z: -180}
 --- !u!23 &7743869667271904460
 MeshRenderer:
@@ -25469,7 +25438,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1902666198}
-  - {fileID: 76204130}
   - {fileID: 731927031107202567}
   - {fileID: 1318755208}
   - {fileID: 410087041}
