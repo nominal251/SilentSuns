@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +12,10 @@ public class InputHandler : MonoBehaviour
     private InputAction reorientAction;
     private InputAction debugAction;
     private InputAction sprintAction;
+    private InputAction interactAction;
+    private InputAction physicsInteractAction;
+    private InputAction physicsRotateAction;
+    private InputAction physicsExtendAction;
 
     public Vector3 moveInput { get; private set; }
     public Vector2 lookInput { get; private set; }
@@ -22,6 +25,16 @@ public class InputHandler : MonoBehaviour
     public bool reorientInput { get; private set; }
     public bool sprintInput { get; private set; }
     public bool debugInput { get; private set; }
+    public bool debugPressed => debugAction.WasPerformedThisFrame();
+    // Both interaction scripts read these actions from the same copy that Settings edits.
+    public bool interactInput => interactAction.IsPressed();
+    public bool interactPressed => interactAction.WasPressedThisFrame();
+    public bool interactReleased => interactAction.WasReleasedThisFrame();
+    public bool physicsInteractInput => physicsInteractAction.IsPressed();
+    public bool physicsInteractPressed => physicsInteractAction.WasPressedThisFrame();
+    public bool physicsRotateInput => physicsRotateAction.IsPressed();
+    public float physicsExtendInput => physicsExtendAction.ReadValue<float>();
+    public bool physicsExtendIsScroll => physicsExtendAction.activeControl?.path.Contains("/scroll/") == true;
 
     public static InputHandler instance { get; private set; }
 
@@ -46,6 +59,10 @@ public class InputHandler : MonoBehaviour
         reorientAction = playerControls.FindActionMap("Player").FindAction("Reorient");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
         debugAction = playerControls.FindActionMap("Player").FindAction("Debug");
+        interactAction = playerControls.FindAction("Interact");
+        physicsInteractAction = playerControls.FindAction("Physics Interact");
+        physicsRotateAction = playerControls.FindAction("Physics Rotate");
+        physicsExtendAction = playerControls.FindAction("Physics Extend");
         RegisterInputActions();
     }
 
@@ -99,7 +116,10 @@ public class InputHandler : MonoBehaviour
         sprintAction.Enable();
         debugAction.Enable();
         playerControls.FindAction("ControllerLook").Enable();
-        playerControls.FindAction("Interact").Enable();
+        interactAction.Enable();
+        physicsInteractAction.Enable();
+        physicsRotateAction.Enable();
+        physicsExtendAction.Enable();
     }
 
     private void OnDisable()

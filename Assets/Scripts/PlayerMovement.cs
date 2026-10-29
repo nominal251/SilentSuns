@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rBody;
     private GameObject camera;
     private InputHandler inputHandler;
+    private PhysicsInteractor physicsInteractor;
 
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
@@ -61,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     {
         camera = transform.Find("Player Camera").gameObject;
         inputHandler = InputHandler.instance;
+        physicsInteractor = GetComponent<PhysicsInteractor>();
         game = SilentSuns.Menu.TerminalGameSession.Manager;
         resources = game != null ? game.Resources : null;
         if (game != null) game.RunStarted += ResetOxygenForNewRun;
@@ -87,10 +89,13 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (inputHandler.debugInput)
+        if (inputHandler.debugPressed)
         {
             debugDeteced = true;
         }
+
+        // While turning a held object, look input belongs to the hand instead of the camera.
+        if (physicsInteractor != null && physicsInteractor.IsRotatingObject) return;
 
         if (isGravityOn)
         {

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class InteractOrigin : MonoBehaviour
 {
@@ -7,6 +6,12 @@ public class InteractOrigin : MonoBehaviour
 
     private Interactable currentInteractable;
     private Interactable heldInteractable;
+    private InputHandler inputHandler;
+
+    void Start()
+    {
+        inputHandler = InputHandler.instance;
+    }
 
     void Update()
     {
@@ -34,12 +39,12 @@ public class InteractOrigin : MonoBehaviour
 
         // start interaction
         // Use the same remappable action as the settings screen.
-        var interact = SilentSuns.Menu.TerminalBindings.Controls?.FindAction("Interact");
-        if (interact != null && interact.WasPressedThisFrame())
+        if (inputHandler == null) return;
+        if (inputHandler.interactPressed)
         {
             if (currentInteractable != null)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(gameObject);
                 heldInteractable = currentInteractable;
                 // Controls with an EventTrigger roll once when pressed, not every held frame.
                 var eventTrigger = ((MonoBehaviour)currentInteractable).GetComponent<EventTrigger>();
@@ -48,7 +53,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // while holding interact
-        if (interact != null && interact.IsPressed() && heldInteractable != null)
+        if (inputHandler.interactInput && heldInteractable != null)
         {
             // check if the object is still within range
             float distance = Vector3.Distance(
@@ -64,7 +69,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // on release interact
-        if (interact != null && interact.WasReleasedThisFrame())
+        if (inputHandler.interactReleased)
         {
             if (heldInteractable != null)
             {

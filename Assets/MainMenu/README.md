@@ -87,6 +87,10 @@ F12 saves a screenshot under the game's persistent-data folder, in `Screenshots`
 
 `InputHandler` makes one runtime copy of the input asset. Remapping edits that copy. Temporary duplicates are allowed. Conflicting key names turn solid red, and the side panel lists the conflicting action pairs in red, without flashing. Apply stays blocked until they are resolved. Discard restores the bindings from when Settings opened. Apply saves the overrides to PlayerPrefs. `PlayerMovement` uses the chosen look sensitivity; `InteractOrigin` reads the remappable Interact action. ESC and controller Start stay reserved for pause. F12 stays reserved for screenshots.
 
+Movement, instrument interaction, and object handling all read that same `InputHandler`. `PhysicsInteractor` uses the player's Hand to hold objects. Its new settings rows are Pick Up / Drop, Rotate Held Object, Move Object Closer, and Move Object Farther. These work on foot and in ship. Existing saved movement and Interact bindings keep their IDs.
+
+By default, right click picks up or drops, middle click holds object rotation, and the wheel adjusts distance. On a controller, X / Square picks up or drops, holding the right stick button rotates, and D-pad up/down adjusts distance. Each can be remapped. The two distance directions are separate so keys and controller buttons can also move an object both ways. Sensitivity and invert look apply to the camera and held-object rotation. Turning an object holds the camera still. Opening a menu keeps the object held but stops interaction and manipulation until gameplay resumes.
+
 The pause summary shows active gameplay time for this session, excluding time in menus. It does not imply a saved game. Ship directory, physical operator guide, completion screen, and new loading screens are not included.
 Visual Controls, Credits, and Screenshots are no longer listed in Settings. F12 still captures screenshots. Asset credits remain below and in the license files.
 

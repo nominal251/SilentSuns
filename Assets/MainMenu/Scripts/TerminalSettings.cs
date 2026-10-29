@@ -385,7 +385,7 @@ namespace SilentSuns.Menu
                             tab = "KEYBINDS",
                             name = name,
                             help = context == "ON FOOT + IN SHIP" ?
-                                "This binding applies both on foot and in ship. ESC cancels rebinding." :
+                                TerminalBindings.Description(action) :
                                 "Select to rebind. ESC cancels. Resolve conflicting actions before applying.",
                             draw = row =>
                             {

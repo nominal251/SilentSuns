@@ -101,9 +101,24 @@ namespace SilentSuns.Menu
 
         public static string Label(InputAction action, int index)
         {
+            if (action.name == "Physics Interact") return "PICK UP / DROP";
+            if (action.name == "Physics Rotate") return "ROTATE HELD OBJECT";
+            if (action.name == "Physics Extend")
+                return action.bindings[index].name == "positive" ? "MOVE OBJECT FARTHER" : "MOVE OBJECT CLOSER";
             string part = action.bindings[index].isPartOfComposite ? " " + action.bindings[index].name : "";
             string context = MovementContext(action, index);
             return (action.name + part).ToUpperInvariant() + (context.Length > 0 ? " (" + context + ")" : "");
+        }
+
+        public static string Description(InputAction action)
+        {
+            switch (action.name)
+            {
+                case "Physics Interact": return "Pick up the object you are looking at. Press again to drop it.";
+                case "Physics Rotate": return "Hold and move the mouse or right stick to turn the held object. The camera stays still.";
+                case "Physics Extend": return "Move the held object closer or farther. Scroll for small steps, or hold a key or controller button.";
+                default: return "This binding applies both on foot and in ship. ESC cancels rebinding.";
+            }
         }
 
         public static string MovementContext(InputAction action, int index)
