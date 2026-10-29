@@ -19,7 +19,7 @@ public class PhysicsInteractor : MonoBehaviour
     {
         inputHandler = InputHandler.instance;
         camera = transform.Find("Player Camera").gameObject;
-        hand = transform.Find("Hand").gameObject;
+        hand = camera.transform.Find("Hand").gameObject;
         handPosition = hand.transform.localPosition.z;
     }
     private void Update()
@@ -68,7 +68,8 @@ public class PhysicsInteractor : MonoBehaviour
         {
             if (inputHandler.physicsRotateInput)
             {
-                hand.transform.rotation = Quaternion.Euler(hand.transform.rotation.eulerAngles.x - inputHandler.lookInput.y, hand.transform.rotation.eulerAngles.y + inputHandler.lookInput.x, hand.transform.rotation.eulerAngles.z);
+                hand.transform.Rotate(camera.transform.up, -inputHandler.lookInput.x, Space.World);
+                hand.transform.Rotate(camera.transform.right, inputHandler.lookInput.y, Space.World);
             }
         }
     }
