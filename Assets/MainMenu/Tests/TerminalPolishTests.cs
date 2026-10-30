@@ -607,7 +607,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(TerminalDisplayOptions.Pending, Is.False, "Unconfirmed modes must revert without input.");
         }
 
-        [UnityTest, Category("Menu")]
+        [UnityTest, Category("Menu"), Category("Failure")]
         public IEnumerator FailureScreenRestartSkipsIntro()
         {
             yield return SceneManager.LoadSceneAsync("GameOverScene");
@@ -615,6 +615,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(TerminalFailure.Active, Is.True);
             yield return new WaitForSecondsRealtime(.3f);
             yield return CaptureOverlay("polish-game-over");
+            yield return WaitForFailureChoices();
             var restart = Object.FindObjectsByType<TerminalButton>(FindObjectsSortMode.None).First(b => b.name.Contains("RESTART SURVEY"));
             restart.onClick.Invoke();
             yield return new WaitForSecondsRealtime(2);

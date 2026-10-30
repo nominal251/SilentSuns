@@ -4,5 +4,6 @@ Source and license notice: https://int10h.org/oldschool-pc-fonts/readme/
 License: Creative Commons Attribution-ShareAlike 4.0 International
 License terms: https://creativecommons.org/licenses/by-sa/4.0/
 
-The existing Px437_DOS-V_re_ANK16.ttf is unchanged.
+Fonts used: Px437_DOS-V_re_ANK16.ttf and PxPlus_IBM_BIOS.ttf.
+NavigationPixel.ttf is an unchanged copy of PxPlus_IBM_BIOS.ttf.
 Unity TextMesh Pro uses generated font atlases for the interface.

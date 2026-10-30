@@ -47,6 +47,8 @@ public class PlayerMovement : MonoBehaviour
         ? Mathf.Clamp01(resources.OxygenSeconds / Mathf.Max(.001f, resources.OxygenCapacity)) * maxTotalDistance
         : Mathf.Max(0, maxTotalDistance - totalDistanceTraveled);
     public float SafeRadius => OxygenRemaining;
+    // Read by the navigation gauge, including scenes without the shared resource manager.
+    public float OxygenFraction => Mathf.Clamp01(OxygenRemaining / Mathf.Max(1, maxTotalDistance));
     public bool CanUseSuitOxygen => isGravityOn && !SilentSuns.Menu.TerminalPause.BlocksGameplayInput &&
         (game == null || game.Phase == GameManager.GamePhase.PlanetaryExploration ||
          game.Phase == GameManager.GamePhase.SystemExploration || game.Phase == GameManager.GamePhase.SystemComplete);

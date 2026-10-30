@@ -149,7 +149,7 @@ namespace SilentSuns.Menu.Tests
             finally { Object.Destroy(definition); }
         }
 
-        [UnityTest, Category("Menu")]
+        [UnityTest, Category("Menu"), Category("Failure")]
         public IEnumerator EmptyHullUsesFailureMenuAndRestartResetsResources()
         {
             yield return SceneManager.LoadSceneAsync("SampleScene");
@@ -160,6 +160,7 @@ namespace SilentSuns.Menu.Tests
             while (SceneManager.GetActiveScene().name != "GameOverScene" && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("GameOverScene"));
             Assert.That(game.Phase, Is.EqualTo(GameManager.GamePhase.Ending));
+            yield return WaitForFailureChoices();
             var restart = Object.FindObjectsByType<TerminalButton>(FindObjectsSortMode.None).First(b => b.name.Contains("RESTART SURVEY"));
             restart.onClick.Invoke();
             deadline = Time.realtimeSinceStartup + 10;
@@ -170,7 +171,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(TerminalShipIntro.IsActive, Is.False);
         }
 
-        [UnityTest, Category("Menu")]
+        [UnityTest, Category("Menu"), Category("Failure")]
         public IEnumerator OxygenFailureWaitsForPauseToClose()
         {
             yield return SceneManager.LoadSceneAsync("SampleScene");

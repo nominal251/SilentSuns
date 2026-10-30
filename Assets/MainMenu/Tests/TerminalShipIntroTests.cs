@@ -323,6 +323,8 @@ namespace SilentSuns.Menu.Tests
                 }
             float aspect = camera.aspect;
             camera.aspect = 16f / 9f;
+            var failure = Object.FindFirstObjectByType<TerminalFailure>();
+            if (failure != null && ReadMember(failure, "wake") is Material light) light.SetFloat("_Aspect", camera.aspect);
             var target = new RenderTexture(1920, 1080, 24); target.Create();
             camera.targetTexture = target;
             Canvas.ForceUpdateCanvases();
@@ -334,7 +336,7 @@ namespace SilentSuns.Menu.Tests
                 if (instrument != camera && instrument.enabled && instrument.targetTexture != null && instrument != pauseDisplay?.SourceCamera)
                     RenderPipeline.SubmitRenderRequest(instrument, new UniversalRenderPipeline.SingleCameraRequest { destination = instrument.targetTexture });
             RenderPipeline.SubmitRenderRequest(camera, new UniversalRenderPipeline.SingleCameraRequest { destination = target });
-            var image = new Texture2D(1920, 1080, TextureFormat.RGB24, false);
+            var image = new Texture2D(1920, 1080, TextureFormat.RGBA32, false);
             var previous = RenderTexture.active; RenderTexture.active = target;
             image.ReadPixels(new Rect(0, 0, 1920, 1080), 0, 0); image.Apply();
             RenderTexture.active = previous;

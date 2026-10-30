@@ -19,29 +19,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1082674441
-MonoBehaviour:
+--- !u!224 &1082674443
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1082674439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  m_UiScaleMode: 1
-  m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1600, y: 900}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
-  m_PhysicalUnit: 3
-  m_FallbackScreenDPI: 96
-  m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1164785231}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!223 &1082674442
 Canvas:
   m_ObjectHideFlags: 0
@@ -66,26 +63,29 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!224 &1082674443
-RectTransform:
+--- !u!114 &1082674441
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1082674439}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1164785231}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 1600, y: 900}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0.5
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &1082674444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,20 +99,18 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   mapImage: {fileID: 1164785234}
+  navigationFont: {fileID: 11400000, guid: f96a3120da3f26a41a0e654514d4a2c0, type: 2}
   playerName: Player
   viewRadius: 40
-  terrainLayers:
-    serializedVersion: 2
-    m_Bits: 67108864
-  textureWidth: 256
-  backgroundColor: {r: 0.02, g: 0.04, b: 0.08, a: 1}
-  playerIcon: {fileID: 21300000, guid: 3ac4cf06b97032a40a8441d0f4335e27, type: 3}
-  playerIconColor: {r: 1, g: 1, b: 1, a: 1}
+  anchorToScreen: 1
+  returnPoint: {fileID: 0}
+  backgroundColor: {r: 0.01960784, g: 0.05490196, b: 0.07058824, a: 1}
+  playerIcon: {fileID: 0}
+  playerIconColor: {r: 0.87058824, g: 0.8666667, b: 0.7176471, a: 1}
   playerIconScale: 1
   objectiveIconScale: 1
   clampToEdge: 1
-  circleSprite: {fileID: 0}
-  circleColor: {r: 0.2, g: 0.8, b: 1, a: 1}
+  markerStyles: []
 --- !u!1 &1164785230
 GameObject:
   m_ObjectHideFlags: 0
@@ -124,7 +122,6 @@ GameObject:
   - component: {fileID: 1164785231}
   - component: {fileID: 1164785233}
   - component: {fileID: 1164785234}
-  - component: {fileID: 1164785235}
   m_Layer: 5
   m_Name: Container/Background
   m_TagString: Untagged
@@ -141,7 +138,7 @@ RectTransform:
   m_GameObject: {fileID: 1164785230}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8125, y: 0.8125, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1082674443}
@@ -149,7 +146,7 @@ RectTransform:
   m_AnchorMin: {x: 0.03, y: 0.97}
   m_AnchorMax: {x: 0.03, y: 0.97}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 640, y: 480}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1164785233
 CanvasRenderer:
@@ -186,17 +183,3 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &1164785235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1164785230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RectMask2D
-  m_Padding: {x: 0, y: 0, z: 0, w: 0}
-  m_Softness: {x: 0, y: 0}
