@@ -1,106 +1,140 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using SilentSuns.Menu;
 
-// Keeps the ship screen and buttons connected while ObjectiveSystem tracks the survey.
 public class ObjectiveTracker : MonoBehaviour
 {
     public Planet planet1;
     public Planet planet2;
     public Planet planet3;
     public Planet planet4;
+
     public TextMeshPro objText;
-    [HideInInspector] public bool allObjectivesComplete;
+
+    [HideInInspector]
+    public bool allObjectivesComplete = false;
+
     public Button cryoButton;
     public Button debugButton;
+
+    private bool debugComplete = false;
+
+    private string stats;
+
+    private string p1String;
+    private string p2String;
+    private string p3String;
+    private string p4String;
+
     public string victoryScene;
+
     public BlinkyLight blinkyLight;
-    [SerializeField] private ObjectiveSystem objectiveSystem;
+    private bool var = true;
 
-    private readonly PlanetSurveyObjective[] surveys = new PlanetSurveyObjective[4];
-    private GameManager game;
-    private bool debugComplete;
-    private bool leaving;
-
-    private void Start()
+    void Start()
     {
-        objectiveSystem.SetSuspended(true);
-        Planet[] planets = { planet1, planet2, planet3, planet4 };
-        for (int i = 0; i < planets.Length; i++)
+        RefreshText();
+    }
+
+    void Update()
+    {
+        if (debugButton.activated)
+            debugComplete = true;
+
+        RefreshText();
+
+        if (cryoButton.activated && allObjectivesComplete)
+            SceneManager.LoadScene(victoryScene);
+
+        if (allObjectivesComplete && var)
         {
-            // Keep objectives on their planets so future map markers use the right positions.
-            surveys[i] = planets[i].gameObject.AddComponent<PlanetSurveyObjective>();
-            surveys[i].SetPlanet(planets[i], i + 1);
-            objectiveSystem.Register(surveys[i]);
+            blinkyLight.blink = true;
+            var = false;
         }
-        objectiveSystem.AllObjectivesCompleted += SurveyComplete;
-        game = TerminalGameSession.Manager;
-        if (game != null) game.RunStarted += ResetSurvey;
-        RefreshText();
     }
 
-    private void Update()
+    void RefreshText()
     {
-        bool playing = game == null || game.Phase == GameManager.GamePhase.SystemExploration ||
-            game.Phase == GameManager.GamePhase.SystemComplete || game.Phase == GameManager.GamePhase.PlanetaryExploration;
-        objectiveSystem.SetSuspended(!playing || TerminalPause.BlocksGameplayInput);
-        if (objectiveSystem.Suspended || leaving) return;
-
-        if (debugButton != null && debugButton.activated) debugComplete = true;
-        foreach (var survey in surveys)
-            if (survey != null) survey.CheckScans();
-
-        allObjectivesComplete = debugComplete || (objectiveSystem.Objectives.Count == 4 && objectiveSystem.AllComplete);
-        RefreshText();
-        if (!allObjectivesComplete) return;
-
-        // The debug button can unlock cryosleep, but does not earn the completion flag.
-        SurveyComplete();
-        blinkyLight.blink = true;
-        if (cryoButton == null || !cryoButton.activated) return;
-        if (game != null)
+        // Planet 1
+        if (!planet1.gameObject.activeInHierarchy)
         {
-            game.SubmitCatalog();
-            if (!game.EnterCryosleep()) return;
-            game.SetEnding();
+            p1String = "PLANET 1 NOT LOCATED";
         }
-        leaving = true;
-        if (!debugComplete) GameProgress.MarkCompleted();
-        SceneManager.LoadScene(victoryScene);
-    }
+        else
+        {
+            p1String =
+                planet1.name +
+                "- Signal Scan: [" +
+                (planet1.waveformComplete ? "X" : " ") +
+                "] - Comp Scan: [" +
+                (planet1.compComplete ? "X" : " ") +
+                "]";
+        }
 
-    private void SurveyComplete()
-    {
-        // Danny's manager handles catalog submission and the nitrogen cost after this.
-        if (objectiveSystem.Objectives.Count == 4 && (objectiveSystem.AllComplete || debugComplete))
-            game?.MarkCatalogReady();
-    }
+        // Planet 2
+        if (!planet2.gameObject.activeInHierarchy)
+        {
+            p2String = "PLANET 2 NOT LOCATED";
+        }
+        else
+        {
+            p2String =
+                planet2.name +
+                "- Signal Scan: [" +
+                (planet2.waveformComplete ? "X" : " ") +
+                "] - Comp Scan: [" +
+                (planet2.compComplete ? "X" : " ") +
+                "]";
+        }
 
-    private void ResetSurvey()
-    {
-        objectiveSystem.SetSuspended(true);
-        objectiveSystem.ResetObjectives();
-        debugComplete = false;
-        leaving = false;
-        allObjectivesComplete = false;
-        blinkyLight.blink = false;
-        if (cryoButton != null) cryoButton.activated = false;
-        if (debugButton != null) debugButton.activated = false;
-        RefreshText();
-    }
+        // Planet 3
+        if (!planet3.gameObject.activeInHierarchy)
+        {
+            p3String = "PLANET 3 NOT LOCATED";
+        }
+        else
+        {
+            p3String =
+                planet3.name +
+                "- Signal Scan: [" +
+                (planet3.waveformComplete ? "X" : " ") +
+                "] - Comp Scan: [" +
+                (planet3.compComplete ? "X" : " ") +
+                "]";
+        }
 
-    private void RefreshText()
-    {
-        string[] lines = new string[4];
-        for (int i = 0; i < surveys.Length; i++)
-            lines[i] = surveys[i] != null ? surveys[i].GetProgressText() : "PLANET " + (i + 1) + " NOT LOCATED";
-        objText.text = "Bodies Surveyed:\n" + string.Join("\n", lines);
-    }
+        // Planet 4
+        if (!planet4.gameObject.activeInHierarchy)
+        {
+            p4String = "PLANET 4 NOT LOCATED";
+        }
+        else
+        {
+            p4String =
+                planet4.name +
+                "- Signal Scan: [" +
+                (planet4.waveformComplete ? "X" : " ") +
+                "] - Comp Scan: [" +
+                (planet4.compComplete ? "X" : " ") +
+                "]";
+        }
 
-    private void OnDestroy()
-    {
-        if (game != null) game.RunStarted -= ResetSurvey;
-        if (objectiveSystem != null) objectiveSystem.AllObjectivesCompleted -= SurveyComplete;
+        // Check whether every objective is complete
+        allObjectivesComplete =
+            debugComplete ||
+            (
+                planet1.waveformComplete && planet1.compComplete &&
+                planet2.waveformComplete && planet2.compComplete &&
+                planet3.waveformComplete && planet3.compComplete &&
+                planet4.waveformComplete && planet4.compComplete
+            );
+
+        stats =
+            p1String + "\n" +
+            p2String + "\n" +
+            p3String + "\n" +
+            p4String;
+
+        objText.text = "Bodies Surveyed:\n" + stats;
     }
 }

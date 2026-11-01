@@ -12,6 +12,7 @@ public class PhysicsInteractor : MonoBehaviour
 
     private PhysicsInteractable observedObject;
     private PhysicsInteractable heldObject;
+    public bool IsRotatingObject;
     private GameObject hand;
     private float handPosition;
 
@@ -68,8 +69,13 @@ public class PhysicsInteractor : MonoBehaviour
         {
             if (inputHandler.physicsRotateInput)
             {
+                IsRotatingObject = true;
                 hand.transform.Rotate(camera.transform.up, -inputHandler.lookInput.x, Space.World);
                 hand.transform.Rotate(camera.transform.right, inputHandler.lookInput.y, Space.World);
+            }
+            else
+            {
+                IsRotatingObject = false;
             }
         }
     }
