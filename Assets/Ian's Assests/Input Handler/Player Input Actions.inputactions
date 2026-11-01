@@ -77,6 +77,16 @@
                     "priority": 0
                 },
                 {
+                    "name": "Physics Interact",
+                    "type": "Button",
+                    "id": "e3298d7d-b345-45bb-b060-d9a4446cc9ae",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "e0d6f3da-0b8f-480c-97cc-67262e0f9b34",
@@ -205,6 +215,28 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "4a3909ec-40cd-4484-8060-f948c4211ae4",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Physics Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "412fbdf9-342e-4d25-84af-e08f4295b6c5",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Physics Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "Mouse",

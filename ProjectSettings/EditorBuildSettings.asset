@@ -24,4 +24,4 @@ EditorBuildSettings:
     path: Assets/Scenes/ObjectiveCheck.unity
     guid: 796cddaa0051cb14592b9e2c38d43dd2
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 6d8fd22eec8a92d4aabea023b5569db9, type: 3}
