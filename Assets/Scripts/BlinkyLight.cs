@@ -10,7 +10,7 @@ public class BlinkyLight : MonoBehaviour
 
     void Update()
     {
-        if (blink)
+        if (blink && light != null)
         {
             timer += Time.deltaTime;
 
@@ -19,6 +19,10 @@ public class BlinkyLight : MonoBehaviour
                 timer = 0f;
                 light.SetActive(!light.activeSelf);
             }
+        }
+        else
+        {
+            Debug.LogWarning(gameObject.name + "light does not have a gameobject assigned");
         }
     }
 }

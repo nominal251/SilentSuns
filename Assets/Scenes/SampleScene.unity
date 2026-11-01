@@ -2427,10 +2427,10 @@ MonoBehaviour:
   planet2: {fileID: 239383531}
   planet3: {fileID: 260379923}
   planet4: {fileID: 913949520}
-  objText: {fileID: 0}
+  objText: {fileID: 1837249874}
   allObjectivesComplete: 0
-  cryoButton: {fileID: 0}
-  debugButton: {fileID: 0}
+  cryoButton: {fileID: 4170078813923749780}
+  debugButton: {fileID: 1014151204}
   victoryScene: VictoryScene
   blinkyLight: {fileID: 200599904}
 --- !u!4 &200599906
@@ -22252,10 +22252,10 @@ MonoBehaviour:
   planet2: {fileID: 239383531}
   planet3: {fileID: 260379923}
   planet4: {fileID: 913949520}
-  objText: {fileID: 0}
+  objText: {fileID: 1837249874}
   allObjectivesComplete: 0
-  cryoButton: {fileID: 0}
-  debugButton: {fileID: 0}
+  cryoButton: {fileID: 4170078813923749780}
+  debugButton: {fileID: 1014151204}
   victoryScene: VictoryScene
   blinkyLight: {fileID: 2059327821}
 --- !u!4 &2059327823
