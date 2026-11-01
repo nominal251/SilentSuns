@@ -749,6 +749,7 @@ GameObject:
   m_Component:
   - component: {fileID: 63704302}
   - component: {fileID: 63704303}
+  - component: {fileID: 63704305}
   - component: {fileID: 63704304}
   m_Layer: 0
   m_Name: ScreenZoneObjectiveTracker
@@ -799,6 +800,22 @@ MonoBehaviour:
   debugButton: {fileID: 1083703137}
   victoryScene: VictoryScene
   blinkyLight: {fileID: 63704304}
+  objectiveSystem: {fileID: 63704305}
+--- !u!114 &63704305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63704300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c90213570e204148bf0eab39b3083fc, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveSystem
+  objectives: []
+  collectOnAwake: 0
+  suspended: 1
 --- !u!114 &63704304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2387,7 +2404,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 200599906}
-  - component: {fileID: 200599905}
   - component: {fileID: 200599904}
   m_Layer: 0
   m_Name: ScreenZoneTelescope
@@ -2411,28 +2427,6 @@ MonoBehaviour:
   light: {fileID: 0}
   blink: 0
   blinkInterval: 0.75
---- !u!114 &200599905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 200599903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 963035025}
-  planet2: {fileID: 239383531}
-  planet3: {fileID: 260379923}
-  planet4: {fileID: 913949520}
-  objText: {fileID: 1837249874}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 4170078813923749780}
-  debugButton: {fileID: 1014151204}
-  victoryScene: VictoryScene
-  blinkyLight: {fileID: 200599904}
 --- !u!4 &200599906
 Transform:
   m_ObjectHideFlags: 0
@@ -4186,6 +4180,7 @@ GameObject:
   - component: {fileID: 343065124}
   - component: {fileID: 343065123}
   - component: {fileID: 343065122}
+  - component: {fileID: 343065127}
   m_Layer: 0
   m_Name: PhysicsObjectTest (1)
   m_TagString: Untagged
@@ -4313,6 +4308,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 44.277, y: -28.706, z: 7.684}
+--- !u!114 &343065127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343065121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
 --- !u!1 &351977314
 GameObject:
   m_ObjectHideFlags: 0
@@ -9800,6 +9807,7 @@ GameObject:
   - component: {fileID: 791488916}
   - component: {fileID: 791488915}
   - component: {fileID: 791488914}
+  - component: {fileID: 791488919}
   m_Layer: 0
   m_Name: PhysicsObjectTest
   m_TagString: Untagged
@@ -9927,6 +9935,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 11.652, y: 17.484, z: -7.287}
+--- !u!114 &791488919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791488913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
 --- !u!1001 &800891335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22212,7 +22232,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2059327823}
-  - component: {fileID: 2059327822}
   - component: {fileID: 2059327821}
   m_Layer: 0
   m_Name: ScreenZoneProbeLauncher
@@ -22236,28 +22255,6 @@ MonoBehaviour:
   light: {fileID: 0}
   blink: 0
   blinkInterval: 0.75
---- !u!114 &2059327822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059327820}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 963035025}
-  planet2: {fileID: 239383531}
-  planet3: {fileID: 260379923}
-  planet4: {fileID: 913949520}
-  objText: {fileID: 1837249874}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 4170078813923749780}
-  debugButton: {fileID: 1014151204}
-  victoryScene: VictoryScene
-  blinkyLight: {fileID: 2059327821}
 --- !u!4 &2059327823
 Transform:
   m_ObjectHideFlags: 0

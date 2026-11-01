@@ -1,0 +1,37 @@
+SILENT SUNS
+Thing(s) Studios
+
+TEAM
+Aiden Figueroa / Austin Covert / Bella Rastrelli
+Brian Posada / Daniel Chaviano / Daniel Krupczak
+Dave Tassinari / Drew Prato / Hope Phillips
+Ian Ramage / Jack Hardy / Joseph Rossario
+Xavier Rosario
+
+INTERFACE AUDIO
+Keyboard Soundpack #1: unicaegames / OpenGameArt / CC0
+Key_Press: Mediasaur / Freesound 788932 / CC0
+Mouse Click: planet_jvk / Freesound 825193 / CC0
+CRT monitor turns on: Darklanlan / Wikimedia Commons / CC0
+CRT TV Hum: X3SB / Freesound 818513 / CC0
+Controller notice: Kenney Interface Sounds / error_006.ogg / CC0
+https://kenney.nl/assets/interface-sounds
+Menu Music: temporary supplied track; license not documented.
+
+ARTWORK
+Space shuttle: Font Awesome Free / Fonticons, Inc. / CC BY 4.0
+https://fontawesome.com/icons/shuttle-space
+https://creativecommons.org/licenses/by/4.0/
+SVG converted to a white PNG; rotated and tinted in the screensaver.
+Pipes: original procedural geometry.
+
+FONT
+Px437 DOS/V re. ANK16 / The Ultimate Oldschool PC Font Pack
+VileR / https://int10h.org/oldschool-pc-fonts/ / CC BY-SA 4.0
+See the font license included in the project.
+
+LEGACY GAMEPLAY AUDIO
+Click.mp3, Click2.mp3, knocking.wav, signal1-4 were already in the
+project before the menu work. Sources and licenses await team confirmation.
+
+Full audio links and modifications are in Assets/MainMenu/README.md.

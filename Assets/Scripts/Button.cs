@@ -8,7 +8,7 @@ public class Button : MonoBehaviour, Interactable
     public Material inactiveMat;
     public Material activeMat;
 
-    public void Interact()
+    public void Interact(GameObject interactionSource)
     {
         if (isToggle)
         {

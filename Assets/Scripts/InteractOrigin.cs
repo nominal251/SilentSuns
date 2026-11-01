@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class InteractOrigin : MonoBehaviour
 {
@@ -7,9 +6,25 @@ public class InteractOrigin : MonoBehaviour
 
     private Interactable currentInteractable;
     private Interactable heldInteractable;
+    private InputHandler inputHandler;
+
+    void Start()
+    {
+        inputHandler = InputHandler.instance;
+    }
 
     void Update()
     {
+        // Release held controls before pausing; menu clicks must not reach instruments.
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        {
+            if (heldInteractable != null)
+                heldInteractable.StopInteract();
+            heldInteractable = null;
+            currentInteractable = null;
+            return;
+        }
+
         Ray ray = new Ray(transform.position, transform.forward);
 
         currentInteractable = null;
@@ -23,17 +38,22 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // start interaction
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        // Use the same remappable action as the settings screen.
+        if (inputHandler == null) return;
+        if (inputHandler.interactPressed)
         {
             if (currentInteractable != null)
             {
-                currentInteractable.Interact();
+                currentInteractable.Interact(gameObject);
                 heldInteractable = currentInteractable;
+                // Controls with an EventTrigger roll once when pressed, not every held frame.
+                var eventTrigger = ((MonoBehaviour)currentInteractable).GetComponent<EventTrigger>();
+                if (eventTrigger != null) eventTrigger.Fire(transform);
             }
         }
 
         // while holding interact
-        if (Mouse.current.leftButton.isPressed && heldInteractable != null)
+        if (inputHandler.interactInput && heldInteractable != null)
         {
             // check if the object is still within range
             float distance = Vector3.Distance(
@@ -49,7 +69,7 @@ public class InteractOrigin : MonoBehaviour
         }
 
         // on release interact
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
+        if (inputHandler.interactReleased)
         {
             if (heldInteractable != null)
             {

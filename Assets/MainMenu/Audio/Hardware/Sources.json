@@ -1,0 +1,26 @@
+[
+  {
+    "file": "CRTPowerOn.wav",
+    "title": "CRT monitor turns on",
+    "author": "Darklanlan",
+    "source": "https://commons.wikimedia.org/wiki/File:CRT_monitor_turns_on.ogg",
+    "download": "https://upload.wikimedia.org/wikipedia/commons/2/22/CRT_monitor_turns_on.ogg",
+    "changes": "0.92-4.72 seconds, mono 44.1 kHz PCM, +5 dB, 5 ms start and 250 ms tail fade.",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved": "2026-10-19",
+    "source_sha256": "fca8732a06d5c8e3a97b4489dd94bbe1873091bb666c9e242b9037dcb76ae1ef"
+  },
+  {
+    "file": "CRTHum.wav",
+    "title": "CRT TV Hum",
+    "author": "X3SB",
+    "source": "https://freesound.org/people/X3SB/sounds/818513/",
+    "download": "https://cdn.freesound.org/previews/818/818513_3410027-hq.mp3",
+    "changes": "1.8-6.8 seconds of actual CRT recording, mono 44.1 kHz PCM, RMS adjusted to -29 dBFS, 300 ms overlap crossfade for looping.",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "retrieved": "2026-10-19",
+    "source_sha256": "6bdbda577fcd647ef6415174875c4612e03a28584fe58505f713a48a9fb5cd2e"
+  }
+]
