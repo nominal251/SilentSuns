@@ -19,12 +19,18 @@ public class Planet : MonoBehaviour
     public string compText1;
     public string compText2;
 
+    [Header("Paramaters for On-Surface Gameplay")]
+    public bool isLandable;
+    public string surfaceScene;
+
     [Header("Objective Completion Trackers")]
     // OBJECTIVE COMPLETION TRACKERS
     public bool waveformComplete = false;
     //public bool imageComplete = false;
     public bool compComplete = false;
     //public bool probeComplete = false;
+
+    public bool landingReady = false;
 
     [Header("Anomaly Planet Settings")]
     public bool isAnomaly = false;
@@ -35,6 +41,11 @@ public class Planet : MonoBehaviour
         if (isAnomaly && waveformComplete && compComplete)
         {
             enemy.SetActive(true);
+        }
+
+        if (waveformComplete && compComplete)
+        {
+            landingReady = true;
         }
     }
 
