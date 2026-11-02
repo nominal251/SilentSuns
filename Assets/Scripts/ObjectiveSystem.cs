@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ObjectiveSystem : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ObjectiveSystem : MonoBehaviour
     public bool AllComplete => objectives.Count > 0 && objectives.TrueForAll(o => o != null && o.IsComplete);
     public event Action<Objective> ObjectiveCompleted;
     public event Action AllObjectivesCompleted;
+    public UnityEvent AllObjectivesCompletedEvent;
 
     private void Awake()
     {
@@ -23,7 +25,7 @@ public class ObjectiveSystem : MonoBehaviour
         objectives.Clear();
         if (collectOnAwake) suspended = true;
         if (collectOnAwake)
-            foreach (Objective objective in FindObjectsByType<Objective>(FindObjectsSortMode.None))
+            foreach (Objective objective in FindObjectsByType<Objective>())
                 Register(objective);
     }
 
@@ -100,6 +102,7 @@ public class ObjectiveSystem : MonoBehaviour
             completionReported = true;
             Debug.Log("All objectives complete!");
             AllObjectivesCompleted?.Invoke();
+            AllObjectivesCompletedEvent?.Invoke();
         }
     }
 }

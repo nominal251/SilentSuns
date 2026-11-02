@@ -20,13 +20,23 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float maxCameraAngle = 85f;
 
+    [Header("Jump Parameters (gravity mode only)")]
+    [SerializeField] private float jumpHeight = 1.2f;
+    [SerializeField] private float jumpCooldown = 0.2f;
+    [SerializeField] private float groundCheckDistance = 0.15f;
+    [SerializeField] private LayerMask groundMask = ~0;
+
     private Rigidbody rBody;
+    private Collider bodyCollider;
     private GameObject camera;
     private InputHandler inputHandler;
     private PhysicsInteractor physicsInteractor;
 
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
+
+    private float jumpPressedTime = -10f;
+    private float lastJumpTime = -10f;
 
     private bool debugDeteced = false;
     [Header("Oxygen Parameters")]
@@ -57,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rBody = GetComponent<Rigidbody>();
+        bodyCollider = GetComponentInChildren<Collider>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -72,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGravityOn)
         {
+            SyncLookAnglesFromTransform();
             rBody.useGravity = isGravityOn;
             rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         }
@@ -84,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Mouse look uses raw input, so it also needs to stop while the menu is open.
+        //Mouse look uses raw input, so it also needs to stop while the menu is open.
         if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
         {
             previousPosition = rBody.position;
@@ -96,7 +108,12 @@ public class PlayerMovement : MonoBehaviour
             debugDeteced = true;
         }
 
-        // While turning a held object, look input belongs to the hand instead of the camera.
+        if (inputHandler.jumpPressed)
+        {
+            jumpPressedTime = Time.time;
+        }
+
+        //While turning a held object, look input belongs to the hand instead of the camera.
         if (physicsInteractor != null && physicsInteractor.IsRotatingObject) return;
 
         if (isGravityOn)
@@ -124,10 +141,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGravityOn)
         {
+            HandleJump();
             HandleMovementGravity();
         }
         else
         {
+            jumpPressedTime = -10f; // no jumping in zero G, and don't carry a press into gravity mode
             HandleMovementNoGravity();
         }
     }
@@ -155,6 +174,30 @@ public class PlayerMovement : MonoBehaviour
         {
             rBody.AddRelativeForce(inputDirection * groundedMoveForce, ForceMode.Force);
         }
+    }
+
+    private void HandleJump()
+    {
+        if (Time.time - jumpPressedTime > 0.15f) return;
+        if (Time.time - lastJumpTime < jumpCooldown) return;
+        if (!IsGrounded()) return;
+
+        float jumpSpeed = Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+        rBody.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
+
+        lastJumpTime = Time.time;
+        jumpPressedTime = -10f;
+    }
+
+    private bool IsGrounded()
+    {
+        if (bodyCollider == null) return true;
+
+        Bounds bounds = bodyCollider.bounds;
+        float radius = Mathf.Min(bounds.extents.x, bounds.extents.z) * 0.9f;
+        float distance = bounds.extents.y - radius + groundCheckDistance;
+        return Physics.SphereCast(bounds.center, radius, Vector3.down, out _, distance,
+            groundMask, QueryTriggerInteraction.Ignore);
     }
 
     private void HandleRotationNoGravity()
@@ -186,15 +229,41 @@ public class PlayerMovement : MonoBehaviour
             if (!isGravityOn) currentOxygenStation = null;
             if (isGravityOn)
             {
+                SyncLookAnglesFromTransform();
                 rBody.useGravity = isGravityOn;
                 rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             }
             else
             {
+                BakeCameraPitchIntoBody();
                 rBody.useGravity = isGravityOn;
                 rBody.constraints = RigidbodyConstraints.None;
             }
         }
+    }
+    //Switches between gravity and zero G
+    private void SyncLookAnglesFromTransform()
+    {
+        Vector3 forward = transform.forward;
+        Vector3 flat = Vector3.ProjectOnPlane(forward, Vector3.up);
+        yRotation = flat.sqrMagnitude > 0.0001f
+            ? Quaternion.LookRotation(flat).eulerAngles.y
+            : transform.eulerAngles.y;
+        cameraXRotation = Mathf.Clamp(
+            -Mathf.Asin(Mathf.Clamp(forward.y, -1f, 1f)) * Mathf.Rad2Deg,
+            -maxCameraAngle, maxCameraAngle);
+
+        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+        if (camera != null)
+            camera.transform.localRotation = Quaternion.Euler(cameraXRotation, 0f, 0f);
+    }
+
+    private void BakeCameraPitchIntoBody()
+    {
+        transform.rotation = Quaternion.Euler(cameraXRotation, yRotation, 0f);
+        if (camera != null)
+            camera.transform.localRotation = Quaternion.identity;
+        cameraXRotation = 0f;
     }
 
     private void TrackDistance()

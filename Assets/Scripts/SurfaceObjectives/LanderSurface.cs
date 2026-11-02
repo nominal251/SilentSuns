@@ -9,7 +9,7 @@ public class LanderSurface : MonoBehaviour
 
     public string spaceScene = "SampleScene";
 
-    private bool isLaunching = false;
+    public bool isLaunching = false;
 
     void Update()
     {

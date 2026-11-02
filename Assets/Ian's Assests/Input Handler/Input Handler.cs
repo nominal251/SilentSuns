@@ -12,6 +12,7 @@ public class InputHandler : MonoBehaviour
     private InputAction reorientAction;
     private InputAction debugAction;
     private InputAction sprintAction;
+    private InputAction jumpAction;
     private InputAction toolAction;
     private InputAction interactAction;
     private InputAction physicsInteractAction;
@@ -25,6 +26,7 @@ public class InputHandler : MonoBehaviour
     public float rollInput { get; private set; }
     public bool reorientInput { get; private set; }
     public bool sprintInput { get; private set; }
+    public bool jumpPressed => jumpAction.WasPressedThisFrame();
     public bool toolInput { get; private set; }
     public bool debugInput { get; private set; }
     public bool debugPressed => debugAction.WasPerformedThisFrame();
@@ -60,6 +62,7 @@ public class InputHandler : MonoBehaviour
         rollAction = playerControls.FindActionMap("Player").FindAction("Roll");
         reorientAction = playerControls.FindActionMap("Player").FindAction("Reorient");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
+        jumpAction = playerControls.FindAction("Jump", true); // throws a clear error if the action is missing
         debugAction = playerControls.FindActionMap("Player").FindAction("Debug");
         toolAction = playerControls.FindActionMap("Player").FindAction("Tool");
         interactAction = playerControls.FindAction("Interact");
@@ -121,6 +124,7 @@ public class InputHandler : MonoBehaviour
         rollAction.Enable();
         reorientAction.Enable();
         sprintAction.Enable();
+        jumpAction.Enable();
         debugAction.Enable();
         toolAction.Enable();
         playerControls.FindAction("ControllerLook").Enable();
@@ -138,6 +142,7 @@ public class InputHandler : MonoBehaviour
         rollAction?.Disable();
         reorientAction?.Disable();
         sprintAction?.Disable();
+        jumpAction?.Disable();
         debugAction?.Disable();
         toolAction?.Disable();
         if (instance == this) playerControls?.Disable();

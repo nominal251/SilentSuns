@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEditor;
 
 public class TransformTool : MonoBehaviour
 {
@@ -11,9 +10,17 @@ public class TransformTool : MonoBehaviour
     public Transform baseTransform;
     public Vector3 basePosition;
 
-    [Header("Path (offsets from base)")]
-    public Vector3 pointA = Vector3.zero;
+    [Header("Rotation")]
+    // Off by default so existing objects keep their current rotation.
+    public bool useRotation = false;
+    // Starting orientation (Euler), in the same space as the position (local, world, or relative to baseTransform).
+    public Vector3 baseRotation;
+
+    [Header("Path (offsets and rotate from base)")]
+    public Vector3 pointApos = Vector3.zero;
+    public Vector3 pointArot = Vector3.zero;
     public Vector3 pointB = new Vector3(3f, 0f, 0f);
+    public Vector3 pointBrot = new Vector3(0f, 0f, 0f);
 
     [Header("Motion")]
     [Min(0.01f)] public float duration = 2f;
@@ -38,7 +45,9 @@ public class TransformTool : MonoBehaviour
     bool moving;
     float pause;
 
-    public Vector3 PointAWorld => ToWorld(pointA);
+    Transform Base => baseTransform && !baseTransform.IsChildOf(transform) ? baseTransform : null;
+
+    public Vector3 PointAWorld => ToWorld(pointApos);
     public Vector3 PointBWorld => ToWorld(pointB);
 
     public void MoveToA() => MoveTo(0f);
@@ -61,41 +70,67 @@ public class TransformTool : MonoBehaviour
     Vector3 FromSpace(Vector3 p) => UseParentSpace ? transform.parent.TransformPoint(p) : p;
 
     public Quaternion HandleRotation =>
-        baseTransform ? baseTransform.rotation : UseParentSpace ? transform.parent.rotation : Quaternion.identity;
+        Base ? Base.rotation : UseParentSpace ? transform.parent.rotation : Quaternion.identity;
     public Vector3 BasePosition => ToWorld(Vector3.zero);
     public Vector3 ToWorld(Vector3 offset) =>
-        baseTransform ? baseTransform.TransformPoint(offset) : FromSpace(basePosition + offset);
+        Base ? Base.TransformPoint(offset) : FromSpace(basePosition + offset);
     public Vector3 ToOffset(Vector3 world) =>
-        baseTransform ? baseTransform.InverseTransformPoint(world) : ToSpace(world) - basePosition;
+        Base ? Base.InverseTransformPoint(world) : ToSpace(world) - basePosition;
     public void SetBaseFromWorld(Vector3 world) => basePosition = ToSpace(world);
 
-    //Move to a target position
-    void MoveTo(float t)
+    //Rotation relative to the base
+    Quaternion LocalRotation(float e) =>
+        Quaternion.Euler(baseRotation) * Quaternion.Euler(Vector3.LerpUnclamped(pointArot, pointBrot, e));
+
+    Quaternion WorldRotation(float e)
     {
-        target = t;
+        Quaternion local = LocalRotation(e);
+        if (Base) return Base.rotation * local;
+        if (UseParentSpace) return transform.parent.rotation * local;
+        return local;
+    }
+
+    //Move to a target position
+    void MoveTo(float time)
+    {
+        target = time;
         pause = 0f;
-        moving = !Mathf.Approximately(progress, t);
+        moving = !Mathf.Approximately(progress, time);
     }
 
     //Snap to an area when not moving, and apply the position immediately
-    void Snap(float t)
+    void Snap(float time)
     {
-        progress = target = t;
+        progress = target = time;
         moving = false;
         Apply();
     }
 
-    //Apply the current progress to the transform position
+    //Apply the current progress to the transform position (and rotation, if enabled)
     void Apply()
     {
-        float e = easing.Evaluate(progress);
-        if (useLocalPosition && !baseTransform)
-            transform.localPosition = Vector3.LerpUnclamped(basePosition + pointA, basePosition + pointB, e);
+        float ease = easing.Evaluate(progress);
+        if (useLocalPosition && !Base)
+            transform.localPosition = Vector3.LerpUnclamped(basePosition + pointApos, basePosition + pointB, ease);
         else
-            transform.position = Vector3.LerpUnclamped(PointAWorld, PointBWorld, e);
+            transform.position = Vector3.LerpUnclamped(PointAWorld, PointBWorld, ease);
+
+        if (!useRotation) return;
+
+        if (useLocalPosition && !Base)
+            transform.localRotation = LocalRotation(ease);
+        else
+            transform.rotation = WorldRotation(ease);
     }
 
-    void Reset() => basePosition = useLocalPosition ? transform.localPosition : transform.position;
+    void Reset() => CaptureBaseFromCurrent();
+
+    [ContextMenu("Set Base From Current Position")]
+    void CaptureBaseFromCurrent()
+    {
+        basePosition = useLocalPosition ? transform.localPosition : transform.position;
+        baseRotation = useLocalPosition ? transform.localEulerAngles : transform.eulerAngles;
+    }
 
     //Start action on start
     void Start()

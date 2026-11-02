@@ -115,6 +115,15 @@ MonoBehaviour:
   groundedMoveForce: 25
   sprintMultiplier: 2
   maxCameraAngle: 85
+  jumpHeight: 1.2
+  jumpCooldown: 0.2
+  jumpBuffer: 0.15
+  groundCheckDistance: 0.15
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  oxygenRegenRate: 10
+  maxTotalDistance: 900
 --- !u!114 &5373841226381726112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +153,7 @@ MonoBehaviour:
   scrollSens: 0.05
   handMin: 0.5
   handMax: 2
+  IsRotatingObject: 0
 --- !u!1 &4978200516783072722
 GameObject:
   m_ObjectHideFlags: 0
@@ -172,7 +182,7 @@ Transform:
   m_GameObject: {fileID: 4978200516783072722}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -185,7 +195,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4978200516783072722}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &8108095082167166078
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -255,7 +265,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5371243066157529511
