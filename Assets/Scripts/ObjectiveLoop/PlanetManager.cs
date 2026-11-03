@@ -4,6 +4,10 @@ using TMPro;
 
 public class PlanetManager : MonoBehaviour
 {
+    public int currentSystem = 1;
+
+    public bool currentSystemLanderComplete = false;
+
     public bool debugMode = false;
     public GameObject debugText;
 
@@ -20,6 +24,29 @@ public class PlanetManager : MonoBehaviour
     public List<Planet> planets = new List<Planet>();
 
     public Planet CurrentPlanet { get; private set; }
+
+    void Awake()
+    {
+        planets.Clear();
+
+        // autofill planets list
+        foreach (Planet planet in FindObjectsByType<Planet>(FindObjectsInactive.Include))
+        {
+            if (planet.CompareTag("Planet"))
+                planets.Add(planet);
+        }
+
+        // sort by system number first, then by object name within each system
+        planets.Sort((a, b) =>
+        {
+            int bySystem = a.system.CompareTo(b.system);
+            return bySystem != 0
+                ? bySystem
+                : string.Compare(a.gameObject.name, b.gameObject.name);
+        });
+
+        Debug.Log($"PlanetManager: registered {planets.Count} planets.", this);
+    }
 
     void Start()
     {
@@ -59,5 +86,29 @@ public class PlanetManager : MonoBehaviour
         {
             debugText.GetComponent<TMP_Text>().text = "Planet Name = N/A";
         }
+    }
+
+    void Update()
+    {
+        var keyboard = UnityEngine.InputSystem.Keyboard.current;
+        if (keyboard != null && keyboard.f10Key.wasPressedThisFrame)
+            DebugCompleteSystem();
+    }
+
+    public void DebugCompleteSystem()
+    {
+        foreach (Planet planet in planets)
+        {
+            if (planet.system != currentSystem)
+                continue;
+
+            planet.gameObject.SetActive(true);   // discover planet
+            planet.waveformComplete = true;
+            planet.compComplete = true;
+        }
+
+        currentSystemLanderComplete = true;
+
+        Debug.Log($"PlanetManager: DEBUG marked system {currentSystem} complete.", this);
     }
 }

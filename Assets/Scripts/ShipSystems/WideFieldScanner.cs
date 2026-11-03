@@ -7,6 +7,8 @@ using UnityEngine.Windows.Speech;
 
 public class WideFieldScanner : MonoBehaviour
 {
+    public PlanetManager planetManager;
+
     public TMP_Text wfsText;
 
     public Button confirmButton;
@@ -35,6 +37,30 @@ public class WideFieldScanner : MonoBehaviour
         int empty = length - filled;
 
         return "[" + new string('▒', filled) + new string(' ', empty) + "]";
+    }
+
+    void Awake()
+    {
+        if (planetManager == null)
+        {
+            PlanetManager[] managers = FindObjectsByType<PlanetManager>();
+            if (managers.Length > 0)
+                planetManager = managers[0];
+        }
+
+        planets.Clear();
+
+        // include inactive objects (planets start inactive)
+        foreach (Planet planet in FindObjectsByType<Planet>(FindObjectsInactive.Include))
+        {
+            if (!planet.CompareTag("Planet"))
+                continue;
+
+            if (planet.gameObject.activeInHierarchy)
+                continue;
+
+            planets.Add(planet.gameObject);
+        }
     }
 
     void Start()
@@ -74,15 +100,28 @@ public class WideFieldScanner : MonoBehaviour
         }
     }
 
+    // check if planet is in current system
+    private bool InCurrentSystem(GameObject planetObject)
+    {
+        return planetObject.TryGetComponent(out Planet planet) &&
+               planet.system == planetManager.currentSystem;
+    }
+
     void Calculate()
     {
         float closestDistance = Mathf.Infinity;
         currentPlanet = null;
+        int remainingInSystem = 0;
 
         // find the planet closest to the ship marker on the X axis
-        // ignore planets that are below the ship
+        // ignore planets in other systems and planets that are below the ship
         foreach (GameObject planet in planets)
         {
+            if (!InCurrentSystem(planet))
+                continue;
+
+            remainingInSystem++;
+
             if (shipMarker.transform.position.y > planet.transform.position.y)
                 continue;
 
@@ -97,8 +136,8 @@ public class WideFieldScanner : MonoBehaviour
             }
         }
 
-        // all planets have been found
-        if (planets.Count == 0)
+        // all planets in this system have been found
+        if (remainingInSystem == 0)
         {
             confidence = 0f;
             scanComplete = true;

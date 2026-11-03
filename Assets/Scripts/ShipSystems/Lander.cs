@@ -96,6 +96,10 @@ public class Lander : MonoBehaviour
         if (launchDelay > 0f)
             yield return new WaitForSeconds(launchDelay);
 
+        // SET SURFACE SURVEY OBJECTIVE IN PLANETMANAGER TO TRUE!!!! IMPORTANT FOR OBJECTIVE TRACKING
+        if (planetManager != null)
+            planetManager.currentSystemLanderComplete = true;
+
         //Unloads the planet scene; SceneSwap's ReturnedToShip event updates the GameManager phase.
         SceneSwap.ReturnToShip();
     }
