@@ -790,16 +790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04586bf34b93d1b488f3c27d6693d38c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectiveTracker
-  planet1: {fileID: 0}
-  planet2: {fileID: 0}
-  planet3: {fileID: 0}
-  planet4: {fileID: 0}
-  objText: {fileID: 0}
-  allObjectivesComplete: 0
-  cryoButton: {fileID: 0}
-  debugButton: {fileID: 0}
-  victoryScene: 
-  blinkyLight: {fileID: 0}
 --- !u!114 &63704304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24369,9 +24359,17 @@ PrefabInstance:
       propertyPath: isGravityOn
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: floatingMoveForce
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318390735657446605, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 67109111
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25988,7 +25986,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1902666198}
-  - {fileID: 1618988318}
   - {fileID: 731927031107202567}
   - {fileID: 1318755208}
   - {fileID: 410087041}
@@ -25996,6 +25993,7 @@ SceneRoots:
   - {fileID: 502895158}
   - {fileID: 791488918}
   - {fileID: 343065126}
+  - {fileID: 1618988318}
   - {fileID: 35101446}
   - {fileID: 483114686}
   - {fileID: 107294288}

@@ -46,6 +46,7 @@ public class Lander : MonoBehaviour
     void Update()
     {
         RefreshText();
+        CheckDebugKey(); // press F9 to force complete surface objectives
     }
 
     private void HandleButtonPress()
@@ -205,6 +206,18 @@ public class Lander : MonoBehaviour
         else
         {
             statusText.text = "CURRENT PLANET: POSSIBLE CANDIDATE\nPLANETARY LANDER NOW AVAILABLE";
+        }
+    }
+
+    private void CheckDebugKey()
+    {
+        if (!SceneSwap.OnSurface) return;
+
+        var keyboard = UnityEngine.InputSystem.Keyboard.current;
+        if (keyboard != null && keyboard.f9Key.wasPressedThisFrame)
+        {
+            HandleObjectivesComplete();
+            Debug.Log("Lander: DEBUG F9 pressed, surface objectives marked complete.", this);
         }
     }
 }
