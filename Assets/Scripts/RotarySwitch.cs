@@ -32,7 +32,7 @@ public class RotarySwitch : MonoBehaviour, Interactable
         UpdateSwitch();
     }
 
-    public void Interact()
+    public void Interact(GameObject interactionSource)
     {
         currentState++;
 

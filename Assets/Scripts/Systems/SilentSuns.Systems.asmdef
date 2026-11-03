@@ -1,0 +1,4 @@
+{
+    "name": "SilentSuns.Systems",
+    "references": ["Unity.InputSystem"]
+}

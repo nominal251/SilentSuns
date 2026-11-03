@@ -1,0 +1,5 @@
+{
+    "name": "SilentSuns.Menu.Editor",
+    "references": ["SilentSuns.Menu", "Unity.TextMeshPro", "Unity.InputSystem", "Unity.ugui"],
+    "includePlatforms": ["Editor"]
+}

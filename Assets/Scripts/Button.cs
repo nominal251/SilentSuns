@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Button : MonoBehaviour, Interactable
 {
@@ -8,18 +9,28 @@ public class Button : MonoBehaviour, Interactable
     public Material inactiveMat;
     public Material activeMat;
 
-    public void Interact()
+    public bool requiresEnable = false;
+    private bool buttonActive;
+
+    [Header("Events")]
+    public UnityEvent onInteracted;
+
+    public void Interact(GameObject interactionSource)
     {
+        if (requiresEnable && !buttonActive)
+            return;
+
         if (isToggle)
-        {
             activated = !activated;
-            RefreshMat();
-        }
         else
-        {
             activated = true;
-            RefreshMat();
-        }
+
+        RefreshMat();
+
+        if (requiresEnable)
+            buttonActive = false;
+
+        onInteracted?.Invoke();
     }
 
     public void StopInteract()
@@ -33,13 +44,18 @@ public class Button : MonoBehaviour, Interactable
 
     void RefreshMat()
     {
-        if (activated)
-        {
-            GetComponent<Renderer>().material = activeMat;
-        }
-        else
-        {
-            GetComponent<Renderer>().material = inactiveMat;
-        }
+        GetComponent<Renderer>().material = activated ? activeMat : inactiveMat;
+    }
+
+    public void ResetButton()
+    {
+        activated = false;
+        RefreshMat();
+    }
+
+    public void LanderDoorDown()
+    {
+        buttonActive = true;
+        RefreshMat();
     }
 }

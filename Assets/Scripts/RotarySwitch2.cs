@@ -35,7 +35,7 @@ public class RotarySwitch2 : MonoBehaviour, Interactable
         UpdateSwitchInstant();
     }
 
-    public void Interact()
+    public void Interact(GameObject interactionSource)
     {
 
         if (isAnimating)

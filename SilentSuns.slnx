@@ -1,4 +1,8 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="SilentSuns.Menu.Tests.csproj" />
+  <Project Path="SilentSuns.Menu.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="SilentSuns.Menu.Editor.csproj" />
+  <Project Path="SilentSuns.Systems.csproj" />
 </Solution>

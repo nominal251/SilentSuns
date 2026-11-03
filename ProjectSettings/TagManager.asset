@@ -12,6 +12,8 @@ TagManager:
   - 2DScreen
   - Water
   - UI
+  - Player
+  - Vision Blocker
   - 
   - 
   - 
@@ -30,9 +32,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - Geometry
   - 
   - 
   - 
