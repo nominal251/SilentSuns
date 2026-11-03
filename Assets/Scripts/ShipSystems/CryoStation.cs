@@ -12,8 +12,9 @@ public class CryoStation : MonoBehaviour
 
     void Update()
     {
-        bool complete = AllPlanetsSurveyed();
+        bool complete = SystemComplete();
 
+        // Only touch the light when the state changes
         if (complete != wasComplete)
         {
             blinkyLight.blink = complete;
@@ -21,19 +22,26 @@ public class CryoStation : MonoBehaviour
         }
 
         if (complete && cryoButton.activated)
-            SceneManager.LoadScene(victoryScene);
+        {
+            if (planetManager.HasNextSystem)
+                planetManager.AdvanceToNextSystem();
+            else
+                SceneManager.LoadScene(victoryScene);
+        }
     }
 
-    bool AllPlanetsSurveyed()
+    bool SystemComplete()
     {
-        int count = 0;
+        // A system with no planets must not count as complete
+        if (planetManager.planets.Count == 0)
+            return false;
+
+        bool hasLandable = false;
 
         foreach (Planet planet in planetManager.planets)
         {
-            if (planet.system != planetManager.currentSystem)
-                continue;
-
-            count++;
+            if (planet.isLandable)
+                hasLandable = true;
 
             if (!planet.gameObject.activeInHierarchy ||
                 !planet.waveformComplete ||
@@ -41,6 +49,10 @@ public class CryoStation : MonoBehaviour
                 return false;
         }
 
-        return count > 0;
+        // If the system has a landable planet, the player must have landed and launched
+        if (hasLandable && !planetManager.currentSystemLanderComplete)
+            return false;
+
+        return true;
     }
 }

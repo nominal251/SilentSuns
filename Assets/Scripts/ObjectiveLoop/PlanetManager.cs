@@ -21,23 +21,42 @@ public class PlanetManager : MonoBehaviour
 
     [Header("Other Assignments")]
 
+    // Only the planets in the current system
     public List<Planet> planets = new List<Planet>();
+
+    // Every planet in every system
+    private readonly List<Planet> allPlanets = new List<Planet>();
 
     public Planet CurrentPlanet { get; private set; }
 
+    // Fired after the system number changes and the planet list has been rebuilt
+    public event System.Action SystemChanged;
+
+    // True if any planet belongs to a later system
+    public bool HasNextSystem
+    {
+        get
+        {
+            foreach (Planet planet in allPlanets)
+                if (planet.system > currentSystem)
+                    return true;
+            return false;
+        }
+    }
+
     void Awake()
     {
-        planets.Clear();
+        allPlanets.Clear();
 
-        // autofill planets list
+        // include inactive planets, since undiscovered planets start disabled
         foreach (Planet planet in FindObjectsByType<Planet>(FindObjectsInactive.Include))
         {
             if (planet.CompareTag("Planet"))
-                planets.Add(planet);
+                allPlanets.Add(planet);
         }
 
         // sort by system number first, then by object name within each system
-        planets.Sort((a, b) =>
+        allPlanets.Sort((a, b) =>
         {
             int bySystem = a.system.CompareTo(b.system);
             return bySystem != 0
@@ -45,7 +64,7 @@ public class PlanetManager : MonoBehaviour
                 : string.Compare(a.gameObject.name, b.gameObject.name);
         });
 
-        Debug.Log($"PlanetManager: registered {planets.Count} planets.", this);
+        RebuildSystemList();
     }
 
     void Start()
@@ -53,6 +72,52 @@ public class PlanetManager : MonoBehaviour
         debugText.GetComponent<TMP_Text>().text = "Planet Name = N/A";
         objText.GetComponent<TMP_Text>().text = "ORBT: N/A";
         debugText.SetActive(debugMode);
+    }
+
+    void Update()
+    {
+        var keyboard = UnityEngine.InputSystem.Keyboard.current;
+        if (keyboard != null && keyboard.f10Key.wasPressedThisFrame)
+            DebugCompleteSystem();
+    }
+
+    // Refill the public list with only the current system's planets
+    private void RebuildSystemList()
+    {
+        planets.Clear();
+
+        foreach (Planet planet in allPlanets)
+        {
+            if (planet.system == currentSystem)
+                planets.Add(planet);
+        }
+
+        Debug.Log($"PlanetManager: system {currentSystem} has {planets.Count} planets.", this);
+    }
+
+    public void AdvanceToNextSystem()
+    {
+        // The old current planet is about to be disabled, so drop the reference
+        ClearCurrentPlanet();
+
+        // Hide every planet and wipe its scan progress
+        foreach (Planet planet in allPlanets)
+        {
+            planet.waveformComplete = false;
+            planet.compComplete = false;
+            planet.landingReady = false;
+
+            if (planet.enemy != null)
+                planet.enemy.SetActive(false);
+
+            planet.gameObject.SetActive(false);
+        }
+
+        currentSystem++;
+        currentSystemLanderComplete = false;
+
+        RebuildSystemList();
+        SystemChanged?.Invoke();
     }
 
     public void SetCurrentPlanet(Planet planet)
@@ -88,20 +153,10 @@ public class PlanetManager : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        var keyboard = UnityEngine.InputSystem.Keyboard.current;
-        if (keyboard != null && keyboard.f10Key.wasPressedThisFrame)
-            DebugCompleteSystem();
-    }
-
     public void DebugCompleteSystem()
     {
         foreach (Planet planet in planets)
         {
-            if (planet.system != currentSystem)
-                continue;
-
             planet.gameObject.SetActive(true);   // discover planet
             planet.waveformComplete = true;
             planet.compComplete = true;
