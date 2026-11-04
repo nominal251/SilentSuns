@@ -16,7 +16,7 @@ public class InteractOrigin : MonoBehaviour
     void Update()
     {
         // Release held controls before pausing; menu clicks must not reach instruments.
-        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput)
         {
             if (heldInteractable != null)
                 heldInteractable.StopInteract();

@@ -140,6 +140,7 @@ namespace SilentSuns.Menu
                 case "<gamepad>/buttoneast": return "MENU BACK";
                 case "<keyboard>/f12": return "SCREENSHOT";
                 case "<keyboard>/f1": return "DEBUG GRAVITY TOGGLE";
+                case "<keyboard>/m": return "TRACKER MODE";
                 default: return "";
             }
         }

@@ -26,7 +26,7 @@ public class PhysicsInteractor : MonoBehaviour
     private void Update()
     {
         // Pause, settings, and the telescope intro must not pick up or move objects.
-        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || inputHandler == null) return;
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput || inputHandler == null) return;
         Ray ray = new Ray(camera.transform.position, camera.transform.forward);
 
         //raycast logic
