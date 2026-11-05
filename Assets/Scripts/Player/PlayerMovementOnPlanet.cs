@@ -10,6 +10,8 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveForce = 25f;
     [SerializeField] private float sprintMultiplier = 2f;
+    [SerializeField] private float staminaConsumption = 10f;
+    [SerializeField] private float maxStamina = 100f;
     [SerializeField, Min(0f)] private float drag = 5f;
 
     private Rigidbody rBody;
@@ -18,6 +20,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
 
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
+    private float stamina;
 
     private void Awake()
     {
@@ -25,6 +28,8 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         rBody.useGravity = true;
         rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         rBody.linearDamping = 0f;
+
+        stamina = maxStamina;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
