@@ -482,6 +482,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689cec57870317c4aba61b56d6933971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AirCompMinigame
+  camera: {fileID: 0}
+  cameraToMinigame: {fileID: 0}
+  cameraToPlayer: {fileID: 0}
+  playerMovement: {fileID: 0}
   buttonParent: {fileID: 1295029396}
   bar: {fileID: 589568263}
   sections:
@@ -528,6 +532,7 @@ Transform:
   m_Children:
   - {fileID: 2082295374}
   - {fileID: 589568264}
+  - {fileID: 287906366}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &165750832
@@ -867,6 +872,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 250009799}
   m_CullTransparentMesh: 1
+--- !u!1 &287906365
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 287906366}
+  m_Layer: 0
+  m_Name: AirComp Cam Spot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &287906366
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 287906365}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.055511475, y: 1.44, z: -2.699997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 58318592}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &310324983
 GameObject:
   m_ObjectHideFlags: 0
@@ -1213,6 +1249,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 381331086}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &385013574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 385013575}
+  m_Layer: 0
+  m_Name: pH Cam Spot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &385013575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385013574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.44, z: -2.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1598287363}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &449585623
 GameObject:
   m_ObjectHideFlags: 0
@@ -5079,8 +5146,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d8665bcf0988004d9db7d3b4b7d859a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PHAnalysisMinigame
+  playerMovement: {fileID: 0}
   phBar: {fileID: 1192915146}
   colorImage: {fileID: 1700920002}
+  camera: {fileID: 0}
+  cameraToMinigame: {fileID: 0}
+  cameraToPlayer: {fileID: 0}
 --- !u!65 &1598287362
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5117,6 +5188,7 @@ Transform:
   m_Children:
   - {fileID: 1946926137}
   - {fileID: 1192915147}
+  - {fileID: 385013575}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1652730369
