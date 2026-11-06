@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class PHAnalysisMinigame : MonoBehaviour, IMinigame
 {
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private GameObject phBar;
     [SerializeField] private Image colorImage;
+    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject cameraToMinigame;
+    [SerializeField] private GameObject cameraToPlayer;
     private MinigameManager minigameManager;
 
     private bool success = false;
-
     private int color = 0;
     void Awake()
     {
@@ -19,12 +22,40 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
             GameObject tmp = GameObject.Find("Minigame Manager");
             minigameManager = tmp.GetComponent<MinigameManager>();
         }
+
+        if (camera == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
+            camera = tmp;
+        }
+
+        if (cameraToPlayer == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
+            cameraToPlayer = tmp;
+        }
+
+        if (cameraToMinigame == null)
+        {
+            GameObject tmp = GameObject.Find("pH Analysis Minigame Starter/pH Cam Spot");
+            cameraToMinigame = tmp;
+        }
+
+        if (playerMovement == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player");
+            playerMovement = tmp.GetComponent<PlayerMovement>();
+        }
     }
     public void StartMinigame()
     {
+        playerMovement.MinigameOnOff(); //turns camera rotation off
+        camera.transform.position = cameraToMinigame.transform.position;
+        camera.transform.rotation = cameraToMinigame.transform.rotation;
         success = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
         phBar.SetActive(true);
         color = Random.Range(0, 14);
         DisplayColor();
@@ -32,6 +63,9 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
 
     public void EndMinigame()
     {
+        playerMovement.MinigameOnOff(); //turns camera rotation back on
+        camera.transform.position = cameraToPlayer.transform.position;
+        camera.transform.rotation = cameraToPlayer.transform.rotation;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         phBar.SetActive(false);

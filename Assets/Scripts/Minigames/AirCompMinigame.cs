@@ -6,6 +6,10 @@ using UnityEngine.UI;
 
 public class AirCompMinigame : MonoBehaviour, IMinigame
 {
+    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject cameraToMinigame;
+    [SerializeField] private GameObject cameraToPlayer;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Transform buttonParent;
     [SerializeField] private GameObject bar;
     [SerializeField] private List<LayoutElement> sections = new List<LayoutElement>();
@@ -28,10 +32,42 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
             GameObject tmp = GameObject.Find("Minigame Manager");
             minigameManager = tmp.GetComponent<MinigameManager>();
         }
+
+        if (camera == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
+            camera = tmp;
+        }
+
+        if (cameraToPlayer == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
+            cameraToPlayer = tmp;
+        }
+
+        if (cameraToMinigame == null)
+        {
+            GameObject tmp = GameObject.Find("AirComp Minigame Starter/AirComp Cam Spot");
+            cameraToMinigame = tmp;
+        }
+
+        if (playerMovement == null)
+        {
+            GameObject tmp = GameObject.Find("Astronaut Player");
+            playerMovement = tmp.GetComponent<PlayerMovement>();
+        }
     }
 
     public void StartMinigame()
     {
+        playerMovement.MinigameOnOff(); //turns camera rotation off
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        camera.transform.position = cameraToMinigame.transform.position;
+        camera.transform.rotation = cameraToMinigame.transform.rotation;
+
         bar.SetActive(true);
 
         numCorrect = 0;
@@ -39,9 +75,6 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
         correctOrder.Clear();
 
         ResetColors();
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
 
         CreateBarValues();
 
@@ -80,8 +113,14 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
     public void EndMinigame()
     {
+        playerMovement.MinigameOnOff(); //turns camera rotation off
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        camera.transform.position = cameraToPlayer.transform.position;
+        camera.transform.rotation = cameraToPlayer.transform.rotation;
+
         bar.SetActive(false);
     }
 
