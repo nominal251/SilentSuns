@@ -92,6 +92,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth: 0.11
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -100,10 +101,11 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _Large_Crack_Edge1: -0.52
-    - _Large_Crack_Edge2: 2.78
+    - _Large_Crack_Edge1: -0.19
+    - _Large_Crack_Edge2: 2.72
     - _Large_Crack_Opacity: 0.48
     - _Metallic: 0
+    - _Min_Cos: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueControl: 0
@@ -122,7 +124,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Base_Color: {r: 0.35404056, g: 0.41259903, b: 0.6415094, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DepthPatternColor: {r: 0, g: 0.068234086, b: 0.5, a: 1}
+    - _DepthPatternColor: {r: 0.2966803, g: 0.3312014, b: 0.5566038, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Large_Crack_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Small_Crack_Color: {r: 0.7971698, g: 0.83003706, b: 1, a: 1}
