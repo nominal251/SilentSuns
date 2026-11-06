@@ -171,13 +171,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b143219a741b064cbe63b954d688705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
-  health: 20
+  health: 100
   globalVolume: {fileID: 1386495080}
   cautionBreakpoint: 60
   dangerBreakpoint: 35
   goodIntensity: 0.1
   cautionIntensity: 0.4
   dangerIntensity: 0.7
+--- !u!114 &206947250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206947248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8a87ecc35e4f7b479910eb5fda7d110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementOnPlanet
+  mouseSens: 1
+  maxCameraAngle: 85
+  moveForce: 25
+  sprintMultiplier: 2
+  drag: 5
+  maxStamina: 100
+  staminaConsumptionRate: 10
+  staminaRegenRate: 10
+  staminaRegenCooldown: 1
+  staminaExhaustionCooldown: 3.5
+  currentStamina: 0
+  currentRegenCooldown: 0
+  currentExhaustionCooldown: 0
+  canRun: 1
 --- !u!1 &295266324
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,6 +854,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: isGravityOn
       value: 1
       objectReference: {fileID: 0}
@@ -839,6 +869,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 206947250}
     - targetCorrespondingSourceObject: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 206947249}
