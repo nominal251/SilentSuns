@@ -60,7 +60,8 @@ namespace SilentSuns.Menu
                 for (int j = i + 1; j < bindings.Count; j++)
                 {
                     var second = bindings[j];
-                    if (path == Normalize(second.action.bindings[second.index].effectivePath))
+                    if (ContextsOverlap(first.action, first.index, second.action, second.index) &&
+                        path == Normalize(second.action.bindings[second.index].effectivePath))
                         conflicts.Add(Label(first.action, first.index) + " + " + Label(second.action, second.index));
                 }
             }
@@ -124,12 +125,20 @@ namespace SilentSuns.Menu
         public static string MovementContext(InputAction action, int index)
         {
             // PlayerMovement ignores vertical movement on foot and sprint in zero gravity.
-            if (action.name == "Sprint") return "ON FOOT";
+            if (action.name == "Sprint" || action.name == "Jump") return "ON FOOT";
             if (action.name == "Roll" || action.name == "Reorient") return "IN SHIP";
             if (action.name == "Move")
                 return action.bindings[index].name == "up" || action.bindings[index].name == "down" ?
                     "IN SHIP" : "ON FOOT + IN SHIP";
             return "";
+        }
+
+        // Jump and zero-G controls never run together, so they can share a button.
+        private static bool ContextsOverlap(InputAction first, int firstIndex, InputAction second, int secondIndex)
+        {
+            string a = MovementContext(first, firstIndex);
+            string b = MovementContext(second, secondIndex);
+            return !((a == "ON FOOT" && b == "IN SHIP") || (a == "IN SHIP" && b == "ON FOOT"));
         }
 
         private static string ReservedAction(string path)
@@ -159,6 +168,7 @@ namespace SilentSuns.Menu
             if (ReservedAction(path).Length > 0) return true;
             foreach (var pair in Editable())
                 if ((pair.action != action || pair.index != index) &&
+                    ContextsOverlap(action, index, pair.action, pair.index) &&
                     string.Equals(Normalize(pair.action.bindings[pair.index].effectivePath), path, StringComparison.OrdinalIgnoreCase))
                     return true;
             return false;

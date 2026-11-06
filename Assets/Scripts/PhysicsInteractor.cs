@@ -20,7 +20,8 @@ public class PhysicsInteractor : MonoBehaviour
     {
         inputHandler = InputHandler.instance;
         camera = transform.Find("Player Camera").gameObject;
-        hand = transform.Find("Hand").gameObject;
+        // The current player keeps the hand under its camera; older test scenes use the player root.
+        hand = (camera.transform.Find("Hand") ?? transform.Find("Hand")).gameObject;
         handPosition = hand.transform.localPosition.z;
     }
     private void Update()
@@ -74,7 +75,8 @@ public class PhysicsInteractor : MonoBehaviour
             {
                 // Use the same sensitivity and invert setting as player look.
                 Vector2 look = inputHandler.lookInput * inputHandler.lookSensitivity;
-                hand.transform.rotation = Quaternion.Euler(hand.transform.rotation.eulerAngles.x - look.y, hand.transform.rotation.eulerAngles.y + look.x, hand.transform.rotation.eulerAngles.z);
+                hand.transform.Rotate(camera.transform.up, -look.x, Space.World);
+                hand.transform.Rotate(camera.transform.right, look.y, Space.World);
             }
         }
     }

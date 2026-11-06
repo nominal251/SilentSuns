@@ -7,10 +7,12 @@ public class BlinkyLight : MonoBehaviour
     public float blinkInterval = 0.75f;
 
     private float timer = 0f;
+    private bool warned;
 
     void Update()
     {
-        if (blink)
+        if (!blink) return;
+        if (light != null)
         {
             timer += Time.deltaTime;
 
@@ -19,6 +21,11 @@ public class BlinkyLight : MonoBehaviour
                 timer = 0f;
                 light.SetActive(!light.activeSelf);
             }
+        }
+        else if (!warned)
+        {
+            warned = true;
+            Debug.LogWarning(gameObject.name + " has no blinking light assigned.", this);
         }
     }
 }

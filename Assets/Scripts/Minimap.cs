@@ -52,6 +52,7 @@ public class Minimap : MonoBehaviour
     [SerializeField] private List<MarkerStyle> markerStyles = new List<MarkerStyle>();
 
     private PlayerMovement playerMovement;
+    private bool sourcesAssigned;
     private ObjectiveSystem objectiveSystem;
     private RectTransform mapRect, navigationRect, oxygenNeedle, returnOxygenTick, objectiveDirection;
     private Canvas canvas;
@@ -193,8 +194,6 @@ public class Minimap : MonoBehaviour
         objectiveDirection = Draw("Objective direction", root, arrow, Amber, new Vector2(156, 192), 23).rectTransform;
         targetDetail = PanelLabel("Objective distance", root, "", 492, 48, 124, 28, Ink);
         targetDetail.alignment = TextAlignmentOptions.Left;
-        var trackerHint = PanelLabel("Tracker hint", root, "M / TRACKER", 454, 24, 162, 18, Muted);
-        trackerHint.alignment = TextAlignmentOptions.Right;
 
         // Keep the current supply together below the dial, separate from the return threshold.
         var oxygenLabel = PanelLabel("Oxygen label", root, "O2", 440, 332, 64, 26, Ink);
@@ -382,7 +381,16 @@ public class Minimap : MonoBehaviour
             float margin = Mathf.Max(.025f, GamePreferences.SafeArea);
             mapRect.anchorMin = mapRect.anchorMax = new Vector2(margin, 1 - margin);
         }
-        if (objectiveSystem == null) objectiveSystem = FindFirstObjectByType<ObjectiveSystem>();
+        if (!sourcesAssigned && (objectiveSystem == null || objectiveSystem.gameObject.scene != SceneManager.GetActiveScene()))
+        {
+            // Landing keeps the ship loaded. Track the active planet, not its parked ship screen.
+            objectiveSystem = null;
+            foreach (GameObject root in SceneManager.GetActiveScene().GetRootGameObjects())
+            {
+                objectiveSystem = root.GetComponentInChildren<ObjectiveSystem>();
+                if (objectiveSystem != null) break;
+            }
+        }
         SyncIcons();
         UpdateMapPose();
         topography?.Update(mapPosition, mapHeading);
@@ -418,6 +426,7 @@ public class Minimap : MonoBehaviour
     // The future tool can provide these directly instead of searching the scene.
     public void SetSources(PlayerMovement movement, ObjectiveSystem objectives, Transform destination = null)
     {
+        sourcesAssigned = true;
         if (playerMovement != movement) poseReady = false;
         playerMovement = movement;
         objectiveSystem = objectives;

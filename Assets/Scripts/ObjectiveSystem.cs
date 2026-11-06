@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ObjectiveSystem : MonoBehaviour
 {
@@ -16,15 +17,16 @@ public class ObjectiveSystem : MonoBehaviour
     public bool AllComplete => objectives.Count > 0 && objectives.TrueForAll(o => o != null && o.IsComplete);
     public event Action<Objective> ObjectiveCompleted;
     public event Action AllObjectivesCompleted;
+    public UnityEvent AllObjectivesCompletedEvent;
 
     private void Awake()
     {
-        // Test scenes can collect everything. The ship registers its four surveys explicitly.
+        // Only collect this scene. A loaded planet must not collect the ship's survey objectives.
         objectives.Clear();
         if (collectOnAwake) suspended = true;
         if (collectOnAwake)
-            foreach (Objective objective in FindObjectsByType<Objective>(FindObjectsSortMode.None))
-                Register(objective);
+            foreach (Objective objective in FindObjectsByType<Objective>())
+                if (objective.gameObject.scene == gameObject.scene) Register(objective);
     }
 
     private void Start()
@@ -100,6 +102,7 @@ public class ObjectiveSystem : MonoBehaviour
             completionReported = true;
             Debug.Log("All objectives complete!");
             AllObjectivesCompleted?.Invoke();
+            AllObjectivesCompletedEvent?.Invoke();
         }
     }
 }

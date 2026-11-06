@@ -26,6 +26,8 @@ namespace SilentSuns.Menu
             instance = null;
             SceneManager.sceneLoaded -= SceneLoaded;
             SceneManager.sceneLoaded += SceneLoaded;
+            SceneManager.activeSceneChanged -= ActiveSceneChanged;
+            SceneManager.activeSceneChanged += ActiveSceneChanged;
         }
 
         private static TerminalGameSession EnsureSession()
@@ -69,7 +71,8 @@ namespace SilentSuns.Menu
                     return;
                 }
                 session.waitingForIntro = false;
-                RestartScene = scene.name;
+                // Landing adds a planet to the running ship. Restart still needs that ship and player.
+                if (mode != LoadSceneMode.Additive) RestartScene = scene.name;
                 if (session.game.Phase == GameManager.GamePhase.Boot ||
                     session.game.Phase == GameManager.GamePhase.Ending)
                     StartNewRun();
@@ -79,6 +82,12 @@ namespace SilentSuns.Menu
             }
             else if (scene.name == "GameOverScene" || scene.name == "VictoryScene")
                 EndRun();
+        }
+
+        private static void ActiveSceneChanged(Scene previous, Scene next)
+        {
+            if (next.name == "SampleScene" && instance != null)
+                instance.game.ReturnToSystemExploration();
         }
 
         public static void StartNewRun()

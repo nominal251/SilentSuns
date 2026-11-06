@@ -12,6 +12,8 @@ public class InputHandler : MonoBehaviour
     private InputAction reorientAction;
     private InputAction debugAction;
     private InputAction sprintAction;
+    private InputAction jumpAction;
+    private InputAction toolAction;
     private InputAction interactAction;
     private InputAction physicsInteractAction;
     private InputAction physicsRotateAction;
@@ -24,6 +26,8 @@ public class InputHandler : MonoBehaviour
     public float rollInput { get; private set; }
     public bool reorientInput { get; private set; }
     public bool sprintInput { get; private set; }
+    public bool jumpPressed => jumpAction.WasPressedThisFrame();
+    public bool toolInput { get; private set; }
     public bool debugInput { get; private set; }
     public bool debugPressed => debugAction.WasPerformedThisFrame();
     // Both interaction scripts read these actions from the same copy that Settings edits.
@@ -58,7 +62,9 @@ public class InputHandler : MonoBehaviour
         rollAction = playerControls.FindActionMap("Player").FindAction("Roll");
         reorientAction = playerControls.FindActionMap("Player").FindAction("Reorient");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
+        jumpAction = playerControls.FindAction("Jump", true); // throws a clear error if the action is missing
         debugAction = playerControls.FindActionMap("Player").FindAction("Debug");
+        toolAction = playerControls.FindActionMap("Player").FindAction("Tool");
         interactAction = playerControls.FindAction("Interact");
         physicsInteractAction = playerControls.FindAction("Physics Interact");
         physicsRotateAction = playerControls.FindAction("Physics Rotate");
@@ -82,6 +88,9 @@ public class InputHandler : MonoBehaviour
 
         sprintAction.performed += context => sprintInput = true;
         sprintAction.canceled += context => sprintInput = false;
+
+        toolAction.performed += context => toolInput = true;
+        toolAction.canceled += context => toolInput = false;
     }
 
     private void Update()
@@ -90,6 +99,7 @@ public class InputHandler : MonoBehaviour
         // Apply controller settings here; mouse delta keeps its existing action scaling.
         Vector2 controller = Gamepad.current != null ? Gamepad.current.rightStick.ReadUnprocessedValue() : Vector2.zero;
         float deadZone = SilentSuns.Menu.GamePreferences.DeadZone;
+        // Reads zero while the move action is disabled (see DisableMovement).
         moveInput = moveAction.ReadValue<Vector3>();
         if (moveAction.activeControl?.device is Gamepad movePad &&
             moveAction.activeControl.path.Contains("/leftStick/") && movePad.leftStick.ReadUnprocessedValue().magnitude <= deadZone)
@@ -114,7 +124,9 @@ public class InputHandler : MonoBehaviour
         rollAction.Enable();
         reorientAction.Enable();
         sprintAction.Enable();
+        jumpAction.Enable();
         debugAction.Enable();
+        toolAction.Enable();
         playerControls.FindAction("ControllerLook").Enable();
         interactAction.Enable();
         physicsInteractAction.Enable();
@@ -130,7 +142,19 @@ public class InputHandler : MonoBehaviour
         rollAction?.Disable();
         reorientAction?.Disable();
         sprintAction?.Disable();
+        jumpAction?.Disable();
         debugAction?.Disable();
+        toolAction?.Disable();
         if (instance == this) playerControls?.Disable();
+    }
+
+    public void EnableMovement()
+    {
+        moveAction?.Enable();
+    }
+
+    public void DisableMovement()
+    {
+        moveAction?.Disable();
     }
 }

@@ -41,7 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7486321616422480078}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34ec9ff0b5af01b4cb8f513f9387e52b, type: 3}
+  m_Script: {fileID: 11500000, guid: c824e4fcaf8184545885be4b825dc0ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputHandler
-  playerControls: {fileID: -944628639613478452, guid: 7f8d334aca9dd6343baa288fedf85fa2, type: 3}
+  playerControls: {fileID: -944628639613478452, guid: e7b9eb4f043d10c4b9b8187f45c3a2df, type: 3}

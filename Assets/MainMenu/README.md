@@ -91,6 +91,8 @@ F12 saves a screenshot under the game's persistent-data folder, in `Screenshots`
 
 `InputHandler` makes one runtime copy of the input asset. Remapping edits that copy. Temporary duplicates are allowed. Conflicting key names turn solid red, and the side panel lists the conflicting action pairs in red, without flashing. Apply stays blocked until they are resolved. Discard restores the bindings from when Settings opened. Apply saves the overrides to PlayerPrefs. `PlayerMovement` uses the chosen look sensitivity; `InteractOrigin` reads the remappable Interact action. ESC and controller Start stay reserved for pause. F12 stays reserved for screenshots.
 
+Jump appears under ON FOOT. It can share a button with ship-only movement because those controls are used in different modes. Bindings used at the same time still cannot conflict. Existing saved binding IDs are kept in the input asset.
+
 Movement, instrument interaction, and object handling all read that same `InputHandler`. `PhysicsInteractor` uses the player's Hand to hold objects. Its new settings rows are Pick Up / Drop, Rotate Held Object, Move Object Closer, and Move Object Farther. These work on foot and in ship. Existing saved movement and Interact bindings keep their IDs.
 
 By default, right click picks up or drops, middle click holds object rotation, and the wheel adjusts distance. On a controller, X / Square picks up or drops, holding the right stick button rotates, and D-pad up/down adjusts distance. Each can be remapped. The two distance directions are separate so keys and controller buttons can also move an object both ways. Sensitivity and invert look apply to the camera and held-object rotation. Turning an object holds the camera still. Opening a menu keeps the object held but stops interaction and manipulation until gameplay resumes.
@@ -132,3 +134,5 @@ The menu font comes from `Assets/Fonts/Px437_DOS-V_re_ANK16.ttf`, VileR's [Oldsc
 The shuttle is [Font Awesome Free shuttle-space](https://fontawesome.com/icons/shuttle-space), by Fonticons, Inc., [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The SVG was converted to a white PNG; the screensaver tints and rotates it. The copyright comment remains in the SVG. License copies are in `Licenses`.
 
 `TerminalPolishBuild` updates shared UI assets and build metadata before a player build. It does not rebuild the menu scene. Use **Silent Suns > Main Menu > Update shared UI assets** if adding or replacing shared artwork/audio.
+
+When landing loads a planet alongside the ship, the navigation display reads that planet's objectives. The ship keeps its four survey objectives separately. Returning restores the ship phase; restarting still loads the ship and its player.

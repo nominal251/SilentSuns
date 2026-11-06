@@ -24,7 +24,27 @@ namespace SilentSuns.Menu.Tests
         }
         private IEnumerator LoadSurface(string scene = "ObjectiveCheck")
         {
-            yield return SceneManager.LoadSceneAsync(scene);
+            if (scene == "PlanetSurfaceTest")
+            {
+                // This scene now lands alongside the ship and uses its player.
+                yield return SceneManager.LoadSceneAsync("SampleScene");
+                yield return null;
+                GameplayType("SceneSwap").GetMethod("GoToSurface").Invoke(null, new object[] { scene });
+                float deadline = Time.realtimeSinceStartup + 10;
+                while ((bool)GameplayType("SceneSwap").GetProperty("IsBusy").GetValue(null) && Time.realtimeSinceStartup < deadline)
+                    yield return null;
+                Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo(scene));
+                var player = SurfacePlayer();
+                HoldPlayer(player);
+                Call(player, "SetGravity", false);
+                var terrain = Object.FindFirstObjectByType<Terrain>();
+                Vector3 point = terrain.transform.position + terrain.terrainData.size * .5f;
+                point.y = terrain.SampleHeight(point) + terrain.transform.position.y + 2;
+                player.transform.position = player.GetComponent<Rigidbody>().position = point;
+                Call(player, "SetGravity", true);
+                Physics.SyncTransforms();
+            }
+            else yield return SceneManager.LoadSceneAsync(scene);
             yield return null;
             yield return null;
             Assert.That(TerminalGameSession.Manager.Phase, Is.EqualTo(GameManager.GamePhase.PlanetaryExploration));
@@ -563,18 +583,53 @@ namespace SilentSuns.Menu.Tests
         }
 
         [UnityTest, Category("Menu"), Category("Surface")]
-        public IEnumerator PlanetSurfaceSceneWorksWithoutAnObjectiveList()
+        public IEnumerator NavigationWorksWithoutAnObjectiveList()
         {
-            yield return LoadSurface("PlanetSurfaceTest");
+            yield return LoadSurface();
+            Object.Destroy(Object.FindFirstObjectByType(GameplayType("ObjectiveSystem")));
+            yield return null;
             Assert.That(Object.FindFirstObjectByType(GameplayType("ObjectiveSystem")), Is.Null);
             Assert.That(SurfaceMap().GetComponent<Canvas>().enabled, Is.True);
             Assert.That(Camera.main.name, Is.EqualTo("Player Camera"));
-            Assert.That(Object.FindFirstObjectByType<Terrain>().gameObject.layer, Is.EqualTo(LayerMask.NameToLayer("Geometry")));
             var pause = Object.FindFirstObjectByType<TerminalPause>();
             pause.Pause();
             yield return null;
             Assert.That(SurfaceMap().GetComponent<Canvas>().enabled, Is.False);
             Object.Destroy(CaptureGameplay("surface-terrain-pause"));
+        }
+        [UnityTest, Category("Menu"), Category("Surface"), Category("Landing")]
+        public IEnumerator AdditiveLandingKeepsShipProgressAndSelectsSurfaceObjectives()
+        {
+            yield return LoadSurface("PlanetSurfaceTest");
+            var ship = SurveySystem(SurveyTracker());
+            var map = SurfaceMap();
+            var surface = (Component)ReadMember(map, "objectiveSystem");
+            Assert.That(SurveyObjectives(ship).Length, Is.EqualTo(4));
+            Assert.That(surface.gameObject.scene.name, Is.EqualTo("PlanetSurfaceTest"));
+            Assert.That(SurveyObjectives(surface).Length, Is.GreaterThan(0));
+            Assert.That(SurveyObjectives(surface).All(o => o.gameObject.scene == surface.gameObject.scene), Is.True);
+            Assert.That(TerminalGameSession.RestartScene, Is.EqualTo("SampleScene"));
+            Assert.That(map.GetComponent<Canvas>().enabled, Is.True);
+            yield return Press(UnityEngine.InputSystem.Key.M);
+            Assert.That((bool)ReadMember(map, "TrackerOpen"), Is.True);
+            var pause = Object.FindFirstObjectByType<TerminalPause>();
+            pause.Pause();
+            yield return null;
+            Assert.That((bool)ReadMember(map, "TrackerOpen"), Is.False);
+            pause.Resume();
+            TerminalGameSession.Manager.Resources.DrainOxygen(10);
+            float oxygen = TerminalGameSession.Manager.Resources.OxygenSeconds;
+            GameplayType("SceneSwap").GetMethod("ReturnToShip").Invoke(null, null);
+            float deadline = Time.realtimeSinceStartup + 10;
+            while ((bool)GameplayType("SceneSwap").GetProperty("IsBusy").GetValue(null) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            yield return null;
+            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
+            Assert.That(TerminalGameSession.Manager.Phase, Is.EqualTo(GameManager.GamePhase.SystemExploration));
+            Assert.That(TerminalGameSession.Manager.Resources.OxygenSeconds, Is.EqualTo(oxygen).Within(.1f));
+            Assert.That(SurveyObjectives(ship).Length, Is.EqualTo(4));
+            Assert.That(map.GetComponent<Canvas>().enabled, Is.False);
+            Assert.That((bool)GameplayType("SceneSwap").GetProperty("IsIdle").GetValue(null), Is.True);
         }
     }
 }

@@ -159,7 +159,7 @@ namespace SilentSuns.Menu.Tests
             SetTestBinding("Physics Extend", "<Mouse>/scroll/down", "<Keyboard>/c");
             var player = SurfacePlayer();
             var target = PickupTarget(player);
-            var hand = player.transform.Find("Hand");
+            var hand = (player.transform.Find("Player Camera/Hand") ?? player.transform.Find("Hand"));
             try
             {
                 InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Right));
@@ -215,7 +215,7 @@ namespace SilentSuns.Menu.Tests
         {
             yield return LoadInputScene();
             var player = SurfacePlayer();
-            var hand = player.transform.Find("Hand");
+            var hand = (player.transform.Find("Player Camera/Hand") ?? player.transform.Find("Hand"));
             var target = PickupTarget(player);
             try
             {
@@ -260,7 +260,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(first, Is.GreaterThan(.1f));
             Assert.That(Quaternion.Angle(initial, player.transform.rotation), Is.EqualTo(first * 2).Within(.1f));
             var target = PickupTarget(player);
-            var hand = player.transform.Find("Hand");
+            var hand = (player.transform.Find("Player Camera/Hand") ?? player.transform.Find("Hand"));
             try
             {
                 InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Right));
@@ -277,6 +277,20 @@ namespace SilentSuns.Menu.Tests
                 Assert.That(hand.localPosition.z, Is.EqualTo(before).Within(.01f));
             }
             finally { Object.Destroy(target); }
+        }
+        [UnityTest, Category("Menu"), Category("InputIntegration")]
+        public IEnumerator JumpSharesShipControlsButStillChecksOnFootConflicts()
+        {
+            yield return LoadInputScene();
+            Assert.That(TerminalBindings.ConflictWarning(), Is.Empty);
+            var jump = TerminalBindings.Controls.FindAction("Jump");
+            int key = BindingIndex("Jump", "<Keyboard>/space");
+            Assert.That(TerminalBindings.Label(jump, key), Is.EqualTo("JUMP (ON FOOT)"));
+            Assert.That(BindingIndex("Jump", "<Gamepad>/rightShoulder"), Is.GreaterThanOrEqualTo(0));
+            jump.ApplyBindingOverride(key, "<Keyboard>/leftShift");
+            Assert.That(TerminalBindings.ConflictWarning(), Does.Contain("SPRINT").And.Contain("JUMP"));
+            jump.RemoveBindingOverride(key);
+            Assert.That(TerminalBindings.ConflictWarning(), Is.Empty);
         }
     }
 }
