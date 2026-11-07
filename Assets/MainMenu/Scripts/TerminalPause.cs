@@ -110,6 +110,7 @@ namespace SilentSuns.Menu
             if (escape || start || (paused && back))
             {
                 TerminalInteractionAudio.Instance?.Keyboard();
+                if (!paused && escape && TerminalToolInput.TryExitOnEscape()) return;
                 if (paused && confirmationPanel.activeSelf)
                     CancelLeave();
                 else if (paused && settingsPanel.activeSelf)

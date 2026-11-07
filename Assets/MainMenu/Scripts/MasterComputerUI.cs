@@ -403,8 +403,8 @@ namespace SilentSuns.Menu
             submit = Button(middle, "SUBMIT CATALOG  >", .055f, .82f, .89f, .13f, SubmitCatalog);
 
             var resources = Frame("Resources", pageRoot, 0, .74f, 1, .26f);
-            string[] names = { "CRYO CHARGES", "SHIP PARTS", "LIFE SUPPORT", "PARANORMAL ENERGY" };
-            Color[] colors = { cyan, good, cyan, warning };
+            string[] names = { "CRYO CHARGES", "SHIP PARTS", "PARANORMAL ENERGY", "LIFE SUPPORT" };
+            Color[] colors = { cyan, good, warning, good };
             for (int i = 0; i < names.Length; i++)
             {
                 float x = i * .25f;
@@ -609,8 +609,9 @@ namespace SilentSuns.Menu
             hullCaption.text = critical ? "REPAIR REQUIRED" : hull < 100 ? "DAMAGE REGISTERED" : "INTEGRITY WITHIN OPERATING LIMITS";
             resourceValues[0].text = $"{r.NitrogenCanisters:00}";
             resourceValues[1].text = $"{r.ShipParts:00}";
-            resourceValues[2].text = $"{Mathf.CeilToInt(r.OxygenSeconds)} S";
-            resourceValues[3].text = $"{r.ParanormalEnergy:0}";
+            resourceValues[2].text = $"{r.ParanormalEnergy:0}";
+            // This is the ship's status label. Suit oxygen stays on the navigation tool.
+            resourceValues[3].text = "STABLE";
             string progress = total > 0 ? $"{catalogued} / {total} CATALOGUED\n{discovered} / {total} DISCOVERED" : "AWAITING SCANNER DATA";
             currentSystem.text = $"CURRENT SYSTEM: {game.CurrentSystemNumber:00}";
             completion.text = game.CatalogSubmitted ? "SUBMITTED" : total > 0 ? $"{Mathf.RoundToInt(100f * catalogued / total)}% COMPLETE" : "SCANNING";

@@ -200,6 +200,44 @@ namespace SilentSuns.Menu.Tests
             Assert.That(Cursor.lockState, Is.EqualTo(masterPreviousLock));
         }
 
+        [UnityTest, Category("Menu"), Category("MasterComputer")]
+        public IEnumerator EscapeExitsComputerBeforeOpeningPause()
+        {
+            yield return OpenMaster();
+            master.UI.SelectPage(1);
+            yield return WaitForMasterPage();
+            yield return Press(Key.Escape);
+            Assert.That(master.UI.InUse, Is.False);
+            Assert.That(master.UI.Page, Is.EqualTo(MasterComputerUI.ScreenPage.Status));
+            Assert.That(master.UI.Power, Is.Zero);
+            Assert.That(TerminalPause.Paused, Is.False, "Escape exits the computer without pausing the run.");
+            Assert.That(Time.timeScale, Is.EqualTo(1));
+            Assert.That(TerminalToolInput.BlocksInput, Is.True, "The return animation keeps player input held.");
+            yield return Press(Key.Escape);
+            Assert.That(TerminalPause.Paused, Is.False, "Escape during the return must not open pause underneath it.");
+            yield return new WaitForSecondsRealtime(.7f);
+            Assert.That(TerminalToolInput.BlocksInput, Is.False);
+            Assert.That(Cursor.visible, Is.False);
+            Assert.That(Cursor.lockState, Is.EqualTo(masterPreviousLock));
+            Assert.That(Vector3.Distance(Camera.main.transform.localPosition, masterStartPosition), Is.LessThan(.001f));
+            yield return Press(Key.Escape);
+            Assert.That(TerminalPause.Paused, Is.True, "Once outside the computer, Escape pauses normally.");
+            Object.FindFirstObjectByType<TerminalPause>().Resume();
+            yield return new WaitForSecondsRealtime(.5f);
+
+            // Escape must also cancel a login that has only just started.
+            Call(station, "Interact", Camera.main.gameObject);
+            yield return null;
+            Assert.That(master.UI.Ready, Is.False);
+            yield return Press(Key.Escape);
+            yield return new WaitForSecondsRealtime(.7f);
+            Assert.That(master.UI.InUse, Is.False);
+            Assert.That(master.UI.Ready, Is.False);
+            Assert.That(master.UI.Power, Is.Zero);
+            Assert.That(TerminalPause.Paused, Is.False);
+            Assert.That(TerminalToolInput.BlocksInput, Is.False);
+        }
+
         private Vector2 MasterPointer(Vector3 contentPosition)
         {
             Vector3 point = master.SourceCamera.WorldToViewportPoint(contentPosition);

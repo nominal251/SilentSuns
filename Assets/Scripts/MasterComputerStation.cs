@@ -51,7 +51,7 @@ public class MasterComputerStation : MonoBehaviour, Interactable
         }
         if (UI.InUse && (TerminalPause.BlocksGameplayInput || Camera.main == null ||
             Vector3.Distance(Camera.main.transform.position, display.Screen.bounds.center) > 4.5f)) EndUse();
-        // Escape belongs to pause. B/right click just lets go of this instrument.
+        // Pause sends Escape to RequestExit. B/right click uses that same exit.
         if (UI.InUse && Time.frameCount > openedFrame &&
             ((Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame) ||
              (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame))) RequestExit();
@@ -75,7 +75,7 @@ public class MasterComputerStation : MonoBehaviour, Interactable
     public void Interact(GameObject interactionSource)
     {
         if (!connected || !UI.Initialized || UI.InUse || closing || TerminalPause.BlocksGameplayInput) return;
-        TerminalToolInput.Begin(this, EndUse);
+        TerminalToolInput.Begin(this, EndUse, RequestExit);
         if (view == null) view = gameObject.AddComponent<MasterComputerView>();
         view.Begin(display.Screen);
         openedFrame = Time.frameCount;

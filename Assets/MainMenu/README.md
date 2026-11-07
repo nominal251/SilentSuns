@@ -143,6 +143,8 @@ Use `Assets/MasterComputer/MasterComputer.prefab`. The separate `MasterComputerR
 
 Interact with the dark screen to move closer and log in. Look toward the bottom edge to reach the dial. Its four stops open 00 / Status, 01 / Logs, 02 / R&D, and 03 / Alerts. Exit or pause turns the screen off and returns the dial to Status with the same switch click. The console model is unchanged; the alert light is a child of it.
 
+Escape exits the computer with the camera return animation. Press it again after leaving to open pause. Controller Start and a controller disconnect still pause immediately.
+
 - `MasterComputerStation` connects interaction, survey counts, and the run manager.
 - `MasterComputerSelector` tells `RotarySwitch` which page is selected. The prefab uses the four-notch model and the script ID from Danny's switch update. The scene placeholders retain their three positions.
 - `MasterComputerUI` draws the pages and types the login. `MasterComputerDisplay` puts that UI on the screen with lighter CRT effects.
