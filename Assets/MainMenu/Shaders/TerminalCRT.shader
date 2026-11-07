@@ -28,6 +28,8 @@ Shader "Silent Suns/Terminal CRT"
         _Disturbance ("Local disturbance", Float) = 0
         _DiagnosticGlitch ("Diagnostic instability", Float) = 0
         _Warmup ("Power settling", Float) = 0
+        _SyncRipple ("Brief screen ripple", Float) = 0
+        _SyncPhase ("Ripple travel", Float) = 0
         _DisplayBrightness ("Overlay brightness", Float) = 0
         _DisplayContrast ("Overlay contrast", Float) = 1
         _ClearDisplay ("Settings and calibration", Float) = 0
@@ -47,6 +49,7 @@ Shader "Silent Suns/Terminal CRT"
             TEXTURE2D(_PreviousTex); SAMPLER(sampler_PreviousTex);
             float _ShipOverlay, _GameplayBlend, _Dormant, _WakePulse;
             float _HandoffFault, _SignalLevel;
+            float _SyncRipple, _SyncPhase;
             float4 _MainTex_TexelSize, _DisturbanceRegion;
             float _Power, _RespectSourceAlpha, _ContentFit;
             float _Curvature, _ScanStrength, _ScanLines, _PhosphorStrength, _Glow, _Persistence;
@@ -95,6 +98,10 @@ Shader "Silent Suns/Terminal CRT"
                 float alpha = 1 - smoothstep(-0.0015, 0.0015, aperture);
                 if (alpha < 0.001) return half4(0, 0, 0, _ShipOverlay * (1 - _GameplayBlend));
                 float2 uv = curved * 0.5 + 0.5;
+                // Master-computer sync settling. Zero by default keeps other screens unchanged.
+                float rippleY = uv.y - lerp(-.1, 1.1, _SyncPhase);
+                float rippleBand = exp(-rippleY * rippleY * 90);
+                uv.x += sin(rippleY * 35) * rippleBand * .006 * _SyncRipple * _InterferenceStrength;
                 float2 pixel = floor(input.positionCS.xy);
                 float frame = floor(_DisplayTime * 24);
 

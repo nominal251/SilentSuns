@@ -136,3 +136,20 @@ The shuttle is [Font Awesome Free shuttle-space](https://fontawesome.com/icons/s
 `TerminalPolishBuild` updates shared UI assets and build metadata before a player build. It does not rebuild the menu scene. Use **Silent Suns > Main Menu > Update shared UI assets** if adding or replacing shared artwork/audio.
 
 When landing loads a planet alongside the ship, the navigation display reads that planet's objectives. The ship keeps its four survey objectives separately. Returning restores the ship phase; restarting still loads the ship and its player.
+
+## Master computer
+
+Use `Assets/MasterComputer/MasterComputer.prefab`. The separate `MasterComputerReview` scene lets you test it with the ship's player and systems. In Unity, **Silent Suns > Master Computer > Open review scene** opens that scene.
+
+Interact with the dark screen to move closer and log in. Look toward the bottom edge to reach the dial. Its four stops open 00 / Status, 01 / Logs, 02 / R&D, and 03 / Alerts. Exit or pause turns the screen off and returns the dial to Status with the same switch click. The console model is unchanged; the alert light is a child of it.
+
+- `MasterComputerStation` connects interaction, survey counts, and the run manager.
+- `MasterComputerSelector` tells `RotarySwitch` which page is selected. The prefab uses the four-notch model and the script ID from Danny's switch update. The scene placeholders retain their three positions.
+- `MasterComputerUI` draws the pages and types the login. `MasterComputerDisplay` puts that UI on the screen with lighter CRT effects.
+- `MasterComputerData` keeps logs, tools, and alerts for the current run. Other systems call `InsertDisk`, `RegisterTool`, or `RaiseAlert` when something actually happens.
+
+Submit Catalog becomes available after the required survey is complete and its alert has been read. It submits the catalog; the cryopod spends the nitrogen charge when continuing. Physical disk insertion and individual ship-module readings still need their gameplay connections. This does not add save/load.
+
+The rare startup interruption can happen once per run, with a five-minute gap between eligible rolls. There is no keyboard shortcut to trigger it. Reduced Motion skips the light flicker. It uses the Effects volume; typing and screen clicks use the shared UI sounds.
+
+Master-computer sound and image notes are in `Assets/MasterComputer/Media/Credits.txt`. The switch uses the existing `Assets/Sounds/Click2.mp3`, whose source is still unconfirmed.
