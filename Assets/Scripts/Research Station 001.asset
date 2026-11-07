@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: Research Station 001
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: Research Station 001
+  logTitle: "Geological Survey \u2013 Entry 12"
+  author: Dr. Elias Voss
+  dateRecorded: 04/17/2189
+  logText: '
+
+    "We''ve completed another round of geological testing near the
+    northern ridge. The samples appear to contain an unusual crystalline structure.
+    Initial scans suggest the material is reacting to nearby heat sources. Further
+    investigation is required."'
