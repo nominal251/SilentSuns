@@ -33,7 +33,7 @@ namespace SilentSuns.Menu
         private readonly Color panel = new Color32(10, 18, 38, 255);
         private TMP_Text completion, currentSystem, recordCount;
         private TMP_Text hullCaption, catalogState, recordStamp, recordSection;
-        private readonly TMP_Text[] resourceValues = new TMP_Text[4];
+        private readonly TMP_Text[] resourceValues = new TMP_Text[3];
         private Image recordAccent;
         private MasterComputerGraphic recordSymbol;
         private Image surveyFill, hullFill;
@@ -403,14 +403,15 @@ namespace SilentSuns.Menu
             submit = Button(middle, "SUBMIT CATALOG  >", .055f, .82f, .89f, .13f, SubmitCatalog);
 
             var resources = Frame("Resources", pageRoot, 0, .74f, 1, .26f);
-            string[] names = { "CRYO CHARGES", "SHIP PARTS", "PARANORMAL ENERGY", "LIFE SUPPORT" };
-            Color[] colors = { cyan, good, warning, good };
+            string[] names = { "CRYO CHARGES", "SHIP PARTS", "PARANORMAL ENERGY" };
+            Color[] colors = { cyan, good, warning };
+            float width = 1f / names.Length;
             for (int i = 0; i < names.Length; i++)
             {
-                float x = i * .25f;
+                float x = i * width;
                 if (i > 0) TerminalUI.Panel("Resource divider", resources, x, .16f, .001f, .68f, muted * .4f);
-                Label(resources, "Resource label " + i, names[i], x + .025f, .13f, .21f, .23f, 23).color = muted;
-                resourceValues[i] = Label(resources, "Resource value " + i, "--", x + .025f, .39f, .21f, .46f, 43);
+                Label(resources, "Resource label " + i, names[i], x + .025f, .13f, width - .05f, .23f, 23).color = muted;
+                resourceValues[i] = Label(resources, "Resource value " + i, "--", x + .025f, .39f, width - .05f, .46f, 43);
                 resourceValues[i].color = colors[i];
             }
         }
@@ -610,8 +611,6 @@ namespace SilentSuns.Menu
             resourceValues[0].text = $"{r.NitrogenCanisters:00}";
             resourceValues[1].text = $"{r.ShipParts:00}";
             resourceValues[2].text = $"{r.ParanormalEnergy:0}";
-            // This is the ship's status label. Suit oxygen stays on the navigation tool.
-            resourceValues[3].text = "STABLE";
             string progress = total > 0 ? $"{catalogued} / {total} CATALOGUED\n{discovered} / {total} DISCOVERED" : "AWAITING SCANNER DATA";
             currentSystem.text = $"CURRENT SYSTEM: {game.CurrentSystemNumber:00}";
             completion.text = game.CatalogSubmitted ? "SUBMITTED" : total > 0 ? $"{Mathf.RoundToInt(100f * catalogued / total)}% COMPLETE" : "SCANNING";
