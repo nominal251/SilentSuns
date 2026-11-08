@@ -110,6 +110,7 @@ namespace SilentSuns.Menu
             if (escape || start || (paused && back))
             {
                 TerminalInteractionAudio.Instance?.Keyboard();
+                if (!paused && escape && TerminalToolInput.TryExitOnEscape()) return;
                 if (paused && confirmationPanel.activeSelf)
                     CancelLeave();
                 else if (paused && settingsPanel.activeSelf)
@@ -181,6 +182,7 @@ namespace SilentSuns.Menu
         {
             if (paused || TerminalTransition.IsActive || TerminalShipIntro.IsActive)
                 return;
+            TerminalToolInput.CloseActive();
             EnsureInputSystem();
             // Menu sounds still play while AudioListener.pause stops gameplay sounds.
             GetComponent<TerminalInteractionAudio>().TakeFocus();

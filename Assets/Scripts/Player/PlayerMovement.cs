@@ -59,8 +59,10 @@ public class PlayerMovement : MonoBehaviour
         ? Mathf.Clamp01(resources.OxygenSeconds / Mathf.Max(.001f, resources.OxygenCapacity)) * maxTotalDistance
         : Mathf.Max(0, maxTotalDistance - totalDistanceTraveled);
     public float SafeRadius => OxygenRemaining;
+    // The green mark on the dial uses this same full-tank travel budget.
+    public float OxygenRangeAtFull => Mathf.Max(1, maxTotalDistance);
     // Read by the navigation gauge, including scenes without the shared resource manager.
-    public float OxygenFraction => Mathf.Clamp01(OxygenRemaining / Mathf.Max(1, maxTotalDistance));
+    public float OxygenFraction => Mathf.Clamp01(OxygenRemaining / OxygenRangeAtFull);
     public bool CanUseSuitOxygen => isGravityOn && !SilentSuns.Menu.TerminalPause.BlocksGameplayInput &&
         (game == null || game.Phase == GameManager.GamePhase.PlanetaryExploration ||
          game.Phase == GameManager.GamePhase.SystemExploration || game.Phase == GameManager.GamePhase.SystemComplete);
@@ -104,6 +106,8 @@ public class PlayerMovement : MonoBehaviour
             previousPosition = rBody.position;
             return;
         }
+        // Choosing a tracker stops controls, but travel and oxygen still belong to the world.
+        if (SilentSuns.Menu.TerminalToolInput.BlocksInput) return;
 
         if (inputHandler.debugPressed)
         {
@@ -132,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
     {
         TrackDistance();
         CheckSafeCircle();
-        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput)
             return;
 
         if (debugDeteced)

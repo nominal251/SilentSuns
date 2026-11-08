@@ -7,6 +7,7 @@ namespace SilentSuns.Menu
     public class TerminalScroll : ScrollRect
     {
         private TerminalDisplay display;
+        private MasterComputerRaycaster computer;
         private bool easing;
         private bool updatingScrollbar;
         private float targetY, easeVelocity;
@@ -53,6 +54,7 @@ namespace SilentSuns.Menu
             var menu = GetComponentInParent<TerminalMenu>();
             if (menu != null)
                 display = menu.GetComponentInChildren<TerminalDisplay>(true);
+            computer = GetComponentInParent<MasterComputerRaycaster>();
         }
         public override void OnBeginDrag(PointerEventData data)
         {
@@ -61,6 +63,8 @@ namespace SilentSuns.Menu
             Vector2 original = data.position;
             if (display != null && display.TryGetContentPoint(original, out var point))
                 data.position = point;
+            else if (computer != null && computer.Display.TryGetContentPoint(original, out point))
+                data.position = point;
             base.OnBeginDrag(data);
             data.position = original;
         }
@@ -68,6 +72,8 @@ namespace SilentSuns.Menu
         {
             Vector2 original = data.position;
             if (display != null && display.TryGetContentPoint(original, out var point))
+                data.position = point;
+            else if (computer != null && computer.Display.TryGetContentPoint(original, out point))
                 data.position = point;
             base.OnDrag(data);
             data.position = original;
