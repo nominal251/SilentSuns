@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Planet : MonoBehaviour
 {
+    [Header("What system the planet belongs to")]
+    public int system = 1;
+
     public string name;
 
     [Header("Sine Parameters for Waveform Scanner")]

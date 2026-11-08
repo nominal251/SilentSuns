@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows.Speech;
 
 public class WideFieldScanner : MonoBehaviour
 {
+    public PlanetManager planetManager;
+
     public TMP_Text wfsText;
 
     public Button confirmButton;
 
     public GameObject shipMarker;
 
+    // Filled automatically with the current system's undiscovered planets
     public List<GameObject> planets = new List<GameObject>();
 
     public float confidenceRange = 0.3f;
@@ -37,8 +39,49 @@ public class WideFieldScanner : MonoBehaviour
         return "[" + new string('▒', filled) + new string(' ', empty) + "]";
     }
 
+    void Awake()
+    {
+        if (planetManager == null)
+        {
+            PlanetManager[] managers = FindObjectsByType<PlanetManager>();
+            if (managers.Length > 0)
+                planetManager = managers[0];
+        }
+    }
+
     void Start()
     {
+        if (planetManager == null)
+        {
+            Debug.LogError("WideFieldScanner: no PlanetManager found in the scene.", this);
+            return;
+        }
+
+        planetManager.SystemChanged += RebuildPlanetList;
+        RebuildPlanetList();
+    }
+
+    void OnDestroy()
+    {
+        if (planetManager != null)
+            planetManager.SystemChanged -= RebuildPlanetList;
+    }
+
+    // Fill the scanner with the current system's undiscovered planets
+    void RebuildPlanetList()
+    {
+        planets.Clear();
+
+        foreach (Planet planet in planetManager.planets)
+        {
+            if (!planet.gameObject.activeInHierarchy)
+                planets.Add(planet.gameObject);
+        }
+
+        scanComplete = false;
+        currentPlanet = null;
+        confidence = 0.1f;
+
         Calculate();
     }
 
@@ -74,15 +117,35 @@ public class WideFieldScanner : MonoBehaviour
         }
     }
 
+    // True if the planet is in the current system and hasn't been located yet
+    private bool NeedsLocating(GameObject planetObject)
+    {
+        if (planetManager == null || planetObject == null)
+            return false;
+
+        // Already located (normally or via the debug key), so the scanner no longer needs it
+        if (planetObject.activeInHierarchy)
+            return false;
+
+        return planetObject.TryGetComponent(out Planet planet) &&
+               planet.system == planetManager.currentSystem;
+    }
+
     void Calculate()
     {
         float closestDistance = Mathf.Infinity;
         currentPlanet = null;
+        int remaining = 0;
 
         // find the planet closest to the ship marker on the X axis
-        // ignore planets that are below the ship
+        // ignore located planets, planets in other systems, and planets below the ship
         foreach (GameObject planet in planets)
         {
+            if (!NeedsLocating(planet))
+                continue;
+
+            remaining++;
+
             if (shipMarker.transform.position.y > planet.transform.position.y)
                 continue;
 
@@ -97,8 +160,8 @@ public class WideFieldScanner : MonoBehaviour
             }
         }
 
-        // all planets have been found
-        if (planets.Count == 0)
+        // all planets in this system have been found
+        if (remaining == 0)
         {
             confidence = 0f;
             scanComplete = true;
