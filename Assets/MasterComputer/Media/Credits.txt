@@ -1,0 +1,13 @@
+SCREEN INTERRUPTION
+
+Audio: "jumpscare" by xloizlol.
+Original: https://freesound.org/people/xloizlol/sounds/564950/
+License: Creative Commons Zero (CC0 1.0).
+https://creativecommons.org/publicdomain/zero/1.0/
+Uses the creator's high-quality MP3 preview. Runtime playback is capped at 18% source volume and routed through the game's Effects mixer.
+
+Also listed by freesound_community on the supplied Pixabay page:
+https://pixabay.com/sound-effects/horror-jumpscare-94984/
+The sound was obtained from the original Freesound listing above.
+
+Screen image: supplied reference image. Creator and source license have not been supplied.
