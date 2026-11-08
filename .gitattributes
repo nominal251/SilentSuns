@@ -37,7 +37,9 @@
 
 # Unity YAML files
 *.anim                  unity-yaml
-*.asset                 unity-yaml
+# Some .asset files contain binary data (terrain, navmeshes, and baked lighting).
+# Keep YAML assets readable, but never normalize line endings inside binary assets.
+*.asset                 unity-yaml text=auto
 *.brush                 unity-yaml
 *.controller            unity-yaml
 *.flare                 unity-yaml
@@ -167,5 +169,9 @@ Packages/packages-lock.json linguist-generated
 # Spine export file for Unity
 *.skel.bytes            lfs
 
-# Exceptions for .asset files such as lightning pre-baking
-LightingData.asset     binary
+# Binary Unity data must not use text conversion or the YAML merge driver.
+"Assets/terrain data/**/*.asset" binary
+TerrainData*.asset      binary
+"New Terrain*.asset"    binary
+NavMesh*.asset          binary
+LightingData.asset      binary
