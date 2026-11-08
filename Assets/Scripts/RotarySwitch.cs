@@ -1,52 +1,52 @@
+
 using UnityEngine;
+using System.Collections;
 
 public class RotarySwitch : MonoBehaviour, Interactable
 {
     [Header("Rotary Dial")]
     public Transform dial;
 
-    [Tooltip("Rotation of the dial when the switch is at state 0.")]
-    public Vector3 state0Rotation;
+    [Header("Notch Settings")]
+    public Vector3[] stateRotations;
 
-    [Tooltip("Rotation of the dial when the switch is at state 1.")]
-    public Vector3 state1Rotation;
-
-    [Tooltip("Rotation of the dial when the switch is at state 2.")]
-    public Vector3 state2Rotation;
+    [Header("Animation")]
+    [Tooltip("Time in seconds to move between states.")]
+    public float animationDuration = 0.25f;
 
     [Header("Switch State")]
-    [Range(0, 2)]
     public int currentState = 0;
 
     [Header("State GameObjects")]
-    public GameObject state0Object;
-    public GameObject state1Object;
-    public GameObject state2Object;
+    public GameObject[] stateObjects;
 
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip switchSound;
 
+    private bool isAnimating = false;
+
     private void Start()
     {
-        UpdateSwitch();
+        currentState = Mathf.Clamp(currentState, 0, stateRotations.Length - 1);
+        UpdateSwitchInstant();
     }
 
     public void Interact(GameObject interactionSource)
     {
+        if (isAnimating || stateRotations.Length == 0)
+        {
+            return;
+        }
+
         currentState++;
 
-        if (currentState > 2)
+        if (currentState >= stateRotations.Length)
         {
             currentState = 0;
         }
 
-        UpdateSwitch();
-
-        if (audioSource != null && switchSound != null)
-        {
-            audioSource.PlayOneShot(switchSound);
-        }
+        StartCoroutine(AnimateSwitch());
     }
 
     public void StopInteract()
@@ -54,58 +54,73 @@ public class RotarySwitch : MonoBehaviour, Interactable
 
     }
 
-    private void UpdateSwitch()
+    private IEnumerator AnimateSwitch()
     {
+        isAnimating = true;
 
-        if (dial != null)
+        Quaternion startRotation = dial.localRotation;
+        Quaternion targetRotation = GetRotationForState(currentState);
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < animationDuration)
         {
-            switch (currentState)
+            elapsedTime += Time.deltaTime;
+
+            float progress = Mathf.Clamp01(
+                elapsedTime / animationDuration
+            );
+
+            progress = Mathf.SmoothStep(0f, 1f, progress);
+
+            dial.localRotation = Quaternion.Slerp(
+                startRotation,
+                targetRotation,
+                progress
+            );
+
+            yield return null;
+        }
+
+        dial.localRotation = targetRotation;
+
+        UpdateStateObjects();
+        PlaySwitchSound();
+
+        isAnimating = false;
+    }
+
+    private Quaternion GetRotationForState(int state)
+    {
+        return Quaternion.Euler(stateRotations[state]);
+    }
+
+    private void UpdateSwitchInstant()
+    {
+        if (dial != null && stateRotations.Length > 0)
+        {
+            dial.localRotation = GetRotationForState(currentState);
+        }
+
+        UpdateStateObjects();
+    }
+
+    private void UpdateStateObjects()
+    {
+        for (int i = 0; i < stateObjects.Length; i++)
+        {
+            if (stateObjects[i] != null)
             {
-                case 0:
-                    dial.localEulerAngles = state0Rotation;
-                    break;
-
-                case 1:
-                    dial.localEulerAngles = state1Rotation;
-                    break;
-
-                case 2:
-                    dial.localEulerAngles = state2Rotation;
-                    break;
+                stateObjects[i].SetActive(currentState == i);
             }
         }
+    }
 
-        if (state0Object != null)
+    private void PlaySwitchSound()
+    {
+        if (audioSource != null && switchSound != null)
         {
-            state0Object.SetActive(false);
-        }
-
-        if (state1Object != null)
-        {
-            state1Object.SetActive(false);
-        }
-
-        if (state2Object != null)
-        {
-            state2Object.SetActive(false);
-        }
-
-        switch (currentState)
-        {
-            case 0:
-                if (state0Object != null)
-                    state0Object.SetActive(true);
-                break;
-
-            case 1:
-                if (state1Object != null)
-                    state1Object.SetActive(true);
-                break;
-
-            case 2:
-                if (state2Object != null)
-                    state2Object.SetActive(true);
-                break;
+            audioSource.PlayOneShot(switchSound);
         }
     }
 }
