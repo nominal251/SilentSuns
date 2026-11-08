@@ -41,7 +41,7 @@ namespace SilentSuns.Menu
         [SerializeField] private TerminalDisplay display;
         [SerializeField] private TerminalBootLog bootLog;
         [SerializeField] private TerminalSessionRestoration restoration;
-        [SerializeField] private string gameplayScene = "SampleScene";
+        [SerializeField] private string gameplayScene = "PreDANMerge";
 
         [Header("Audio")]
         [SerializeField] private TerminalMenuMusic menuMusic;

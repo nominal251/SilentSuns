@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        camera = transform.Find("Camera Holder/Player Camera").gameObject;
+        camera = transform.Find("Player Camera").gameObject;
         inputHandler = InputHandler.instance;
         physicsInteractor = GetComponent<PhysicsInteractor>();
         game = SilentSuns.Menu.TerminalGameSession.Manager;

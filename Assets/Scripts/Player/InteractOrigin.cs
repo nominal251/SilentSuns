@@ -7,10 +7,12 @@ public class InteractOrigin : MonoBehaviour
     private Interactable currentInteractable;
     private Interactable heldInteractable;
     private InputHandler inputHandler;
+    private Camera cam;
 
     void Start()
     {
         inputHandler = InputHandler.instance;
+        cam = Camera.main;
     }
 
     void Update()
@@ -25,7 +27,11 @@ public class InteractOrigin : MonoBehaviour
             return;
         }
 
-        Ray ray = new Ray(transform.position, transform.forward);
+        // Camera.main can change (scene loads, camera swaps), so refresh if needed
+        if (cam == null || !cam.isActiveAndEnabled) cam = Camera.main;
+        if (cam == null) return;
+
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
 
         currentInteractable = null;
 
@@ -39,6 +45,7 @@ public class InteractOrigin : MonoBehaviour
 
         // start interaction
         // Use the same remappable action as the settings screen.
+        if (inputHandler == null) inputHandler = InputHandler.instance;
         if (inputHandler == null) return;
         if (inputHandler.interactPressed)
         {
@@ -57,7 +64,7 @@ public class InteractOrigin : MonoBehaviour
         {
             // check if the object is still within range
             float distance = Vector3.Distance(
-                transform.position,
+                cam.transform.position,
                 ((MonoBehaviour)heldInteractable).transform.position
             );
 
