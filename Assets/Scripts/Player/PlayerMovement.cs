@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundedMoveForce = 25f;
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float maxCameraAngle = 85f;
+    public bool inMinigame = false;
 
     [Header("Jump Parameters (gravity mode only)")]
     [SerializeField] private float jumpHeight = 1.2f;
@@ -49,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     private GameManager game;
     private ResourceManager resources;
 
+
     public bool IsOnFoot => isGravityOn;
     public Transform CurrentOxygenStation => currentOxygenStation;
     // Keep the distance units from Drew's system, using Danny's resource as the source of truth.
@@ -73,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        camera = transform.Find("Player Camera").gameObject;
+        camera = transform.Find("Camera Holder/Player Camera").gameObject;
         inputHandler = InputHandler.instance;
         physicsInteractor = GetComponent<PhysicsInteractor>();
         game = SilentSuns.Menu.TerminalGameSession.Manager;
@@ -153,6 +155,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleRotationGravity()
     {
+        if (inMinigame)
+        {
+            return;
+        }
         yRotation += inputHandler.lookInput.x * mouseSens * inputHandler.lookSensitivity;
         cameraXRotation -= inputHandler.lookInput.y * mouseSens * inputHandler.lookSensitivity;
         cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
@@ -318,5 +324,10 @@ public class PlayerMovement : MonoBehaviour
     private void OnDestroy()
     {
         if (game != null) game.RunStarted -= ResetOxygenForNewRun;
+    }
+
+    public void MinigameOnOff()
+    {
+        inMinigame = !inMinigame;
     }
 }
