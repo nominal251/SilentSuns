@@ -22,7 +22,7 @@ public class Lander : MonoBehaviour
     public UnityEvent onLanderReturn;
 
     private ObjectiveSystem surfaceObjectives;
-    private bool objectivesComplete;
+    public bool objectivesComplete;
     private bool launching;
 
     private void Awake()

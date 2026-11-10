@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class AirCompMinigame : MonoBehaviour, IMinigame
 {
+    [SerializeField] private SurfaceObjectiveTracker surfaceObjectiveTracker; // SURFACE OBJECTIVE TRACKER CODE
+
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject cameraToMinigame;
     [SerializeField] private GameObject cameraToPlayer;
@@ -27,6 +29,12 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
     void Awake()
     {
+        if (surfaceObjectiveTracker == null) // SURFACE OBJECTIVE TRACKER CODE
+        {
+            GameObject tmp = GameObject.Find("SurfaceObjectiveTracker"); // SURFACE OBJECTIVE TRACKER CODE 
+            surfaceObjectiveTracker = tmp.GetComponent<SurfaceObjectiveTracker>(); // SURFACE OBJECTIVE TRACKER CODE
+        }
+
         if (minigameManager == null)
         {
             GameObject tmp = GameObject.Find("Minigame Manager");
@@ -35,13 +43,13 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
         if (camera == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
+            GameObject tmp = GameObject.Find("Astronaut Player/Player Camera");
             camera = tmp;
         }
 
         if (cameraToPlayer == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
+            GameObject tmp = GameObject.Find("Astronaut Player");
             cameraToPlayer = tmp;
         }
 
@@ -188,10 +196,12 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
             numCorrect = 0;
         }
 
-        if (numCorrect == 8)
+        if (numCorrect == 8) // WIN
         {
             Debug.Log("Correct Air Composition");
             minigameManager.EndCurrentMinigame();
+
+            surfaceObjectiveTracker.CompleteObj(); // SURFACE OBJECTIVE TRACKER CODE
         }
     }
 

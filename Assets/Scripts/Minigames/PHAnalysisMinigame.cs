@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class PHAnalysisMinigame : MonoBehaviour, IMinigame
 {
+    [SerializeField] private SurfaceObjectiveTracker surfaceObjectiveTracker; // SURFACE OBJECTIVE TRACKER CODE
+
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private GameObject phBar;
     [SerializeField] private Image colorImage;
@@ -17,6 +19,12 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
     private int color = 0;
     void Awake()
     {
+        if (surfaceObjectiveTracker == null) // SURFACE OBJECTIVE TRACKER CODE
+        {
+            GameObject tmp = GameObject.Find("SurfaceObjectiveTracker"); // SURFACE OBJECTIVE TRACKER CODE 
+            surfaceObjectiveTracker = tmp.GetComponent<SurfaceObjectiveTracker>(); // SURFACE OBJECTIVE TRACKER CODE
+        }
+
         if (minigameManager == null)
         {
             GameObject tmp = GameObject.Find("Minigame Manager");
@@ -25,13 +33,13 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
 
         if (camera == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
+            GameObject tmp = GameObject.Find("Astronaut Player/Player Camera");
             camera = tmp;
         }
 
         if (cameraToPlayer == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
+            GameObject tmp = GameObject.Find("Astronaut Player");
             cameraToPlayer = tmp;
         }
 
@@ -86,11 +94,13 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
 
 
 
-        if (myButtonGameObject.name == color.ToString())
+        if (myButtonGameObject.name == color.ToString()) // WIN
         {
             Debug.Log("Winner");
             success = true;
             phBar.SetActive(false);
+
+            surfaceObjectiveTracker.CompleteObj(); // SURFACE OBJECTIVE TRACKER CODE
         }
         else
         {

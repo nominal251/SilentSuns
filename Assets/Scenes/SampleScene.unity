@@ -18647,6 +18647,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  objectivesComplete: 0
 --- !u!4 &1618988318
 Transform:
   m_ObjectHideFlags: 0
@@ -24379,7 +24380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: Astronaut Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
