@@ -1,21 +1,59 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PowerControlledScreen : MonoBehaviour
 {
-    [Header("Blackout Overlay")]
-    [SerializeField] private Image blackoutOverlay;
+    [Header("Blackout")]
+    [SerializeField] private Material blackoutMat;
+    [SerializeField] private List<MeshRenderer> screens;
 
-    public void SetPowered(bool powered)
+    private readonly List<Material> originalMats = new List<Material>();
+    private bool isBlackedOut;
+
+    [ContextMenu("System ON")]
+    public void TriggerYes()
     {
-        if (blackoutOverlay == null)
+        TriggerEMP(true);
+    }
+
+    [ContextMenu("System OFF")]
+    public void TriggerNo()
+    {
+        TriggerEMP(false);
+    }
+
+    public void TriggerEMP(bool powered)
+    {
+        if (blackoutMat == null)
         {
             Debug.LogWarning(
-                $"[PowerControlledScreen] No blackout overlay assigned on {name}",
+                $"[PowerControlledScreen] No blackout material assigned on {name}",
                 this);
             return;
         }
 
-        blackoutOverlay.enabled = !powered;
+        if (!powered)
+        {
+            if (isBlackedOut) return; // don't overwrite saved originals
+
+            originalMats.Clear();
+            foreach (var screen in screens)
+            {
+                originalMats.Add(screen.sharedMaterial);
+                screen.sharedMaterial = blackoutMat;
+            }
+            isBlackedOut = true;
+        }
+        else
+        {
+            if (!isBlackedOut) return;
+
+            for (int i = 0; i < screens.Count; i++)
+            {
+                screens[i].sharedMaterial = originalMats[i];
+            }
+            originalMats.Clear();
+            isBlackedOut = false;
+        }
     }
 }

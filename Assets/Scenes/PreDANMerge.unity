@@ -1824,6 +1824,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119715197}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &127702117
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 127702119}
+  - component: {fileID: 127702118}
+  m_Layer: 0
+  m_Name: EmpScreens
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &127702118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127702117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38a7a446e29a92e4097991fd2bc5cdc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PowerControlledScreen
+  blackoutMat: {fileID: 2100000, guid: b1f1ae3b74e9ac64cbe83ab8b880b227, type: 2}
+  screens:
+  - {fileID: 1838835464}
+  - {fileID: 2099611150}
+  - {fileID: 613419856}
+  - {fileID: 1348837666}
+  - {fileID: 1898645874}
+  - {fileID: 76305788}
+  - {fileID: 683086562}
+  - {fileID: 276005635}
+  - {fileID: 2058062817}
+--- !u!4 &127702119
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127702117}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.23768, y: 3.67681, z: 3.88374}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!64 &127877678
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -27964,6 +28019,7 @@ SceneRoots:
   - {fileID: 1663623599}
   - {fileID: 731927031107202567}
   - {fileID: 1318755208}
+  - {fileID: 127702119}
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 502895158}
