@@ -45,9 +45,10 @@ GameObject:
   - component: {fileID: 5373841226381726112}
   - component: {fileID: 1615608645364647398}
   - component: {fileID: 5348794204827691397}
-  m_Layer: 0
+  - component: {fileID: 2982956634249377485}
+  m_Layer: 6
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,6 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AstronautPlayerScriptVersion1
   isGravityOn: 1
+  movementLocked: 0
   mouseSens: 1
   floatingMoveForce: 10
   rollSpeed: 60
@@ -173,6 +175,21 @@ MonoBehaviour:
   goodIntensity: 0
   cautionIntensity: 0
   dangerIntensity: 0
+--- !u!114 &2982956634249377485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2810187639565938681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a78ea69950028e4ba435387552c830b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LadderClimber
+  climbSpeed: 2.5
+  snapSpeed: 8
+  dismountPush: 0.6
 --- !u!1 &4978200516783072722
 GameObject:
   m_ObjectHideFlags: 0
