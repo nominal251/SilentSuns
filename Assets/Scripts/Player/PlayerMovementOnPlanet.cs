@@ -3,34 +3,46 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementOnPlanet : MonoBehaviour
 {
-    [Header("Look")]
+    [Header("Look Parameters")]
     [SerializeField] private float mouseSens = 1f;
     [SerializeField] private float maxCameraAngle = 85f;
 
-    [Header("Movement")]
+    [Header("Movement Parameters")]
     [SerializeField] private float moveForce = 25f;
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField, Min(0f)] private float drag = 5f;
 
-    [Header("Stamina")]
+    [Header("Jump Parameters")]
+    [SerializeField] private float jumpHeight = 1.2f;
+    [SerializeField] private float jumpCooldown = 0.2f;
+    [SerializeField] private float groundCheckDistance = 0.15f;
+    [SerializeField] private LayerMask groundMask = ~0;
+
+    [Header("Stamina Parameters")]
     [SerializeField] private float maxStamina = 100f;
     [SerializeField] private float staminaConsumptionRate = 10f;
     [SerializeField] private float staminaRegenRate = 10f;
     [SerializeField] private float staminaRegenCooldown = 1f;
     [SerializeField] private float staminaExhaustionCooldown = 3.5f;
 
+    //Internal References
     private Rigidbody rBody;
+    private Collider bodyCollider;
     private Transform cameraTransform;
+    private PhysicsInteractor physicsInteractor;
+
+    //External References
     private InputHandler inputHandler;
 
+    //Hidden Internal Variables
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
-
-    [Header("Debug")]
-    [SerializeField] private float currentStamina;
-    [SerializeField] private float currentRegenCooldown;
-    [SerializeField] private float currentExhaustionCooldown;
-    [SerializeField] private bool canRun = true;
+    private float currentStamina;
+    private float currentRegenCooldown;
+    private float currentExhaustionCooldown;
+    private bool canRun = true;
+    private float jumpPressedTime = -10f;
+    private float lastJumpTime = -10f;
 
     private void Awake()
     {
@@ -38,6 +50,9 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         rBody.useGravity = true;
         rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
         rBody.linearDamping = 0f;
+
+        bodyCollider = GetComponentInChildren<Collider>();
+        physicsInteractor = GetComponent<PhysicsInteractor>();
 
         currentStamina = maxStamina;
 
@@ -52,24 +67,23 @@ public class PlayerMovementOnPlanet : MonoBehaviour
 
     private void Update()
     {
-        HandleRotation();
         ManageStamina();
+
+        if (inputHandler.jumpPressed)
+        {
+            jumpPressedTime = Time.time;
+        }
+
+        //if rotating object don't move the camera
+        if (physicsInteractor != null && physicsInteractor.IsRotatingObject) return;
+        HandleRotation();
     }
 
     private void FixedUpdate()
     {
         HandleMovement();
         ApplyHorizontalDrag();
-    }
-
-    private void HandleRotation()
-    {
-        yRotation += inputHandler.lookInput.x * mouseSens;
-        cameraXRotation -= inputHandler.lookInput.y * mouseSens;
-        cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
-
-        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
-        cameraTransform.localRotation = Quaternion.Euler(cameraXRotation, 0f, 0f);
+        HandleJump();
     }
 
     private void ManageStamina()
@@ -103,6 +117,16 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         currentRegenCooldown -= Time.deltaTime;
     }
 
+    private void HandleRotation()
+    {
+        yRotation += inputHandler.lookInput.x * mouseSens;
+        cameraXRotation -= inputHandler.lookInput.y * mouseSens;
+        cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
+
+        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+        cameraTransform.localRotation = Quaternion.Euler(cameraXRotation, 0f, 0f);
+    }
+
     private void HandleMovement()
     {
         Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, 0f, inputHandler.moveInput.z);
@@ -115,9 +139,33 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     private void ApplyHorizontalDrag()
     {
         Vector3 velocity = rBody.linearVelocity;
-        float damping = Mathf.Clamp01(1f - drag * Time.fixedDeltaTime);
+        float damping = Mathf.Clamp01(1f - drag * Time.fixedDeltaTime); //why 1 - drag?
 
         // Scale only X and Z so gravity and jumps are unaffected.
         rBody.linearVelocity = new Vector3(velocity.x * damping, velocity.y, velocity.z * damping);
+    }
+
+    private void HandleJump()
+    {
+        if (Time.time - jumpPressedTime > 0.15f) return;
+        if (Time.time - lastJumpTime < jumpCooldown) return;
+        if (!IsGrounded()) return;
+
+        float jumpSpeed = Mathf.Sqrt(2f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+        rBody.AddForce(Vector3.up * jumpSpeed, ForceMode.VelocityChange);
+
+        lastJumpTime = Time.time;
+        jumpPressedTime = -10f;
+    }
+
+    private bool IsGrounded()
+    {
+        if (bodyCollider == null) return true;
+
+        Bounds bounds = bodyCollider.bounds;
+        float radius = Mathf.Min(bounds.extents.x, bounds.extents.z) * 0.9f;
+        float distance = bounds.extents.y - radius + groundCheckDistance;
+        return Physics.SphereCast(bounds.center, radius, Vector3.down, out _, distance,
+            groundMask, QueryTriggerInteraction.Ignore);
     }
 }

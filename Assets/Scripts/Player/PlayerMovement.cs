@@ -178,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (inputHandler.sprintInput)
         {
-            rBody.AddRelativeForce(inputDirection * groundedMoveForce * sprintMultiplier, ForceMode.Force);
+            rBody.AddRelativeForce(groundedMoveForce * sprintMultiplier * inputDirection, ForceMode.Force);
         }
         else
         {
