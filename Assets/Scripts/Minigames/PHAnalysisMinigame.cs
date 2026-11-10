@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PHAnalysisMinigame : MonoBehaviour, IMinigame
+public class PHAnalysisMinigame : Objective, IMinigame
 {
     [SerializeField] private SurfaceObjectiveTracker surfaceObjectiveTracker; // SURFACE OBJECTIVE TRACKER CODE
 
@@ -55,6 +55,11 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
             playerMovement = tmp.GetComponent<PlayerMovement>();
         }
     }
+
+    public override string GetProgressText()
+    {
+        return success ? "pH analysis complete" : "Analyze the pH sample";
+    }
     public void StartMinigame()
     {
         playerMovement.MinigameOnOff(); //turns camera rotation off
@@ -101,6 +106,7 @@ public class PHAnalysisMinigame : MonoBehaviour, IMinigame
             phBar.SetActive(false);
 
             surfaceObjectiveTracker.CompleteObj(); // SURFACE OBJECTIVE TRACKER CODE
+            base.Complete();
         }
         else
         {

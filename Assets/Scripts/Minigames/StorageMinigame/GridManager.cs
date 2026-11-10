@@ -16,9 +16,14 @@ public class GridManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private Canvas canvas;
     [SerializeField] private StoragePiece[] pieces;
+    [SerializeField] private SurfaceObjectiveTracker surfaceObjectiveTracker; // SURFACE OBJECTIVE TRACKER CODE
+
+    [SerializeField] private StorageMinigame storageMinigame;
 
     [Header("Grid Appearance")]
     [SerializeField] private Color gridColor = Color.gray;
+
+    private bool success = false;
 
     // Tracks which piece occupies each grid cell.
     private StoragePiece[,] occupiedCells;
@@ -48,6 +53,17 @@ public class GridManager : MonoBehaviour
                 this,
                 canvas.GetComponent<RectTransform>()
             );
+        }
+
+        if (surfaceObjectiveTracker == null) // SURFACE OBJECTIVE TRACKER CODE
+        {
+            GameObject tmp = GameObject.Find("SurfaceObjectiveTracker"); // SURFACE OBJECTIVE TRACKER CODE 
+            surfaceObjectiveTracker = tmp.GetComponent<SurfaceObjectiveTracker>(); // SURFACE OBJECTIVE TRACKER CODE
+        }
+
+        if (storageMinigame == null)
+        {
+            storageMinigame = GetComponentInParent<StorageMinigame>();
         }
     }
 
@@ -203,23 +219,50 @@ public class GridManager : MonoBehaviour
         piece.SetPlacement(piece.GridOrigin, false);
     }
 
-    // Checks whether every piece is in its correct position.
-    private void CheckPuzzleComplete()
+    public bool IsInsideGrid(StoragePiece piece, Vector2Int origin)
     {
-        if (puzzleSolved)
-            return;
-
-        foreach (StoragePiece piece in pieces)
+        foreach (Vector2Int cell in piece.Shape)
         {
-            if (!piece.isPlaced ||
-                piece.GridOrigin != piece.CorrectPosition)
+            Vector2Int position = origin + cell;
+
+            if (position.x < 0 || position.x >= gridWidth ||
+                position.y < 0 || position.y >= gridHeight)
             {
-                return;
+                return false;
             }
         }
 
-        puzzleSolved = true;
+        return true;
+    }
 
+    // Checks whether every piece is in its correct position.
+    public bool CheckPuzzleComplete()
+    {
+        if (puzzleSolved)
+            return false;
+
+        if (!IsGridFull())
+            return false;
+
+        puzzleSolved = true;
         Debug.Log("Puzzle completed!");
+        storageMinigame.CompletePuzzle();
+        return true;
+    }
+
+    private bool IsGridFull()
+    {
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                if (occupiedCells[x, y] == null)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

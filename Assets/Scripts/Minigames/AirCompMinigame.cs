@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AirCompMinigame : MonoBehaviour, IMinigame
+public class AirCompMinigame : Objective, IMinigame
 {
     [SerializeField] private SurfaceObjectiveTracker surfaceObjectiveTracker; // SURFACE OBJECTIVE TRACKER CODE
 
@@ -16,6 +16,8 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
     [SerializeField] private GameObject bar;
     [SerializeField] private List<LayoutElement> sections = new List<LayoutElement>();
 
+    private List<int> cuts = new List<int>();
+
     [SerializeField] private int numCorrect;
     private MinigameManager minigameManager;
     private List<int> percentForBar = new List<int>();
@@ -24,6 +26,8 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
     public List<Color> normalColors = new List<Color>();
 
     public List<UnityEngine.UI.Button> buttons = new List<UnityEngine.UI.Button>();
+
+    private bool success = false;
 
 
 
@@ -66,6 +70,10 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
         }
     }
 
+    public override string GetProgressText()
+    {
+        return success ? "pH analysis complete" : "Analyze the pH sample";
+    }
     public void StartMinigame()
     {
         playerMovement.MinigameOnOff(); //turns camera rotation off
@@ -93,30 +101,52 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
     void CreateBarValues()
     {
+        // Keep trying until an attempt produces no duplicate cuts
+        while (!TryCreateBarValues()) { }
+    }
+
+    bool TryCreateBarValues()
+    {
+        cuts.Clear();
+        percentForBar.Clear();
+
         int remaining = 100;
         int currentValue = 0;
 
         percentForBar.Add(currentValue);
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
-            if (i == 7)
-            {
-                percentForBar.Add(100);
-                break;
-            }
             int cutsLeft = 8 - i;
 
             int min = 5;
-            int max = Mathf.Min(22, remaining - (cutsLeft - 1) * 3); //maximum you can use while leaving 3 units for each remaining cut
+            int max = Mathf.Min(22, remaining - (cutsLeft - 1) * 3);
 
             int cut = Random.Range(min, max + 1);
+
+            if (cuts.Contains(cut))
+            {
+                return false; // duplicate, start over
+            }
+
+            cuts.Add(cut);
 
             currentValue += cut;
             remaining -= cut;
 
             percentForBar.Add(currentValue);
         }
+
+        // The last section is whatever is left, so it needs the same check
+        if (cuts.Contains(remaining))
+        {
+            return false;
+        }
+
+        cuts.Add(remaining);
+        percentForBar.Add(100);
+
+        return true;
     }
 
     public void EndMinigame()
@@ -202,6 +232,8 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
             minigameManager.EndCurrentMinigame();
 
             surfaceObjectiveTracker.CompleteObj(); // SURFACE OBJECTIVE TRACKER CODE
+            base.Complete();
+            success = true;
         }
     }
 

@@ -47,7 +47,7 @@ public class StoragePiece : MonoBehaviour
             // Allows the parent piece to receive drag events.
             image.raycastTarget = true;
 
-            Debug.Log("Created raycastable square: " + square.name);
+            //Debug.Log("Created raycastable square: " + square.name);
         }
     }
 

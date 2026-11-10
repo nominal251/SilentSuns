@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,7 +8,7 @@ public class PieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private RectTransform rectTransform;
     private RectTransform canvasRect;
 
-    private Vector3 originalPosition;
+    private Vector3 homePosition;   // where the piece started in the scene
     private Vector3 dragOffset;
 
     private Vector2Int originalGridPosition;
@@ -25,19 +24,16 @@ public class PieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     {
         gridManager = manager;
         canvasRect = canvasTransform;
+
+        // Remember the starting position once, so it never gets overwritten by later drags
+        homePosition = rectTransform.position;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-
-        //remember original position
-        originalPosition = rectTransform.position;
-
-        //if it was placed now we know
-        wasPlaced = GetComponent<StoragePiece>().isPlaced;
-
         StoragePiece piece = GetComponent<StoragePiece>();
 
+        wasPlaced = piece.isPlaced;
         originalGridPosition = piece.GridOrigin;
 
         //removes from grid if it is already placed
@@ -68,20 +64,20 @@ public class PieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         gridManager.TryGetGridOrigin(rectTransform.position, out Vector2Int newPosition);
 
         //attempt to place piece
-        bool placed = gridManager.TryPlacePiece(piece, newPosition);
+        if (gridManager.TryPlacePiece(piece, newPosition))
+            return;
 
-        if (!placed)
+        bool outsideGrid = !gridManager.IsInsideGrid(piece, newPosition);
+
+        if (outsideGrid || !wasPlaced)
         {
-            //restore to previous position
-            if (wasPlaced)
-            {
-                gridManager.TryPlacePiece(piece, originalGridPosition);
-            }
-            else
-            {
-                //else return to start pos outside of grid
-                rectTransform.position = originalPosition;
-            }
+            //dropped outside the grid (or was never placed): go back to the starting position
+            rectTransform.position = homePosition;
+        }
+        else
+        {
+            //dropped on top of another piece: go back to the previous grid spot
+            gridManager.TryPlacePiece(piece, originalGridPosition);
         }
     }
 }

@@ -149,6 +149,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d8665bcf0988004d9db7d3b4b7d859a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PHAnalysisMinigame
+  title: PH Analysis
+  description: Analyze the sample.
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   surfaceObjectiveTracker: {fileID: 0}
   playerMovement: {fileID: 0}
   phBar: {fileID: 1753357980}
@@ -2807,11 +2814,11 @@ GameObject:
   - component: {fileID: 684168020}
   m_Layer: 0
   m_Name: Storage Minigame
-  m_TagString: Untagged
+  m_TagString: SurfaceObjective
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &684168020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2824,11 +2831,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb19202457e4e7240905bf9b036bf034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StorageMinigame
+  title: Storage
+  description: Manage all the objects you have collected in your storage.
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   camera: {fileID: 0}
   cameraToMinigame: {fileID: 0}
   cameraToPlayer: {fileID: 0}
   playerMovement: {fileID: 0}
   minigameManager: {fileID: 0}
+  plane: {fileID: 2128294041}
 --- !u!65 &684168021
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3459,6 +3474,71 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 781635533}
   m_CullTransparentMesh: 1
+--- !u!1001 &795179035
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -48.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: isGravityOn
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_Name
+      value: Astronaut Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
 --- !u!1 &858491234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3823,6 +3903,8 @@ MonoBehaviour:
   - {fileID: 359713228}
   - {fileID: 20549561}
   - {fileID: 1999921735}
+  surfaceObjectiveTracker: {fileID: 0}
+  storageMinigame: {fileID: 0}
   gridColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &997843207
 GameObject:
@@ -7594,6 +7676,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689cec57870317c4aba61b56d6933971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AirCompMinigame
+  title: Air Composition
+  description: Test the air composition of the planet.
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   surfaceObjectiveTracker: {fileID: 0}
   camera: {fileID: 0}
   cameraToMinigame: {fileID: 0}
@@ -9218,3 +9307,4 @@ SceneRoots:
   - {fileID: 1906692338}
   - {fileID: 543886369}
   - {fileID: 1962276254}
+  - {fileID: 795179035}
