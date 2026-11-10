@@ -86,6 +86,9 @@ public class InputHandler : MonoBehaviour
         reorientAction.performed += context => reorientInput = true;
         reorientAction.canceled += context => reorientInput = false;
 
+        debugAction.performed += context => debugInput = true;
+        debugAction.canceled += context => debugInput = false;
+
         sprintAction.performed += context => sprintInput = true;
         sprintAction.canceled += context => sprintInput = false;
 
@@ -95,7 +98,6 @@ public class InputHandler : MonoBehaviour
 
     private void Update()
     {
-        debugInput = debugAction.triggered;
         // Apply controller settings here; mouse delta keeps its existing action scaling.
         Vector2 controller = Gamepad.current != null ? Gamepad.current.rightStick.ReadUnprocessedValue() : Vector2.zero;
         float deadZone = SilentSuns.Menu.GamePreferences.DeadZone;
@@ -117,7 +119,7 @@ public class InputHandler : MonoBehaviour
     private void OnEnable()
     {
         if (instance != this)
-            return;
+            return; //is this redundant to the if else in awake?
 
         moveAction.Enable();
         lookAction.Enable();
