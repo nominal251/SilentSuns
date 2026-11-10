@@ -8,6 +8,7 @@ namespace SilentSuns.Menu
     public class TerminalScrollbar : Scrollbar
     {
         private TerminalDisplay display;
+        private MasterComputerRaycaster computer;
 
         protected override void Start()
         {
@@ -15,11 +16,14 @@ namespace SilentSuns.Menu
             var menu = GetComponentInParent<TerminalMenu>();
             if (menu != null)
                 display = menu.GetComponentInChildren<TerminalDisplay>(true);
+            computer = GetComponentInParent<MasterComputerRaycaster>();
         }
 
         private Vector2 Map(Vector2 position)
         {
-            return display != null && display.TryGetContentPoint(position, out var point) ? point : position;
+            if (display != null && display.TryGetContentPoint(position, out var point)) return point;
+            if (computer != null && computer.Display.TryGetContentPoint(position, out point)) return point;
+            return position;
         }
 
         public override void OnPointerDown(PointerEventData data)

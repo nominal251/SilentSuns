@@ -12,20 +12,23 @@ public class PhysicsInteractor : MonoBehaviour
 
     private PhysicsInteractable observedObject;
     private PhysicsInteractable heldObject;
-    public bool IsRotatingObject;
     private GameObject hand;
     private float handPosition;
+    public bool IsRotatingObject => heldObject != null && inputHandler != null && inputHandler.physicsRotateInput;
 
     private void Start()
     {
         inputHandler = InputHandler.instance;
         camera = transform.Find("Player Camera").gameObject;
-        hand = camera.transform.Find("Hand").gameObject;
+        // The current player keeps the hand under its camera; older test scenes use the player root.
+        hand = (camera.transform.Find("Hand") ?? transform.Find("Hand")).gameObject;
         handPosition = hand.transform.localPosition.z;
     }
     private void Update()
     {
-        Ray ray = new Ray(transform.position, camera.transform.forward);
+        // Pause, settings, and the telescope intro must not pick up or move objects.
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput || inputHandler == null) return;
+        Ray ray = new Ray(camera.transform.position, camera.transform.forward);
 
         //raycast logic
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
@@ -38,7 +41,7 @@ public class PhysicsInteractor : MonoBehaviour
             {
                 observedObject = null;
             }
-            
+
         }
         else
         {
@@ -50,9 +53,7 @@ public class PhysicsInteractor : MonoBehaviour
         {
             if (heldObject != null)
             {
-                heldObject.StopInteract();
-                heldObject = null;
-                hand.transform.rotation = Quaternion.Euler(0, 0, 0);
+                DropObject();
             }
             else if (heldObject == null && observedObject != null)
             {
@@ -62,21 +63,33 @@ public class PhysicsInteractor : MonoBehaviour
         }
 
         //manipulation logic
-        handPosition += (inputHandler.physicsExtendInput * scrollSens);
+        if (heldObject == null) return;
+        // The wheel moves in steps. A held key or controller button moves smoothly over time.
+        float reachStep = inputHandler.physicsExtendIsScroll ? scrollSens : scrollSens * 30f * Time.deltaTime;
+        handPosition += inputHandler.physicsExtendInput * reachStep;
         handPosition = Mathf.Clamp(handPosition, handMin, handMax);
         hand.transform.localPosition = new Vector3(hand.transform.localPosition.x, hand.transform.localPosition.y, handPosition);
         if(heldObject != null)
         {
             if (inputHandler.physicsRotateInput)
             {
-                IsRotatingObject = true;
-                hand.transform.Rotate(camera.transform.up, -inputHandler.lookInput.x, Space.World);
-                hand.transform.Rotate(camera.transform.right, inputHandler.lookInput.y, Space.World);
-            }
-            else
-            {
-                IsRotatingObject = false;
+                // Use the same sensitivity and invert setting as player look.
+                Vector2 look = inputHandler.lookInput * inputHandler.lookSensitivity;
+                hand.transform.Rotate(camera.transform.up, -look.x, Space.World);
+                hand.transform.Rotate(camera.transform.right, look.y, Space.World);
             }
         }
+    }
+
+    private void DropObject()
+    {
+        if (heldObject != null) heldObject.StopInteract();
+        heldObject = null;
+        if (hand != null) hand.transform.localRotation = Quaternion.identity;
+    }
+
+    private void OnDisable()
+    {
+        DropObject();
     }
 }

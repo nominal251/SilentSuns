@@ -91,6 +91,7 @@ namespace SilentSuns.Menu
         public static void Begin(string destination)
         {
             if (Active) return;
+            TerminalToolInput.CloseActive();
             TerminalGameSession.EndRun();
             Active = true;
             Cursor.visible = false;

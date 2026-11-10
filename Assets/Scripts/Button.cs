@@ -15,16 +15,18 @@ public class Button : MonoBehaviour, Interactable
     [Header("Events")]
     public UnityEvent onInteracted;
 
+    private Renderer rend;
+
+    private void Awake() => rend = GetComponentInChildren<Renderer>();
+
     public void Interact(GameObject interactionSource)
     {
+        Debug.Log($"Button '{name}' Interact called", this);
+
         if (requiresEnable && !buttonActive)
             return;
 
-        if (isToggle)
-            activated = !activated;
-        else
-            activated = true;
-
+        activated = isToggle ? !activated : true;
         RefreshMat();
 
         if (requiresEnable)
@@ -44,7 +46,9 @@ public class Button : MonoBehaviour, Interactable
 
     void RefreshMat()
     {
-        GetComponent<Renderer>().material = activated ? activeMat : inactiveMat;
+        Material mat = activated ? activeMat : inactiveMat;
+        if (rend == null || mat == null) return;
+        rend.material = mat;
     }
 
     public void ResetButton()

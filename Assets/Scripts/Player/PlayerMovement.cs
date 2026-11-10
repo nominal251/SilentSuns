@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundedMoveForce = 25f;
     [SerializeField] private float sprintMultiplier = 2f;
     [SerializeField] private float maxCameraAngle = 85f;
+    public bool inMinigame = false;
 
     [Header("Jump Parameters (gravity mode only)")]
     [SerializeField] private float jumpHeight = 1.2f;
@@ -49,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     private GameManager game;
     private ResourceManager resources;
 
+
     public bool IsOnFoot => isGravityOn;
     public Transform CurrentOxygenStation => currentOxygenStation;
     // Keep the distance units from Drew's system, using Danny's resource as the source of truth.
@@ -57,8 +59,10 @@ public class PlayerMovement : MonoBehaviour
         ? Mathf.Clamp01(resources.OxygenSeconds / Mathf.Max(.001f, resources.OxygenCapacity)) * maxTotalDistance
         : Mathf.Max(0, maxTotalDistance - totalDistanceTraveled);
     public float SafeRadius => OxygenRemaining;
+    // The green mark on the dial uses this same full-tank travel budget.
+    public float OxygenRangeAtFull => Mathf.Max(1, maxTotalDistance);
     // Read by the navigation gauge, including scenes without the shared resource manager.
-    public float OxygenFraction => Mathf.Clamp01(OxygenRemaining / Mathf.Max(1, maxTotalDistance));
+    public float OxygenFraction => Mathf.Clamp01(OxygenRemaining / OxygenRangeAtFull);
     public bool CanUseSuitOxygen => isGravityOn && !SilentSuns.Menu.TerminalPause.BlocksGameplayInput &&
         (game == null || game.Phase == GameManager.GamePhase.PlanetaryExploration ||
          game.Phase == GameManager.GamePhase.SystemExploration || game.Phase == GameManager.GamePhase.SystemComplete);
@@ -102,6 +106,8 @@ public class PlayerMovement : MonoBehaviour
             previousPosition = rBody.position;
             return;
         }
+        // Choosing a tracker stops controls, but travel and oxygen still belong to the world.
+        if (SilentSuns.Menu.TerminalToolInput.BlocksInput) return;
 
         if (inputHandler.debugPressed)
         {
@@ -130,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
     {
         TrackDistance();
         CheckSafeCircle();
-        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput)
+        if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput)
             return;
 
         if (debugDeteced)
@@ -153,6 +159,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleRotationGravity()
     {
+        if (inMinigame)
+        {
+            return;
+        }
         yRotation += inputHandler.lookInput.x * mouseSens * inputHandler.lookSensitivity;
         cameraXRotation -= inputHandler.lookInput.y * mouseSens * inputHandler.lookSensitivity;
         cameraXRotation = Mathf.Clamp(cameraXRotation, -maxCameraAngle, maxCameraAngle);
@@ -318,5 +328,10 @@ public class PlayerMovement : MonoBehaviour
     private void OnDestroy()
     {
         if (game != null) game.RunStarted -= ResetOxygenForNewRun;
+    }
+
+    public void MinigameOnOff()
+    {
+        inMinigame = !inMinigame;
     }
 }
