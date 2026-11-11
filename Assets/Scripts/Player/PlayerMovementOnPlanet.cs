@@ -82,7 +82,6 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     private void FixedUpdate()
     {
         HandleMovement();
-        ApplyHorizontalDrag();
         HandleJump();
     }
 
@@ -134,15 +133,6 @@ public class PlayerMovementOnPlanet : MonoBehaviour
 
         float force = (inputHandler.sprintInput && canRun) ? moveForce * sprintMultiplier : moveForce;
         rBody.AddRelativeForce(inputDirection * force, ForceMode.Force);
-    }
-
-    private void ApplyHorizontalDrag()
-    {
-        Vector3 velocity = rBody.linearVelocity;
-        float damping = Mathf.Clamp01(1f - drag * Time.fixedDeltaTime); //why 1 - drag?
-
-        // Scale only X and Z so gravity and jumps are unaffected.
-        rBody.linearVelocity = new Vector3(velocity.x * damping, velocity.y, velocity.z * damping);
     }
 
     private void HandleJump()

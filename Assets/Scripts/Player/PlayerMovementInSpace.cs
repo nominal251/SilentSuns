@@ -34,7 +34,6 @@ public class PlayerMovementInSpace : MonoBehaviour
     private void FixedUpdate()
     {
         HandleMovement();
-        ApplyDrag();
     }
 
     private void HandleRotation()
@@ -55,12 +54,5 @@ public class PlayerMovementInSpace : MonoBehaviour
         inputDirection.Normalize();
 
         rBody.AddRelativeForce(inputDirection * floatingMoveForce, ForceMode.Force);
-    }
-
-    private void ApplyDrag()
-    {
-        Vector3 velocity = rBody.linearVelocity;
-        float damping = Mathf.Clamp01(1f - drag * Time.fixedDeltaTime); //why 1 - drag?
-        rBody.linearVelocity = new Vector3(velocity.x * damping, velocity.y * damping, velocity.z * damping);
     }
 }
