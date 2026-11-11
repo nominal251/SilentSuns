@@ -1,65 +1,97 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+public enum HealthCondition { Good, Caution, Danger }
+
 public class PlayerHealth : MonoBehaviour
 {
-    public float health /*{ get; private set; }*/ = 100f;
+    public float health = 100f;
+    public event Action OnHealthChanged;
 
     [SerializeField] private Volume globalVolume;
-    private Vignette vignette;
+    [SerializeField] private Material damageVignetteMaterial;
+    private Vignette volumeVignette;
+    private SuitDamageVignette suitVignette;
 
     [Header("Health state breakpoints")]
-    [SerializeField][Range(0, 100)] private float cautionBreakpoint;
-    [SerializeField][Range(0, 100)] private float dangerBreakpoint;
+    [SerializeField, Range(0, 100)] private float cautionBreakpoint;
+    [SerializeField, Range(0, 100)] private float dangerBreakpoint;
 
     [Header("Vignette intensity at breakpoints.")]
-    [SerializeField] [Range(0, 1)] private float goodIntensity;
-    [SerializeField] [Range(0, 1)] private float cautionIntensity;
-    [SerializeField] [Range(0, 1)] private float dangerIntensity;
+    [SerializeField, Range(0, 1)] private float goodIntensity;
+    [SerializeField, Range(0, 1)] private float cautionIntensity;
+    [SerializeField, Range(0, 1)] private float dangerIntensity;
 
+    public HealthCondition Condition
+    {
+        get
+        {
+            if (health > cautionBreakpoint) return HealthCondition.Good;
+            if (health > dangerBreakpoint) return HealthCondition.Caution;
+            return HealthCondition.Danger;
+        }
+    }
+
+    private float lastHealth = float.NaN;
+    private HealthCondition lastCondition;
+    private float lastIntensity = float.NaN;
 
     private void Awake()
     {
-        if (globalVolume.profile.TryGet<Vignette>(out vignette))
+        if (globalVolume && globalVolume.profile) globalVolume.profile.TryGet(out volumeVignette);
+        var playerCamera = GetComponentInChildren<Camera>(true);
+        if (damageVignetteMaterial && playerCamera)
         {
-            UpdateVignette();
+            suitVignette = SuitDamageVignette.Create(playerCamera, damageVignetteMaterial);
+            if (volumeVignette != null) volumeVignette.intensity.value = 0;
         }
-        else
-        {
-            Debug.LogError("Vignette missing from the Volume Profile!");
-        }
+
+        RefreshFeedback();
+    }
+
+    private void OnDestroy()
+    {
+        if (suitVignette) Destroy(suitVignette.gameObject);
     }
 
     public void TakeDamage(float damageTaken)
     {
         health -= damageTaken;
-        UpdateVignette();
+        RefreshFeedback();
     }
 
     public void HealDamage(float damageHealed)
     {
-        health += damageHealed;
-        if(health > 100)
-        {
-            health = 100;
-        }
-        UpdateVignette();
+        health = Mathf.Min(100f, health + damageHealed);
+        RefreshFeedback();
     }
 
-    private void UpdateVignette()
+    // Inspector edits and legacy callers can write the public health field directly.
+    private void LateUpdate() => RefreshFeedback();
+
+    private void RefreshFeedback()
     {
-        if(health > cautionBreakpoint)
+        var condition = Condition;
+        float intensity = condition switch
         {
-            vignette.intensity.value = goodIntensity;
-        }
-        else if (health > dangerBreakpoint)
+            HealthCondition.Good => goodIntensity,
+            HealthCondition.Caution => cautionIntensity,
+            _ => dangerIntensity
+        };
+        if (health == lastHealth && condition == lastCondition && intensity == lastIntensity) return;
+        if (suitVignette)
         {
-            vignette.intensity.value = cautionIntensity;
+            float critical = condition == HealthCondition.Danger
+                ? Mathf.Lerp(.28f, 1f, 1f - Mathf.Clamp01(health / Mathf.Max(1f, dangerBreakpoint))) : 0f;
+            suitVignette.SetReading(intensity, float.IsNaN(lastHealth) ? 0 : lastHealth - health, critical);
         }
-        else
-        {
-            vignette.intensity.value = dangerIntensity;
-        }
+        else if (volumeVignette != null)
+            volumeVignette.intensity.value = intensity;
+        lastIntensity = intensity;
+        lastHealth = health;
+        lastCondition = condition;
+        OnHealthChanged?.Invoke();
     }
 }

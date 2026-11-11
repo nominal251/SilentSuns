@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53f4582e37c73e6489e1c38db20048b0, type: 3}
+  m_Name: Suit Display
+  m_EditorClassIdentifier: Assembly-CSharp::VitalsPalette
+  good: {r: 0.635, g: 1, b: 0.700, a: 1}
+  caution: {r: 1, g: 0.918, b: 0.286, a: 1}
+  danger: {r: 0.9411765, g: 0.4666667, b: 0.4862745, a: 1}
+  glass: {r: 0.020, g: 0.043, b: 0.110, a: 1}
+  lettering: {r: 0.898, g: 0.925, b: 0.961, a: 1}
