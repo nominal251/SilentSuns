@@ -1,8 +1,14 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Materials/Springs_Materials/terrain_beige.terrainlayer.meta
 guid: 245559e8980c2e94e93e455130501be2
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 8574412962073106934
+========
+guid: 63efb721755915c44987d59480e10654
+PrefabImporter:
+  externalObjects: {}
+>>>>>>>> main_new:Assets/Prefabs/Global Volume.prefab.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 
