@@ -15,10 +15,7 @@ public class SampleItem : MonoBehaviour
 
     private void Start()
     {
-        button.onInteracted.AddListener(HandleCollect);
         sampler = FindAnyObjectByType<Sampler>();
-        if (sampler != null) sampler.Register(this);
-        else Debug.LogWarning("SampleItem: no Sampler found.", this);
     }
 
     private void OnDestroy()
@@ -28,9 +25,9 @@ public class SampleItem : MonoBehaviour
 
     private void HandleCollect()
     {
-        Debug.Log($"SampleItem '{name}': interacted", this);
-        if (sampler != null) sampler.TryLoad(this);
-        HideGroup(); // sample despawns when collected
+        if (sampler == null) return;
+        sampler.Collect();
+        HideGroup();
     }
 
     public void HideGroup()

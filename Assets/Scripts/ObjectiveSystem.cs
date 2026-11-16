@@ -26,7 +26,8 @@ public class ObjectiveSystem : MonoBehaviour
         if (collectOnAwake) suspended = true;
         if (collectOnAwake)
             foreach (Objective objective in FindObjectsByType<Objective>())
-                if (objective.gameObject.scene == gameObject.scene) Register(objective);
+                Register(objective);
+                
     }
 
     private void Start()

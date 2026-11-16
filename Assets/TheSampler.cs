@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Sampler : Objective
 {
@@ -11,10 +12,12 @@ public class Sampler : Objective
 
     //All samples
     private readonly List<SampleItem> samples = new List<SampleItem>();
+    private int totalRequired;
+    private int stored;
+    private int analyzed;
     private SampleItem loaded;
     private bool analyzing;
     private float remaining;
-    private int analyzed;
     public SampleItem Loaded => loaded;
 
     public void Register(SampleItem item)
@@ -25,6 +28,14 @@ public class Sampler : Objective
     private void Start()
     {
         analyzeButton.onInteracted.AddListener(HandlePress);
+        SceneSwap.SurfaceEntered += HandleSurfaceEntered;
+
+        foreach (var system in FindObjectsByType<ObjectiveSystem>(FindObjectsInactive.Include))
+        {
+            if (system.gameObject.scene == SceneSwap.SurfaceScene) continue;
+            system.Register(this);
+            break;
+        }
     }
 
     private void OnDestroy()
@@ -47,12 +58,42 @@ public class Sampler : Objective
     //Debug stuff with interaction system
     private void HandlePress()
     {
-        Debug.Log($"Sampler: analyze pressed (running={IsRunning}, analyzing={analyzing}, loaded={loaded != null})", this);
-
-        if (!IsRunning || analyzing || loaded == null) return;
-
+        if (!IsRunning || analyzing || stored <= 0) return;
+        stored--;
         analyzing = true;
         remaining = analysisSeconds;
+    }
+
+    private static int CountSamplesInSurface()
+    {
+        Scene surface = SceneSwap.SurfaceScene;
+        if (!surface.IsValid()) return 0;
+
+        int count = 0;
+        foreach (GameObject root in surface.GetRootGameObjects())
+            count += root.GetComponentsInChildren<SampleItem>(true).Length;
+        return count;
+    }
+
+    public void Collect()
+    {
+        if (IsActive) stored++;
+    }
+
+    private void HandleSurfaceEntered()
+    {
+        int count = CountSamplesInSurface();
+        if (count == 0) return; //no samples here
+
+        if (IsActive && !IsComplete)
+        {
+            totalRequired += count;
+            return;
+        }
+
+        ResetObjective();
+        totalRequired = count;
+        TriggerObjectiveStart();
     }
 
     private void Update()
@@ -70,22 +111,14 @@ public class Sampler : Objective
     {
         analyzing = false;
         analyzed++;
-        samples.Remove(loaded);
-        Destroy(loaded.gameObject);
-        loaded = null;
-
-        if (analyzed >= analyzed + samples.Count)
-            CompletePhase();
+        if (analyzed >= totalRequired) CompletePhase();
     }
 
-    public override string GetProgressText() =>
-        $"{Title}: {analyzed}/{analyzed + samples.Count}";
+    public override string GetProgressText() => $"{Title}: {analyzed}/{totalRequired}";
 
     protected override void OnObjectiveReset()
     {
-        analyzed = 0;
-        analyzing = false;
-        loaded = null;
+        analyzed = 0; stored = 0; totalRequired = 0; analyzing = false;
     }
 
     //Show progress

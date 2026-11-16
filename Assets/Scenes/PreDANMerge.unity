@@ -748,7 +748,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 63704302}
-  - component: {fileID: 63704305}
   - component: {fileID: 63704304}
   - component: {fileID: 63704306}
   m_Layer: 0
@@ -794,24 +793,6 @@ MonoBehaviour:
   light: {fileID: 1429475549}
   blink: 0
   blinkInterval: 0.75
---- !u!114 &63704305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 63704300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c90213570e204148bf0eab39b3083fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectiveSystem
-  objectives: []
-  collectOnAwake: 0
-  suspended: 1
-  AllObjectivesCompletedEvent:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &63704306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2904,7 +2885,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Sampler
   title: Find Planet Samples
   description: Find soil samples for analysis.
-  triggersOnStart: 1
+  triggersOnStart: 0
   phases: 1
   objectiveIcon: {fileID: 21300000, guid: 3ac4cf06b97032a40a8441d0f4335e27, type: 3}
   objectiveIconColor: {r: 0.038573146, g: 1, b: 0, a: 1}
@@ -3476,6 +3457,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 193439208453889777, guid: 6613b58dc058a4745a33f13ac5ea35c6, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2040144049007959299, guid: 6613b58dc058a4745a33f13ac5ea35c6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.0070999
@@ -4961,14 +4946,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350154316}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000089143265, y: -0.0000034074537, z: -0.6087606, w: -0.79335403}
-  m_LocalPosition: {x: -1.413524, y: 0.798812, z: 0.13200139}
+  m_LocalRotation: {x: 0.00000019113403, y: 0.00000073060176, z: 0.1305256, w: -0.99144495}
+  m_LocalPosition: {x: -0.38299996, y: 0.77599996, z: 0.132}
   m_LocalScale: {x: 0.046205, y: 0.18481998, z: 0.4118998}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 200871257}
   m_Father: {fileID: 208824664}
-  m_LocalEulerAnglesHint: {x: 0, y: -360, z: 75}
+  m_LocalEulerAnglesHint: {x: 0, y: -360, z: -15}
 --- !u!1 &351977314
 GameObject:
   m_ObjectHideFlags: 0
