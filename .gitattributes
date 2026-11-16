@@ -170,7 +170,7 @@ Packages/packages-lock.json linguist-generated
 *.skel.bytes            lfs
 
 # Binary Unity data must not use text conversion or the YAML merge driver.
-"Assets/terrain data/**/*.asset" binary
+"Assets/GameData/Environment/Terrain/**/*.asset" binary
 TerrainData*.asset      binary
 "New Terrain*.asset"    binary
 NavMesh*.asset          binary

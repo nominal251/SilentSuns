@@ -20,6 +20,7 @@ public class PlayerMovementInSpace : MonoBehaviour
 
     private void Start()
     {
+        rBody = GetComponent<Rigidbody>();
         inputHandler = InputHandler.instance;
         physicsInteractor = GetComponent<PhysicsInteractor>();
     }
