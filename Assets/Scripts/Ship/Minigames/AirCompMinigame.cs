@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AirCompMinigame : MonoBehaviour, IMinigame
+public class AirCompMinigame : Objective, IMinigame
 {
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject cameraToMinigame;
@@ -14,6 +13,8 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
     [SerializeField] private GameObject bar;
     [SerializeField] private List<LayoutElement> sections = new List<LayoutElement>();
 
+    private List<int> cuts = new List<int>();
+
     [SerializeField] private int numCorrect;
     private MinigameManager minigameManager;
     private List<int> percentForBar = new List<int>();
@@ -22,8 +23,6 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
     public List<Color> normalColors = new List<Color>();
 
     public List<UnityEngine.UI.Button> buttons = new List<UnityEngine.UI.Button>();
-
-
 
     void Awake()
     {
@@ -35,28 +34,28 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
         if (camera == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
-            camera = tmp;
+            camera = GameObject.Find("Player Camera");
         }
 
         if (cameraToPlayer == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
-            cameraToPlayer = tmp;
+            cameraToPlayer = GameObject.Find("Player");
         }
 
         if (cameraToMinigame == null)
         {
-            GameObject tmp = GameObject.Find("AirComp Minigame Starter/AirComp Cam Spot");
-            cameraToMinigame = tmp;
+            cameraToMinigame = GameObject.Find("AirComp Minigame Starter/AirComp Cam Spot");
         }
 
         if (playerMovement == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player");
+            GameObject tmp = GameObject.Find("Player");
             playerMovement = tmp.GetComponent<PlayerMovement>();
         }
     }
+
+    public override string GetProgressText() =>
+        IsComplete ? "Air composition analysis complete" : "Analyze the air composition";
 
     public void StartMinigame()
     {
@@ -80,40 +79,61 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
         BarGenerator();
         CreateSortedList();
-        //Debug.Log(string.Join(", ", percentForBar));
     }
 
     void CreateBarValues()
     {
+        // Keep trying until an attempt produces no duplicate cuts
+        while (!TryCreateBarValues()) { }
+    }
+
+    bool TryCreateBarValues()
+    {
+        cuts.Clear();
+        percentForBar.Clear();
+
         int remaining = 100;
         int currentValue = 0;
 
         percentForBar.Add(currentValue);
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
-            if (i == 7)
-            {
-                percentForBar.Add(100);
-                break;
-            }
             int cutsLeft = 8 - i;
 
             int min = 5;
-            int max = Mathf.Min(22, remaining - (cutsLeft - 1) * 3); //maximum you can use while leaving 3 units for each remaining cut
+            int max = Mathf.Min(22, remaining - (cutsLeft - 1) * 3);
 
             int cut = Random.Range(min, max + 1);
+
+            if (cuts.Contains(cut))
+            {
+                return false; // duplicate, start over
+            }
+
+            cuts.Add(cut);
 
             currentValue += cut;
             remaining -= cut;
 
             percentForBar.Add(currentValue);
         }
+
+        // The last section is whatever is left, so it needs the same check
+        if (cuts.Contains(remaining))
+        {
+            return false;
+        }
+
+        cuts.Add(remaining);
+        percentForBar.Add(100);
+
+        return true;
     }
 
     public void EndMinigame()
     {
-        playerMovement.MinigameOnOff(); //turns camera rotation off
+        playerMovement.MinigameOnOff(); //turns camera rotation back on
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -154,25 +174,19 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
     {
         for (int i = 0; i < sections.Count; i++)
         {
-
             int sectionWidth = percentForBar[i + 1] - percentForBar[i];
-
-            //Debug.Log(sectionWidth);
-
             sections[i].flexibleWidth = sectionWidth;
         }
     }
 
     public void CheckIfCorrect()
     {
-        //this is a beautiful thing i learned in casual from one of my programmers, it finds the button so you can use it's name as a value
         GameObject myButtonGameObject = EventSystem.current.currentSelectedGameObject;
         if (myButtonGameObject == null)
         {
             Debug.Log("Unable to find GameObject.");
             return;
         }
-        Button myButton = myButtonGameObject.GetComponent<Button>();
 
         if (myButtonGameObject.name == correctOrder[numCorrect].ToString())
         {
@@ -180,7 +194,6 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
             buttons[correctOrder[numCorrect]].image.color = Color.green;
             numCorrect++;
         }
-
         else
         {
             Debug.Log("Wrong Element");
@@ -188,10 +201,11 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
             numCorrect = 0;
         }
 
-        if (numCorrect == 8)
+        if (numCorrect == 8) // WIN
         {
             Debug.Log("Correct Air Composition");
             minigameManager.EndCurrentMinigame();
+            Complete();
         }
     }
 
@@ -205,14 +219,14 @@ public class AirCompMinigame : MonoBehaviour, IMinigame
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.name == "Player Body")
-        {
-            minigameManager.StartMinigame(this);
-        }
+        if (collider.name != "Player Body") return;
+        if (IsComplete || !IsRunning) return;
+        minigameManager.StartMinigame(this);
     }
 
     void OnTriggerExit(Collider collider)
     {
+        if (collider.name != "Player Body") return;
         minigameManager.EndCurrentMinigame();
     }
 }

@@ -149,6 +149,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d8665bcf0988004d9db7d3b4b7d859a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PHAnalysisMinigame
+  title: PH Analysis Minigame
+  description: 
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   playerMovement: {fileID: 0}
   phBar: {fileID: 1753357980}
   colorImage: {fileID: 1076864317}
@@ -2778,11 +2785,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb19202457e4e7240905bf9b036bf034, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StorageMinigame
+  title: Storage Minigame
+  description: 
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   camera: {fileID: 0}
   cameraToMinigame: {fileID: 0}
   cameraToPlayer: {fileID: 0}
   playerMovement: {fileID: 0}
-  minigameManager: {fileID: 0}
+  minigameManager: {fileID: 997843208}
+  plane: {fileID: 2128294041}
 --- !u!65 &684168021
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3777,6 +3792,7 @@ MonoBehaviour:
   - {fileID: 359713228}
   - {fileID: 20549561}
   - {fileID: 1999921735}
+  storageMinigame: {fileID: 684168020}
   gridColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &997843207
 GameObject:
@@ -7548,6 +7564,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 689cec57870317c4aba61b56d6933971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AirCompMinigame
+  title: Air Composition Minigame
+  description: 
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 0}
+  objectiveIconColor: {r: 0, g: 0, b: 0, a: 0}
+  <CurrentPhase>k__BackingField: 0
   camera: {fileID: 0}
   cameraToMinigame: {fileID: 0}
   cameraToPlayer: {fileID: 0}

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Diagnostics;
 
 public class GridManager : MonoBehaviour
 {
@@ -9,13 +10,13 @@ public class GridManager : MonoBehaviour
     [SerializeField] private RectTransform gridPanel;
     [SerializeField] private int gridWidth = 4;
     [SerializeField] private int gridHeight = 4;
-
     [SerializeField] private float cellSize = 80f;
     [SerializeField] private float spacing = 5f;
 
     [Header("References")]
     [SerializeField] private Canvas canvas;
     [SerializeField] private StoragePiece[] pieces;
+    [SerializeField] private StorageMinigame storageMinigame;
 
     [Header("Grid Appearance")]
     [SerializeField] private Color gridColor = Color.gray;
@@ -174,7 +175,7 @@ public class GridManager : MonoBehaviour
 
         // Snap the piece to the grid.
         piece.transform.position = GetCellWorldPosition(origin);
-
+        UnityEngine.Debug.Log("Check!");
         CheckPuzzleComplete();
 
         return true;
@@ -209,17 +210,30 @@ public class GridManager : MonoBehaviour
         if (puzzleSolved)
             return;
 
+        //Make sure every piece has been placed.
         foreach (StoragePiece piece in pieces)
         {
-            if (!piece.isPlaced ||
-                piece.GridOrigin != piece.CorrectPosition)
-            {
+            if (!piece.isPlaced)
                 return;
+        }
+
+        //Check whether every grid cell is occupied.
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                if (occupiedCells[x, y] == null)
+                    return;
             }
         }
 
         puzzleSolved = true;
 
-        Debug.Log("Puzzle completed!");
+        UnityEngine.Debug.Log("Puzzle completed!");
+
+        if (storageMinigame != null)
+        {
+            storageMinigame.CompletePuzzle();
+        }
     }
 }

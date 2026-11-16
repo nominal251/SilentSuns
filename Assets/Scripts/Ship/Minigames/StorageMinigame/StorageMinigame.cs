@@ -1,15 +1,19 @@
-using UnityEditor.Rendering;
 using UnityEngine;
 
-public class StorageMinigame : MonoBehaviour, IMinigame
+public class StorageMinigame : Objective, IMinigame
 {
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject cameraToMinigame;
     [SerializeField] private GameObject cameraToPlayer;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private MinigameManager minigameManager;
+
+    [SerializeField] private GameObject plane;
+
     void Awake()
     {
+        plane.SetActive(false);
+
         if (minigameManager == null)
         {
             GameObject tmp = GameObject.Find("Minigame Manager");
@@ -18,31 +22,33 @@ public class StorageMinigame : MonoBehaviour, IMinigame
 
         if (camera == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder/Player Camera");
-            camera = tmp;
+            camera = GameObject.Find("Player Camera");
         }
 
         if (cameraToPlayer == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player/Camera Holder");
-            cameraToPlayer = tmp;
+            cameraToPlayer = GameObject.Find("Player");
         }
 
         if (cameraToMinigame == null)
         {
-            GameObject tmp = GameObject.Find("Storage Minigame/Storage Cam Spot");
-            cameraToMinigame = tmp;
+            cameraToMinigame = GameObject.Find("Storage Minigame/Storage Cam Spot");
         }
 
         if (playerMovement == null)
         {
-            GameObject tmp = GameObject.Find("Astronaut Player");
+            GameObject tmp = GameObject.Find("Player");
             playerMovement = tmp.GetComponent<PlayerMovement>();
         }
     }
 
+    public override string GetProgressText() =>
+        IsComplete ? "Storage organized" : "Organize the storage";
+
     public void StartMinigame()
     {
+        plane.SetActive(true);
+
         playerMovement.MinigameOnOff(); //turns camera rotation off
 
         Cursor.lockState = CursorLockMode.None;
@@ -54,7 +60,9 @@ public class StorageMinigame : MonoBehaviour, IMinigame
 
     public void EndMinigame()
     {
-        playerMovement.MinigameOnOff(); //turns camera rotation off
+        plane.SetActive(false);
+
+        playerMovement.MinigameOnOff(); //turns camera rotation back on
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -62,19 +70,22 @@ public class StorageMinigame : MonoBehaviour, IMinigame
         camera.transform.position = cameraToPlayer.transform.position;
         camera.transform.rotation = cameraToPlayer.transform.rotation;
     }
+
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.name == "Player Body")
-        {
-            minigameManager.StartMinigame(this);
-        }
+        if (collider.name != "Player Body") return;
+        if (IsComplete || !IsRunning) return;
+        minigameManager.StartMinigame(this);
     }
 
     void OnTriggerExit(Collider collider)
     {
-        if (collider.name == "Player Body")
-        {
-            minigameManager.EndCurrentMinigame();
-        }
+        if (collider.name != "Player Body") return;
+        minigameManager.EndCurrentMinigame();
+    }
+
+    public void CompletePuzzle()
+    {
+        Complete();
     }
 }
