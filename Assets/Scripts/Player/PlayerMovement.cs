@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private bool isGravityOn = false;
-
+    public bool movementLocked = false;
     [Header("General Parameters")]
     [SerializeField] private float mouseSens = 1f;
 
@@ -139,6 +139,12 @@ public class PlayerMovement : MonoBehaviour
         if (SilentSuns.Menu.TerminalPause.BlocksGameplayInput || SilentSuns.Menu.TerminalToolInput.BlocksInput)
             return;
 
+        if (movementLocked)
+        {
+            jumpPressedTime = -10f; // don't carry a jump press off the ladder
+            return;
+        }
+
         if (debugDeteced)
         {
             SetGravity(!isGravityOn);
@@ -178,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (inputHandler.sprintInput)
         {
-            rBody.AddRelativeForce(inputDirection * groundedMoveForce * sprintMultiplier, ForceMode.Force);
+            rBody.AddRelativeForce(groundedMoveForce * sprintMultiplier * inputDirection, ForceMode.Force);
         }
         else
         {
