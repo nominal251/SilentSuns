@@ -6,28 +6,28 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/MainMenu/Scenes/MainMenu.unity
+    path: Assets/Scenes/Menus/MainMenu.unity
     guid: d53968372734003478beda396a27e64f
   - enabled: 1
-    path: Assets/Scenes/PreDANMerge.unity
+    path: Assets/Scenes/Gameplay/PreDANMerge.unity
     guid: 94cfe083b19ee5f42aa4baca6545d411
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/Gameplay/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/GameOverScene.unity
+    path: Assets/Scenes/Menus/GameOverScene.unity
     guid: 9e8325bfdd7096d48ad5e2a009230c3c
   - enabled: 1
-    path: Assets/Scenes/VictoryScene.unity
+    path: Assets/Scenes/Menus/VictoryScene.unity
     guid: a9157d7915f963c4bab379e1408423b3
   - enabled: 1
-    path: Assets/Scenes/PlanetSurfaceTest.unity
+    path: Assets/Scenes/Gameplay/PlanetSurfaceTest.unity
     guid: ee08cb7542d979e449b6590ff6b4f7b4
   - enabled: 1
-    path: Assets/Scenes/ObjectiveCheck.unity
+    path: Assets/Scenes/Gameplay/ObjectiveCheck.unity
     guid: 796cddaa0051cb14592b9e2c38d43dd2
   - enabled: 1
-    path: Assets/Scenes/Brian_Level_Design_Blockout.unity
+    path: Assets/Scenes/Gameplay/Brian_Level_Design_Blockout.unity
     guid: 2724c3f4144effc4abb53c9aaf7d7f77
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

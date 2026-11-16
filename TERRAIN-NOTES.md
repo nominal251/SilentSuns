@@ -1,7 +1,7 @@
 # Acid terrain repair and team instructions
 
 Repair branch: `dan-acid-fix` in `nominal251/SilentSuns`.
-Scene: `Assets/Scenes/AcidSprings.unity`.
+Scene: `Assets/Scenes/Gameplay/AcidSprings.unity`.
 Verified with Unity `6000.5.10f1` on November 8, 2026.
 
 This branch is based on Bella's `acid-3`. Publishing the repair branch does not update `acid-3`, `main_new`, or `dev_ui`. Follow the integration order below before treating this as a project-wide fix.
