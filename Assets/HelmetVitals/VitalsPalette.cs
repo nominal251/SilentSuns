@@ -8,6 +8,8 @@ public sealed class VitalsPalette : ScriptableObject
     public Color danger = new Color32(240, 119, 124, 255);
     public Color glass = new Color32(5, 11, 28, 255);
     public Color lettering = new Color32(229, 236, 245, 255);
+    public Color frame = new Color32(220, 234, 255, 255);
+    public Color emptyCell = new Color32(35, 54, 103, 255);
 
     public Color Signal(HealthCondition condition) => condition switch
     {

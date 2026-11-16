@@ -8,6 +8,7 @@ public sealed class HelmetVitals : MonoBehaviour
     [SerializeField] private PlayerHealth source;
     [SerializeField] private VitalsMeter meter;
     [SerializeField] private TMP_Text percent;
+    [SerializeField] private TMP_Text status;
 
     [Header("Direct camera mount")]
     [Tooltip("Bottom-left anchor in the camera viewport. A visor socket can position the prefab directly.")]
@@ -75,6 +76,7 @@ public sealed class HelmetVitals : MonoBehaviour
     private void Refresh()
     {
         var state = source.Condition;
+        if (status) status.text = state.ToString().ToUpperInvariant();
         float value = Mathf.Clamp(source.health, 0, 100);
         meter.SetReading(value, state);
         if (value == shownHealth) return;
