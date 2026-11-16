@@ -9,7 +9,6 @@ public class PlayerMovementInSpace : MonoBehaviour
     [SerializeField] private float floatingMoveForce = 10f;
     [SerializeField] private float rollSpeed = 60f;
     [SerializeField] private float reorientSpeed = 2;
-    [SerializeField, Min(0f)] private float drag = 5f;
 
     //Internal References
     private Rigidbody rBody;

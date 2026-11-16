@@ -10,7 +10,6 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     [Header("Movement Parameters")]
     [SerializeField] private float moveForce = 25f;
     [SerializeField] private float sprintMultiplier = 2f;
-    [SerializeField, Min(0f)] private float drag = 5f;
 
     [Header("Jump Parameters")]
     [SerializeField] private float jumpHeight = 1.2f;
@@ -49,7 +48,6 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         rBody.useGravity = true;
         rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        rBody.linearDamping = 0f;
 
         bodyCollider = GetComponentInChildren<Collider>();
         physicsInteractor = GetComponent<PhysicsInteractor>();
