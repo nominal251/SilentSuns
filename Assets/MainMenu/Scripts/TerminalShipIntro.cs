@@ -71,12 +71,12 @@ namespace SilentSuns.Menu
         // Unity calls this after loading a scene. Starting SampleScene by itself skips the intro.
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name != "SampleScene" && scene.name != "MainMenu" && active != null)
+            if (scene.name != "PreDANMerge" && scene.name != "MainMenu" && active != null)
             {
                 Destroy(active.gameObject);
                 active = null;
             }
-            if (scene.name == "SampleScene" && active != null)
+            if (scene.name == "PreDANMerge" && active != null)
             {
                 if (!active.ready) active.SetUpShipScreen();
                 else { Destroy(active.gameObject); active = null; }
@@ -114,7 +114,7 @@ namespace SilentSuns.Menu
             bootstrapCamera.cullingMask = 0;
             bootstrapCamera.backgroundColor = Color.black;
             bootstrapCamera.tag = "Untagged";
-            yield return SceneManager.LoadSceneAsync("SampleScene", LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync("PreDANMerge", LoadSceneMode.Single);
         }
 
         private void SetUpShipScreen()

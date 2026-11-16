@@ -21,6 +21,17 @@ public static class SceneSwap
     {
         OnSurface = false;
         IsBusy = false;
+        SceneManager.sceneUnloaded -= SceneUnloaded;
+        SceneManager.sceneUnloaded += SceneUnloaded;
+    }
+
+    private static void SceneUnloaded(Scene scene)
+    {
+        // Restart or main menu can unload the planet without using the launch button.
+        if (scene != surfaceScene) return;
+        OnSurface = false;
+        IsBusy = false;
+        surfaceScene = default;
     }
 
     public static void GoToSurface(string sceneName)

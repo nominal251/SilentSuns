@@ -2,6 +2,7 @@ Shader "Silent Suns/Suit Damage Edges"
 {
     Properties
     {
+        [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
         _Shadow ("Shadow ink", Color) = (0.075, 0.063, 0.106, 1)
         _Spread ("Corner reach", Range(0.18, 0.50)) = 0.36
     }

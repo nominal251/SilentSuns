@@ -21,12 +21,12 @@ public class ObjectiveSystem : MonoBehaviour
 
     private void Awake()
     {
-        // Test scenes can collect everything. The ship registers its four surveys explicitly.
+        // Only collect this scene. A loaded planet must not collect the ship's survey objectives.
         objectives.Clear();
         if (collectOnAwake) suspended = true;
         if (collectOnAwake)
             foreach (Objective objective in FindObjectsByType<Objective>())
-                Register(objective);
+                if (objective.gameObject.scene == gameObject.scene) Register(objective);
     }
 
     private void Start()

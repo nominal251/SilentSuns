@@ -1,111 +1,90 @@
 using UnityEngine;
+using System.Collections;
 
 public class RotarySwitch : MonoBehaviour, Interactable
 {
     [Header("Rotary Dial")]
     public Transform dial;
 
-    [Tooltip("Rotation of the dial when the switch is at state 0.")]
-    public Vector3 state0Rotation;
+    [Header("Notch Settings")]
+    public Vector3[] stateRotations = { new Vector3(0, -45, 0), Vector3.zero, new Vector3(0, 45, 0) };
 
-    [Tooltip("Rotation of the dial when the switch is at state 1.")]
-    public Vector3 state1Rotation;
-
-    [Tooltip("Rotation of the dial when the switch is at state 2.")]
-    public Vector3 state2Rotation;
+    [Header("Animation")]
+    [Tooltip("Time in seconds to move between states.")]
+    public float animationDuration = 0.25f;
+    [Tooltip("Lets the computer return its dial while the game is paused.")]
+    public bool useUnscaledTime;
 
     [Header("Switch State")]
-    [Range(0, 2)]
-    public int currentState = 0;
+    public int currentState;
 
     [Header("State GameObjects")]
-    public GameObject state0Object;
-    public GameObject state1Object;
-    public GameObject state2Object;
+    public GameObject[] stateObjects = new GameObject[0];
 
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip switchSound;
 
+    private Coroutine turn;
+
     private void Start()
     {
-        UpdateSwitch();
+        if (stateRotations == null || stateRotations.Length == 0) return;
+        currentState = Mathf.Clamp(currentState, 0, stateRotations.Length - 1);
+        if (dial != null) dial.localRotation = Quaternion.Euler(stateRotations[currentState]);
+        UpdateStateObjects();
     }
 
     public void Interact(GameObject interactionSource)
     {
-        currentState++;
-
-        if (currentState > 2)
-        {
-            currentState = 0;
-        }
-
-        UpdateSwitch();
-
-        if (audioSource != null && switchSound != null)
-        {
-            audioSource.PlayOneShot(switchSound);
-        }
+        if (turn != null || stateRotations == null || stateRotations.Length == 0) return;
+        SetState((currentState + 1) % stateRotations.Length);
     }
 
-    public void StopInteract()
+    // The master computer calls this when its page changes or it returns to Status.
+    public void SetState(int state)
     {
-
+        if (stateRotations == null || stateRotations.Length == 0) return;
+        state = Mathf.Clamp(state, 0, stateRotations.Length - 1);
+        if (currentState == state) return;
+        currentState = state;
+        if (turn != null) { StopCoroutine(turn); turn = null; }
+        UpdateStateObjects();
+        // Click once at the start of the turn, including an automatic return during pause.
+        if (audioSource != null && switchSound != null) audioSource.PlayOneShot(switchSound);
+        if (dial == null) return;
+        if (animationDuration <= 0) dial.localRotation = Quaternion.Euler(stateRotations[currentState]);
+        else turn = StartCoroutine(AnimateSwitch());
     }
 
-    private void UpdateSwitch()
+    public void StopInteract() { }
+
+    private IEnumerator AnimateSwitch()
     {
-
-        if (dial != null)
+        Quaternion startRotation = dial.localRotation;
+        Quaternion targetRotation = Quaternion.Euler(stateRotations[currentState]);
+        float elapsedTime = 0;
+        while (elapsedTime < animationDuration)
         {
-            switch (currentState)
-            {
-                case 0:
-                    dial.localEulerAngles = state0Rotation;
-                    break;
-
-                case 1:
-                    dial.localEulerAngles = state1Rotation;
-                    break;
-
-                case 2:
-                    dial.localEulerAngles = state2Rotation;
-                    break;
-            }
+            elapsedTime += useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
+            float progress = Mathf.SmoothStep(0, 1, Mathf.Clamp01(elapsedTime / animationDuration));
+            dial.localRotation = Quaternion.Slerp(startRotation, targetRotation, progress);
+            yield return null;
         }
+        dial.localRotation = targetRotation;
+        turn = null;
+    }
 
-        if (state0Object != null)
-        {
-            state0Object.SetActive(false);
-        }
+    private void UpdateStateObjects()
+    {
+        if (stateObjects == null) return;
+        for (int i = 0; i < stateObjects.Length; i++)
+            if (stateObjects[i] != null) stateObjects[i].SetActive(currentState == i);
+    }
 
-        if (state1Object != null)
-        {
-            state1Object.SetActive(false);
-        }
-
-        if (state2Object != null)
-        {
-            state2Object.SetActive(false);
-        }
-
-        switch (currentState)
-        {
-            case 0:
-                if (state0Object != null)
-                    state0Object.SetActive(true);
-                break;
-
-            case 1:
-                if (state1Object != null)
-                    state1Object.SetActive(true);
-                break;
-
-            case 2:
-                if (state2Object != null)
-                    state2Object.SetActive(true);
-                break;
-        }
+    private void OnDisable()
+    {
+        if (turn != null) StopCoroutine(turn);
+        turn = null;
     }
 }
