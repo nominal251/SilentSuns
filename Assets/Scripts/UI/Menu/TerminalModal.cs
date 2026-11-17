@@ -48,7 +48,7 @@ namespace SilentSuns.Menu
             scaler.matchWidthOrHeight = .5f;
             var modal = root.AddComponent<TerminalModal>();
             Current = modal;
-            // The telescope and popup use different cameras. Only the popup should receive clicks.
+            // The ship monitor and popup use different cameras. Only the popup should receive clicks.
             foreach (var raycaster in FindObjectsByType<GraphicRaycaster>(FindObjectsSortMode.None))
                 if (raycaster.gameObject != root && raycaster.enabled)
                 {

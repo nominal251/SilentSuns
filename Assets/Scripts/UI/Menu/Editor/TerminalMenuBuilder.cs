@@ -204,9 +204,9 @@ namespace SilentSuns.Menu.Editor
             TerminalSessionRestoration restoration = root.AddComponent<TerminalSessionRestoration>();
             UnityEventTools.AddPersistentListener(skipRestore.onClick, restoration.Skip);
 
-            // The ship screen gets the menu texture when TerminalShipIntro loads SampleScene.
+            // TerminalShipIntro binds the menu texture to the ship's master computer.
             TerminalDisplay display = Rect(root.transform, "CRT Display", 0, 0, 1600, 900).gameObject.AddComponent<TerminalDisplay>();
-            // Show black while the ship loads. The player's camera takes over in SampleScene.
+            // Show black while the ship loads, then use the player's camera.
             Camera startupCamera = new GameObject("Startup Camera", typeof(Camera)).GetComponent<Camera>();
             startupCamera.tag = "MainCamera";
             startupCamera.clearFlags = CameraClearFlags.SolidColor;
@@ -450,7 +450,6 @@ namespace SilentSuns.Menu.Editor
         // Build a local Windows review copy using the same scene list as the project.
         public static void BuildPreview()
         {
-            CreateInitialScene();
             string output = System.Environment.GetEnvironmentVariable("SILENT_SUNS_MENU_BUILD");
             if (string.IsNullOrEmpty(output))
                 output = "Builds/MenuPreview/SilentSuns.exe";

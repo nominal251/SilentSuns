@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace SilentSuns.Menu
 {
-    // Loads the ship, puts the menu on its telescope, then gives control back to the player.
+    // Loads the ship, puts the startup UI on the master computer, then releases the player.
     public class TerminalShipIntro : MonoBehaviour
     {
         private static TerminalShipIntro active;
@@ -21,6 +21,7 @@ namespace SilentSuns.Menu
         private bool released;
         private TerminalMenu menu;
         private TerminalDisplay display;
+        private MasterComputerDisplay computer;
         private Camera playerCamera;
         private Rigidbody body;
         private bool wasKinematic;
@@ -38,20 +39,20 @@ namespace SilentSuns.Menu
 
         private const float HandoffDuration = 6.2f;
         private const float RecoveryRamp = .18f;
-        private const string TelescopeScreenPath = "Telescope/ProbeLauncherScreen";
+        public const string ShipScene = "PreDANMerge";
         private readonly System.Collections.Generic.List<(float end, HandoffLook look)> recovery = new System.Collections.Generic.List<(float, HandoffLook)>();
 
         // These four settings change together during the flickering transition.
         private struct HandoffLook
         {
-            public float telescopeVisibility;
+            public float computerVisibility;
             public float glitchStrength;
             public float screenBrightness;
             public float roomBrightness;
 
-            public HandoffLook(float telescopeVisibility, float glitchStrength, float screenBrightness, float roomBrightness)
+            public HandoffLook(float computerVisibility, float glitchStrength, float screenBrightness, float roomBrightness)
             {
-                this.telescopeVisibility = telescopeVisibility;
+                this.computerVisibility = computerVisibility;
                 this.glitchStrength = glitchStrength;
                 this.screenBrightness = screenBrightness;
                 this.roomBrightness = roomBrightness;
@@ -68,15 +69,15 @@ namespace SilentSuns.Menu
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        // Unity calls this after loading a scene. Starting SampleScene by itself skips the intro.
+        // Opening the ship directly skips the introduction.
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.name != "PreDANMerge" && scene.name != "MainMenu" && active != null)
+            if (mode == LoadSceneMode.Single && scene.name != ShipScene && scene.name != "MainMenu" && active != null)
             {
                 Destroy(active.gameObject);
                 active = null;
             }
-            if (scene.name == "PreDANMerge" && active != null)
+            if (scene.name == ShipScene && active != null)
             {
                 if (!active.ready) active.SetUpShipScreen();
                 else { Destroy(active.gameObject); active = null; }
@@ -84,7 +85,7 @@ namespace SilentSuns.Menu
             }
             if (scene.name != "MainMenu") return;
             if (active != null) { active.gameObject.SetActive(false); Destroy(active.gameObject); }
-            var root = new GameObject("Telescope startup session");
+            var root = new GameObject("Master computer startup session");
             DontDestroyOnLoad(root);
             active = root.AddComponent<TerminalShipIntro>();
             active.StartCoroutine(active.LoadShipForIntro());
@@ -100,7 +101,7 @@ namespace SilentSuns.Menu
                 if (menu != null) break;
             }
             display = menu.GetComponentInChildren<TerminalDisplay>(true);
-            // Keep the UI while MainMenu unloads. Its camera draws a texture for the telescope.
+            // Keep all menu screens and their input while the ship replaces MainMenu.
             menu.transform.SetParent(transform, true);
             display.SourceCamera.transform.SetParent(transform, true);
             menu.transform.position += Vector3.back * 10000;
@@ -114,7 +115,7 @@ namespace SilentSuns.Menu
             bootstrapCamera.cullingMask = 0;
             bootstrapCamera.backgroundColor = Color.black;
             bootstrapCamera.tag = "Untagged";
-            yield return SceneManager.LoadSceneAsync("PreDANMerge", LoadSceneMode.Single);
+            yield return SceneManager.LoadSceneAsync(ShipScene, LoadSceneMode.Single);
         }
 
         private void SetUpShipScreen()
@@ -127,15 +128,20 @@ namespace SilentSuns.Menu
                     gameplayEvents.SetActive(false);
                     break;
                 }
-            // This path is the existing screen in SampleScene. Update it if the team renames that object.
-            var target = GameObject.Find(TelescopeScreenPath);
+            foreach (var candidate in FindObjectsByType<MasterComputerDisplay>(FindObjectsSortMode.None))
+                if (candidate.gameObject.scene == SceneManager.GetActiveScene() && candidate.Screen != null)
+                {
+                    computer = candidate;
+                    break;
+                }
             playerCamera = Camera.main;
-            if (target == null || playerCamera == null)
+            if (computer == null || playerCamera == null)
             {
-                Debug.LogError("Telescope startup requires the existing Telescope/ProbeLauncherScreen and player camera.");
+                Debug.LogError("Ship startup requires a MasterComputerDisplay and player camera in " + ShipScene + ".");
+                Destroy(gameObject);
                 return;
             }
-            Screen = target.GetComponent<Renderer>();
+            Screen = computer.Screen;
             // Save the normal lighting before TerminalDisplay adds the screen glow.
             roomLighting = new TerminalRoomLighting(Screen, playerCamera);
             display.BindToShip(Screen, playerCamera);
@@ -151,7 +157,11 @@ namespace SilentSuns.Menu
             {
                 wasKinematic = body.isKinematic;
                 body.isKinematic = true;
-                body.transform.SetPositionAndRotation(Screen.bounds.center + normal * 2.35f, facing);
+                // Keep the player's floor height while placing them in front of the console.
+                Vector3 position = Screen.bounds.center + normal * 2.35f;
+                position.y = body.position.y;
+                body.position = position;
+                body.rotation = Quaternion.Euler(0, facing.eulerAngles.y, 0);
             }
             playerHud = System.Array.FindAll(FindObjectsByType<Canvas>(FindObjectsSortMode.None), IsGameplayHud);
             foreach (Canvas hud in playerHud) hud.enabled = false;
@@ -199,6 +209,7 @@ namespace SilentSuns.Menu
         // TerminalMenu calls this after fading out the menu audio. The ship is already loaded.
         private IEnumerator HandOverToGameplay()
         {
+            // Fade back to the unpowered monitor. Its gameplay UI starts only on interaction.
             Vector3 start = playerCamera.transform.localPosition;
             Quaternion rotation = playerCamera.transform.localRotation;
             float fov = playerCamera.fieldOfView;
@@ -220,7 +231,7 @@ namespace SilentSuns.Menu
                     look = GetHandoffLook(phase);
 
                 // TerminalDisplay changes the screen. TerminalRoomLighting changes the room.
-                display.SetGameplayBlend(look.telescopeVisibility);
+                display.SetGameplayBlend(look.computerVisibility);
                 display.SetHandoffSignal(look.glitchStrength, look.screenBrightness);
                 roomLighting.SetLevel(look.roomBrightness);
                 yield return null;

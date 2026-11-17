@@ -177,7 +177,7 @@ namespace SilentSuns.Menu
             CreateInvitation(aspect);
         }
 
-        // TerminalShipIntro calls ConfigureShipScreen with the telescope's shape.
+        // TerminalShipIntro calls ConfigureShipScreen with the master monitor's shape.
         // Move the controls to fit that shape without stretching the letters.
         private void ResizePanels(float height)
         {

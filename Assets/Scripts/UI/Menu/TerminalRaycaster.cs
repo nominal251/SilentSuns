@@ -9,7 +9,7 @@ namespace SilentSuns.Menu
     {
         [SerializeField] private TerminalDisplay display;
 
-        // Ask TerminalDisplay where the mouse landed on the telescope, then let Unity find the button.
+        // Map the mouse onto the ship monitor, then let Unity find the button.
         public override void Raycast(PointerEventData eventData, List<RaycastResult> results)
         {
             Vector2 original = eventData.position;

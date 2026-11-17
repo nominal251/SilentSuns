@@ -1,7 +1,7 @@
 # Silent Suns menu
 
 Open `Assets/Scenes/Menus/MainMenu.unity` and press Play.
-It loads `SampleScene` and uses the existing telescope screen. Opening `SampleScene` directly skips the intro.
+It loads `PreDANMerge` and uses the master computer's screen for the wake sequence, boot, menus, and settings. Opening `PreDANMerge` directly skips the intro.
 
 ## How it runs
 
@@ -30,11 +30,11 @@ Paths below are relative to the project root.
 | Scanlines, glow, and glitch strength | `Assets/UI/Menus/MainMenu/DefaultCRT.asset` |
 | Menu music and its fades | **ARCA Terminal > Menu Music** |
 
-`ConfigureShipScreen` adjusts the menu layout to fit the telescope when the scene starts.
+`ConfigureShipScreen` adjusts the menu layout to fit the master monitor when the scene starts.
 
 ## Connections to the game
 
-- `TerminalDisplay` draws the UI into a texture on `Telescope/ProbeLauncherScreen`. If that object is renamed, update `TelescopeScreenPath` in `TerminalShipIntro`.
+- `TerminalShipIntro` finds the ship's `MasterComputerDisplay` and uses its assigned screen. `TerminalDisplay` layers the startup UI over it, then fades back to a black monitor when the player begins a survey. The computer powers on when interacted with. The telescope keeps its instrument display.
 - `TerminalRoomLighting` saves and restores normal lighting. `TerminalShipScreenLight` adds the screen glow to the existing casing. Neither edits shared material assets.
 - `PlayerMovement` and `InteractOrigin` check `TerminalPause.BlocksGameplayInput`. This prevents movement and instrument clicks during the intro or pause menu.
 - `TerminalSettings` saves through `GamePreferences`. `GameAudio` applies the audio settings to `Assets/UI/Menus/MainMenu/Resources/SilentSunsAudio.mixer`. Put music in **Music**, gameplay effects in **FX**, and menu sounds in **Interface**.
@@ -54,7 +54,7 @@ Paths below are relative to the project root.
 - The display appears only on foot and hides for menus. Screen boundaries still apply. Its generated graphics are removed with the scene. To put it on the tool, use a world-space canvas, turn off Minimap's Anchor To Screen, and keep the 640 by 480 display layout. SetSources can supply the player, objective system and an optional return destination. Without a destination, it shows the last visited station as REFILL.
 - Empty oxygen or hull freezes gameplay while the last view gradually tears and flickers using the ship handoff effect, and the light slowly appears over that view. Darkness closes inward until only the light remains, then the restart/menu choices fade in. Reduced Motion uses a steady fade and keeps the light position still. Restart returns to the scene where the player failed. PlanetSurfaceTest and ObjectiveCheck use the same pause/settings controls; they remain test scenes, with no new main-menu entry.
 - Controls with an `EventTrigger` fire it once per interaction and pass the player view as the event source. Triggers find the shared EventManager if none is assigned.
-- Put production event definitions on the prefab's EventManager. The cube remains in EventsTesting. Save/restore and procedural system generation are still separate team work; Resume stays unavailable. `SystemLoadRequested` currently reloads SampleScene when advancing a system.
+- Put production event definitions on the prefab's EventManager. The cube remains in EventsTesting. Save/restore and procedural system generation are still separate team work; Resume stays unavailable. `SystemLoadRequested` currently reloads PreDANMerge when advancing a system.
 
 Pause opens without a selected button. Mouse hover highlights a button; arrows or the controller start keyboard-style selection. ESC from Settings goes back to pause.
 Returning from gameplay opens the main-menu choices directly, without warm-up, the orb, or diagnostics. Begin Survey hides and locks the mouse pointer immediately.

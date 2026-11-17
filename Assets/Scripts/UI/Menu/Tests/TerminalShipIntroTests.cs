@@ -26,14 +26,21 @@ namespace SilentSuns.Menu.Tests
             Assert.That(display.Illumination, Is.LessThan(.02f));
             Assert.That(prompt.text, Is.Empty);
             Assert.That(face.material.GetFloat("_Reveal"), Is.Zero);
-            Object.Destroy(CaptureGameplay("00-cold-glass"));
             menu.PowerOn();
             Assert.That(menu.State, Is.EqualTo(TerminalMenu.PowerState.WarmingUp), "Early input cannot skip the arrival.");
-            yield return new WaitForSecondsRealtime(1.3f);
-            Assert.That(display.Illumination, Is.InRange(.01f, .95f));
-            Assert.That(face.material.GetFloat("_Reveal"), Is.Zero, "The orb must wait until the raster has settled.");
-            Assert.That(prompt.text, Is.Empty);
-            Object.Destroy(CaptureGameplay("00-raster-warming"));
+            bool sawWarmup = false;
+            float deadline = Time.realtimeSinceStartup + 10;
+            while (menu.State == TerminalMenu.PowerState.WarmingUp && Time.realtimeSinceStartup < deadline)
+            {
+                if (display.Illumination > .01f && display.Illumination < .9f)
+                {
+                    sawWarmup = true;
+                    Assert.That(face.material.GetFloat("_Reveal"), Is.Zero, "The orb must wait until the raster has settled.");
+                    Assert.That(prompt.text, Is.Empty);
+                }
+                yield return null;
+            }
+            Assert.That(sawWarmup, Is.True, "The raster should warm gradually before the invitation.");
             yield return WaitForState(TerminalMenu.PowerState.WaitingForTouch);
             while (!menu.InvitationReady) yield return null;
             Assert.That(display.Illumination, Is.EqualTo(1));
@@ -45,16 +52,16 @@ namespace SilentSuns.Menu.Tests
         }
 
         [UnityTest, Category("Menu")]
-        public IEnumerator TelescopePulseInvitesTouchOnShipScreen()
+        public IEnumerator MasterPulseInvitesTouchOnShipScreen()
         {
             var display = terminal.Find("CRT Display").GetComponent<TerminalDisplay>();
-            var screen = GameObject.Find("Telescope/ProbeLauncherScreen").GetComponent<Renderer>();
+            var screen = Object.FindFirstObjectByType<MasterComputerDisplay>().Screen;
             Assert.That(display.ShipScreen, Is.SameAs(screen));
             foreach (var casing in screen.transform.parent.GetComponentsInChildren<MeshRenderer>())
                 if (casing != screen)
                 {
-                    Assert.That(casing.GetComponent<MeshFilter>().sharedMesh.subMeshCount, Is.EqualTo(1));
-                    Assert.That(casing.sharedMaterials.Length, Is.EqualTo(2));
+                    int slots = casing.GetComponent<MeshFilter>().sharedMesh.subMeshCount;
+                    Assert.That(casing.sharedMaterials.Length, Is.EqualTo(slots + 1));
                     Assert.That(casing.sharedMaterials[0].shader.name, Does.Not.Contain("Ship Screen Spill"), "Native casing lighting must remain present throughout startup.");
                 }
             Assert.That(Time.timeScale, Is.Zero);
@@ -87,7 +94,7 @@ namespace SilentSuns.Menu.Tests
             Click("Standby/Wake screen");
             yield return WaitForState(TerminalMenu.PowerState.Booting);
             yield return new WaitForSecondsRealtime(2);
-            Object.Destroy(CaptureGameplay("03-telescope-diagnostics"));
+            Object.Destroy(CaptureGameplay("03-master-diagnostics"));
             Assert.That(display.SourceCamera.aspect, Is.EqualTo(display.ScreenRight.magnitude / display.ScreenUp.magnitude).Within(.001f));
             Assert.That(display.EffectMaterial.GetFloat("_ContentFit"), Is.EqualTo(1), "The whole native display should be filled without letterboxing.");
         }
@@ -95,9 +102,9 @@ namespace SilentSuns.Menu.Tests
         [UnityTest, Category("Menu")]
         public IEnumerator StartupLightingRestoresSceneExactly()
         {
-            yield return SceneManager.LoadSceneAsync("SampleScene");
+            yield return SceneManager.LoadSceneAsync(TerminalShipIntro.ShipScene);
             yield return null; yield return null;
-            var screen = GameObject.Find("Telescope/ProbeLauncherScreen").GetComponent<Renderer>();
+            var screen = Object.FindFirstObjectByType<MasterComputerDisplay>().Screen;
             Light[] lamps = Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
             var levels = new float[lamps.Length];
             for (int i = 0; i < lamps.Length; i++) levels[i] = lamps[i].intensity;
@@ -128,7 +135,7 @@ namespace SilentSuns.Menu.Tests
         {
             var display = terminal.Find("CRT Display").GetComponent<TerminalDisplay>();
             Assert.That(display.ShipScreen.GetComponent<MeshFilter>().sharedMesh.subMeshCount, Is.EqualTo(1));
-            Assert.That(display.ShipScreen.sharedMaterials[0].name, Is.EqualTo("TelescopeTexture"));
+            Assert.That(display.ShipScreen.sharedMaterials[0].name, Is.EqualTo("Master computer CRT (instance)"));
             display.SetGameplayBlend(1);
             yield return null;
             var before = CaptureGameplay(null);
@@ -175,7 +182,7 @@ namespace SilentSuns.Menu.Tests
             if (!Application.isEditor)
                 Assert.That(Cursor.lockState, Is.EqualTo(CursorLockMode.Locked));
             float deadline = Time.realtimeSinceStartup + 30;
-            while (SceneManager.GetActiveScene().name != "SampleScene" && Time.realtimeSinceStartup < deadline) yield return null;
+            while (SceneManager.GetActiveScene().name != TerminalShipIntro.ShipScene && Time.realtimeSinceStartup < deadline) yield return null;
             Assert.That(TerminalShipIntro.IsActive, Is.True);
             Assert.That(TerminalShipIntro.HintVisible, Is.False);
             Assert.That(TerminalPause.BlocksGameplayInput, Is.True);
@@ -213,7 +220,7 @@ namespace SilentSuns.Menu.Tests
                 yield return null;
             }
             Assert.That(powerFailures, Is.GreaterThanOrEqualTo(3), "Room power must visibly fail with the screen recovery attempts.");
-            Assert.That(nativeWasInterrupted, Is.True, "Interference must persist as the actual telescope interface comes back.");
+            Assert.That(nativeWasInterrupted, Is.True, "Interference must persist as the actual master computer interface comes back.");
             Assert.That(monitor.RoomLightLevel, Is.EqualTo(1));
             Object.Destroy(CaptureGameplay("41-console-pullback"));
             yield return WaitForTransition();
@@ -224,10 +231,10 @@ namespace SilentSuns.Menu.Tests
             Assert.That(Time.timeScale, Is.EqualTo(1));
             Assert.That(Camera.main.GetComponentInParent<Rigidbody>().isKinematic, Is.False);
             Assert.That(monitor.Illumination, Is.Zero);
-            var original = GameObject.Find("Telescope/ProbeLauncherScreen").GetComponent<Renderer>();
+            var original = Object.FindFirstObjectByType<MasterComputerDisplay>().Screen;
             Assert.That(original.enabled, Is.True);
             Assert.That(monitor.Screen, Is.SameAs(original));
-            Assert.That(original.sharedMaterial.name, Is.EqualTo("TelescopeTexture"));
+            Assert.That(original.sharedMaterial.name, Is.EqualTo("Master computer CRT (instance)"));
             yield return new WaitForSecondsRealtime(.5f);
             Object.Destroy(CaptureGameplay("42-operator-notice"));
             var notice = GameObject.Find("First survey ESC notice/BIOS notice/Message").GetComponent<TMP_Text>();
@@ -282,7 +289,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(slider.value, Is.EqualTo(.7f).Within(.03f), "Rendering into a texture must preserve mouse slider coordinates.");
             pause.Resume(); yield return new WaitForSecondsRealtime(.3f);
             // A direct scene load (and future save restore) must not replay a new-game introduction.
-            yield return SceneManager.LoadSceneAsync("SampleScene"); yield return null;
+            yield return SceneManager.LoadSceneAsync(TerminalShipIntro.ShipScene); yield return null;
             Assert.That(TerminalShipIntro.IsActive, Is.False);
             Assert.That(TerminalShipIntro.HintVisible, Is.False);
             Assert.That(Object.FindFirstObjectByType<TerminalShipIntro>(), Is.Null);

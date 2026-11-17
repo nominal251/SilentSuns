@@ -44,7 +44,8 @@ public class MasterComputerStation : MonoBehaviour, Interactable
             var list = planets.planets.Where(p => p != null && !p.isAnomaly).ToArray();
             UI.SetSurvey(list.Count(p => p.gameObject.activeInHierarchy), list.Count(p => p.waveformComplete && p.compComplete), list.Length);
         }
-        if (alertLight != null)
+        // Startup owns the room lighting until it hands the console back to gameplay.
+        if (alertLight != null && !TerminalShipIntro.IsActive)
         {
             alertLight.enabled = data.UnreadCount > 0;
             alertLight.intensity = GamePreferences.ReducedMotion ? .8f : .65f + .15f * Mathf.Sin(Time.time * 2);

@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace SilentSuns.Menu
 {
-    // Draws the UI into a texture, adds CRT effects, and puts it on the telescope screen.
+    // Draws the startup UI into a texture and layers it over the master computer's display.
     public class TerminalDisplay : MonoBehaviour
     {
         [Header("Screen")]
@@ -59,7 +59,7 @@ namespace SilentSuns.Menu
             sourceCamera.orthographicSize = 8f / contentAspect;
             sourceCamera.aspect = contentAspect;
 
-            // Keep the real telescope material underneath. The intro fades away to reveal it.
+            // Keep the computer's live pages underneath for the gameplay handoff.
             var layers = new Material[instrumentMaterials.Length + 1];
             System.Array.Copy(instrumentMaterials, layers, instrumentMaterials.Length);
             layers[instrumentMaterials.Length] = material;
@@ -130,7 +130,7 @@ namespace SilentSuns.Menu
             set { reducedMotion = value; }
         }
 
-        // Prepare the screen material. TerminalShipIntro connects it to the telescope after loading.
+        // TerminalShipIntro connects this material to the ship's master computer after loading.
         private void Awake()
         {
             material = new Material(screenMaterial);

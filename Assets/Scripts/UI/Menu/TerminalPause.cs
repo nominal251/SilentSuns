@@ -83,7 +83,7 @@ namespace SilentSuns.Menu
                 if (button.gameObject != cancelButton) TerminalHoldConfirm.Attach(button.gameObject, ConfirmLeave);
         }
 
-        // The telescope's temporary input object can disappear after a scene change.
+        // The startup menu's temporary input object can disappear after a scene change.
         private void EnsureInputSystem()
         {
             if (EventSystem.current != null) return;

@@ -56,7 +56,7 @@ namespace SilentSuns.Menu
             if (scene.name == "MainMenu")
             {
                 var session = EnsureSession();
-                RestartScene = "SampleScene";
+                RestartScene = TerminalShipIntro.ShipScene;
                 session.waitingForIntro = true;
                 session.introShipLoaded = false;
                 session.failurePending = false;
@@ -66,9 +66,9 @@ namespace SilentSuns.Menu
             else if (IsSurveyScene(scene.name))
             {
                 var session = EnsureSession();
-                // MainMenu loads this scene early so it can use the telescope screen.
+                // MainMenu loads the ship early so it can use the master computer.
                 // That does not start the run. Begin Survey and the handoff do that.
-                if (scene.name == "SampleScene" && session.waitingForIntro && !session.introShipLoaded)
+                if (scene.name == TerminalShipIntro.ShipScene && session.waitingForIntro && !session.introShipLoaded)
                 {
                     session.introShipLoaded = true;
                     return;
@@ -80,7 +80,7 @@ namespace SilentSuns.Menu
                     session.game.Phase == GameManager.GamePhase.Ending)
                     StartNewRun();
                 ShipReady();
-                if (scene.name != "SampleScene") session.game.EnterPlanetaryExploration();
+                if (scene.name != TerminalShipIntro.ShipScene) session.game.EnterPlanetaryExploration();
                 else session.game.ReturnToSystemExploration();
             }
             else if (scene.name == "GameOverScene" || scene.name == "VictoryScene")
@@ -89,7 +89,7 @@ namespace SilentSuns.Menu
 
         private static void ActiveSceneChanged(Scene previous, Scene next)
         {
-            if (next.name == "SampleScene" && instance != null)
+            if (next.name == TerminalShipIntro.ShipScene && instance != null && !instance.waitingForIntro)
                 instance.game.ReturnToSystemExploration();
         }
 
@@ -109,8 +109,7 @@ namespace SilentSuns.Menu
         {
             // The intro already loaded the ship; restart already has a scene transition.
             if (waitingForIntro || sceneAlreadyLoading || TerminalTransition.IsActive) return;
-            // SampleScene is the current prototype system. A generator can replace this load later.
-            TerminalTransition.LoadScene("SampleScene");
+            TerminalTransition.LoadScene(TerminalShipIntro.ShipScene);
         }
 
         public static void ShipReady()
