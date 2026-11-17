@@ -3,12 +3,16 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovementOnPlanet : MonoBehaviour
 {
+    public bool crouching { get; private set; }
+
+    //Visible Internal Variables
     [Header("Look Parameters")]
     [SerializeField] private float mouseSens = 1f;
     [SerializeField] private float maxCameraAngle = 85f;
 
     [Header("Movement Parameters")]
     [SerializeField] private float moveForce = 25f;
+    [SerializeField] private float crouchMultiplier = .5f;
     [SerializeField] private float sprintMultiplier = 2f;
 
     [Header("Jump Parameters")]
@@ -16,6 +20,11 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     [SerializeField] private float jumpCooldown = 0.2f;
     [SerializeField] private float groundCheckDistance = 0.15f;
     [SerializeField] private LayerMask groundMask = ~0;
+
+    [Header("Crouch Parameters")]
+    [SerializeField] private float crouchingHeight = 1.2f;
+    [SerializeField] private float standingHeight = 2f;
+    [SerializeField] private float crouchTransitionDuration = 1f;
 
     [Header("Stamina Parameters")]
     [SerializeField] private float maxStamina = 100f;
@@ -26,7 +35,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
 
     //Internal References
     private Rigidbody rBody;
-    private Collider bodyCollider;
+    private CapsuleCollider bodyCollider;
     private Transform cameraTransform;
     private PhysicsInteractor physicsInteractor;
 
@@ -36,6 +45,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     //Hidden Internal Variables
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
+    private float crouchLerpDuration = 0f;
     private float currentStamina;
     private float currentRegenCooldown;
     private float currentExhaustionCooldown;
@@ -49,7 +59,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         rBody.useGravity = true;
         rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        bodyCollider = GetComponentInChildren<Collider>();
+        bodyCollider = GetComponentInChildren<CapsuleCollider>();
         physicsInteractor = GetComponent<PhysicsInteractor>();
 
         currentStamina = maxStamina;
@@ -65,14 +75,14 @@ public class PlayerMovementOnPlanet : MonoBehaviour
 
     private void Update()
     {
-        ManageStamina();
-
         if (inputHandler.jumpPressed)
         {
             jumpPressedTime = Time.time;
         }
+        crouching = inputHandler.crouchInput;
 
-        //if rotating object don't move the camera
+        ManageStamina();
+        //if you are rotating object, don't move the camera
         if (physicsInteractor != null && physicsInteractor.IsRotatingObject) return;
         HandleRotation();
     }
@@ -80,6 +90,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     private void FixedUpdate()
     {
         HandleMovement();
+        HandleCrouch();
         HandleJump();
     }
 
@@ -129,8 +140,24 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, 0f, inputHandler.moveInput.z);
         inputDirection.Normalize();
 
-        float force = (inputHandler.sprintInput && canRun) ? moveForce * sprintMultiplier : moveForce;
+        float force = (inputHandler.sprintInput && canRun) ? moveForce * sprintMultiplier : crouching ? moveForce * crouchMultiplier : moveForce;
         rBody.AddRelativeForce(inputDirection * force, ForceMode.Force);
+    }
+
+    private void HandleCrouch()
+    {
+        float lerpPercentage = crouchLerpDuration / crouchTransitionDuration;
+        cameraTransform.localPosition = Vector3.Lerp(new Vector3(0, standingHeight/4, 0), new Vector3(0, crouchingHeight/4, 0), lerpPercentage);
+        bodyCollider.height = Mathf.Lerp(standingHeight, crouchingHeight, lerpPercentage);
+
+        if (crouching)
+        {
+            crouchLerpDuration = Mathf.Clamp(crouchLerpDuration + Time.deltaTime, 0f, crouchTransitionDuration);
+        }
+        else
+        {
+            crouchLerpDuration = Mathf.Clamp(crouchLerpDuration - Time.deltaTime, 0f, crouchTransitionDuration);
+        }
     }
 
     private void HandleJump()

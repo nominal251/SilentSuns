@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 527154856792903002}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -199,7 +199,7 @@ Transform:
   m_GameObject: {fileID: 2070915945574885420}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -249,23 +249,22 @@ MonoBehaviour:
   mouseSens: 1
   maxCameraAngle: 85
   moveForce: 25
+  crouchMultiplier: 0.5
   sprintMultiplier: 2
-  drag: 5
   jumpHeight: 1.2
   jumpCooldown: 0.2
   groundCheckDistance: 0.15
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  crouchingHeight: 1.2
+  standingHeight: 2
+  crouchTransitionDuration: 1
   maxStamina: 100
   staminaConsumptionRate: 10
   staminaRegenRate: 10
   staminaRegenCooldown: 1
   staminaExhaustionCooldown: 3.5
-  currentStamina: 0
-  currentRegenCooldown: 0
-  currentExhaustionCooldown: 0
-  canRun: 1
 --- !u!114 &7660258448381898780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,7 +341,7 @@ Transform:
   m_GameObject: {fileID: 2241611855243316944}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

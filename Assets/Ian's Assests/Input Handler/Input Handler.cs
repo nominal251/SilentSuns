@@ -13,6 +13,7 @@ public class InputHandler : MonoBehaviour
     private InputAction debugAction;
     private InputAction sprintAction;
     private InputAction jumpAction;
+    private InputAction crouchAction;
     private InputAction toolAction;
     private InputAction interactAction;
     private InputAction physicsInteractAction;
@@ -27,6 +28,7 @@ public class InputHandler : MonoBehaviour
     public bool reorientInput { get; private set; }
     public bool sprintInput { get; private set; }
     public bool jumpPressed => jumpAction.WasPressedThisFrame();
+    public bool crouchInput => crouchAction.IsPressed();
     public bool toolInput { get; private set; }
     public bool debugInput { get; private set; }
     public bool debugPressed => debugAction.WasPerformedThisFrame();
@@ -63,6 +65,7 @@ public class InputHandler : MonoBehaviour
         reorientAction = playerControls.FindActionMap("Player").FindAction("Reorient");
         sprintAction = playerControls.FindActionMap("Player").FindAction("Sprint");
         jumpAction = playerControls.FindAction("Jump", true); // throws a clear error if the action is missing
+        crouchAction = playerControls.FindAction("Crouch");
         debugAction = playerControls.FindActionMap("Player").FindAction("Debug");
         toolAction = playerControls.FindActionMap("Player").FindAction("Tool");
         interactAction = playerControls.FindAction("Interact");
@@ -127,6 +130,7 @@ public class InputHandler : MonoBehaviour
         reorientAction.Enable();
         sprintAction.Enable();
         jumpAction.Enable();
+        crouchAction.Enable();
         debugAction.Enable();
         toolAction.Enable();
         playerControls.FindAction("ControllerLook").Enable();
@@ -139,14 +143,21 @@ public class InputHandler : MonoBehaviour
     private void OnDisable()
     {
         // A duplicate is destroyed before its actions are assigned.
+            //do we even need all the individual disables if we have the playerControls.Disable()?
         moveAction?.Disable();
         lookAction?.Disable();
         rollAction?.Disable();
         reorientAction?.Disable();
         sprintAction?.Disable();
         jumpAction?.Disable();
+        crouchAction?.Disable();
         debugAction?.Disable();
         toolAction?.Disable();
+        playerControls?.FindAction("ControllerLook").Disable();
+        interactAction?.Disable();
+        physicsInteractAction?.Disable();
+        physicsRotateAction?.Disable();
+        physicsExtendAction?.Disable();
         if (instance == this) playerControls?.Disable();
     }
 
