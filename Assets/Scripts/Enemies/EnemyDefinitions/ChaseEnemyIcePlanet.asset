@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32ba381ec1d05b4c8034e3d0b610e14, type: 3}
+  m_Name: ChaseEnemyIcePlanet
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDefinitions
+  prefab: {fileID: 1330143446193172572, guid: 64b48ccdb72bb3a46be7bd01cb6ba2dd, type: 3}
+  cost: 3
+  maxCount: 0

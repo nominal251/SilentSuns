@@ -65,7 +65,7 @@ public class EnemyBase : MonoBehaviour
 
     void Init()
     {
-        player = GameObject.Find("Astronaut Player");  //finds the player gameobject for tranfrom
+        player = GameObject.FindWithTag("Player");  //finds the player gameobject for tranfrom
 
         if (player != null)
         {
