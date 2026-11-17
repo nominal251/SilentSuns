@@ -5,12 +5,17 @@ using System.Runtime.CompilerServices;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("Enemy Array")]
     [SerializeField] private EnemyDefinitions[] spawnableEnemies;
+
+    [Header("Enemy Random Spawn Array")]
     [SerializeField] private Transform[] randomSpawnPoints;
 
-    public List<EnemyDefinitions> enemiesToSpawn = new List<EnemyDefinitions>();
+    private List<EnemyDefinitions> enemiesToSpawn = new List<EnemyDefinitions>(); //list of the enemies that we want to spawn
+
+    [Header("Planet Variables")]
     [SerializeField] private int totalPlanetBudget;
-    [SerializeField] private int totalBudgetUsed;
+    private int totalBudgetUsed;
 
     private void Start()
     {
@@ -41,7 +46,7 @@ public class EnemySpawner : MonoBehaviour
         return;
     }
 
-    private void CheckIfAnyCanSpawn()
+    private void CheckIfAnyCanSpawn() //this is checking if any other enemies can spawn
     {
         List<int> canSpawnList = new List<int>();
         for (int i = 0; i < spawnableEnemies.Length; i++)
@@ -52,14 +57,14 @@ public class EnemySpawner : MonoBehaviour
                 totalBudgetUsed += spawnableEnemies[i].cost;
             }
         }
-        if (canSpawnList.Count == 1)
+        if (canSpawnList.Count == 1) //if only one enemy can spawn, add it to the list and spawn all enemies, because we know none else fit in the budget
         {
             enemiesToSpawn.Add(spawnableEnemies[canSpawnList[0]]);
             SpawnEnemies();
             return;
         }
 
-        if (canSpawnList.Count > 1)
+        if (canSpawnList.Count > 1) //if more than one enemy fits in budget still, add one at random and check to see if any more can spawn
         {
             int tmp = Random.Range(0, canSpawnList.Count);
             enemiesToSpawn.Add(spawnableEnemies[canSpawnList[tmp]]);
@@ -67,7 +72,7 @@ public class EnemySpawner : MonoBehaviour
             CheckIfAnyCanSpawn();
         }
 
-        else
+        else //if zero can fit in budget, spawn enemies
         {
             SpawnEnemies();
             return;
@@ -78,7 +83,7 @@ public class EnemySpawner : MonoBehaviour
     {
         int totalToSpawn = enemiesToSpawn.Count;
 
-        for (int i = 0; i < totalToSpawn; i++)
+        for (int i = 0; i < totalToSpawn; i++) //loops through what can spawn and spawns them all at random points
         {
             int tmpSpawn = Random.Range(0, randomSpawnPoints.Length);
 
