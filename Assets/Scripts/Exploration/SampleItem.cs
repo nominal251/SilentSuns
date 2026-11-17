@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SampleItem : MonoBehaviour
+public class SampleItem : Objective
 {
     [SerializeField] private GameObject sampleGroup;
 
@@ -23,10 +23,15 @@ public class SampleItem : MonoBehaviour
         if (button != null) button.onInteracted.RemoveListener(HandleCollect);
     }
 
+    public override string GetProgressText() =>
+        IsComplete ? "Sample collected" : "Collect sample";
+
     private void HandleCollect()
     {
-        if (sampler == null) return;
-        sampler.Collect();
+        if (IsComplete || !IsRunning) return;
+        if (sampler == null || !sampler.Collect()) return;
+
+        Complete();
         HideGroup();
     }
 

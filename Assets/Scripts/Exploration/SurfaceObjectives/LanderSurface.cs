@@ -7,7 +7,7 @@ public class LanderSurface : MonoBehaviour
 
     public bool objectivesComplete = true;
 
-    public string spaceScene = "SampleScene";
+    public string spaceScene = "PreDANMerge";
 
     public bool isLaunching = false;
 

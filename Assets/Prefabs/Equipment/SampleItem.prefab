@@ -104,6 +104,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7518920d8d423904eba4bc50a9b62e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SampleItem
+  title: Collect Sample
+  description: 
+  triggersOnStart: 1
+  phases: 1
+  objectiveIcon: {fileID: 21300000, guid: 3ac4cf06b97032a40a8441d0f4335e27, type: 3}
+  objectiveIconColor: {r: 0.20908564, g: 1, b: 0, a: 1}
+  <CurrentPhase>k__BackingField: 0
   sampleGroup: {fileID: 7465153309957032824}
   button: {fileID: 1672561900534980501}
 --- !u!1 &7465153309957032824

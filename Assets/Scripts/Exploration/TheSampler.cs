@@ -1,39 +1,31 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class Sampler : Objective
 {
-    //Button hook up and analysis text
     public Button analyzeButton;
     public TextMeshPro statusText;
     [SerializeField, Min(1f)] private float analysisSeconds = 20f;
 
-    //All samples
-    private readonly List<SampleItem> samples = new List<SampleItem>();
+    private ObjectiveSystem system;
     private int totalRequired;
     private int stored;
     private int analyzed;
-    private SampleItem loaded;
     private bool analyzing;
+    private bool pendingStart;
     private float remaining;
-    public SampleItem Loaded => loaded;
-
-    public void Register(SampleItem item)
-    {
-        if (!samples.Contains(item)) samples.Add(item);
-    }
 
     private void Start()
     {
-        analyzeButton.onInteracted.AddListener(HandlePress);
+        if (analyzeButton != null) analyzeButton.onInteracted.AddListener(HandlePress);
         SceneSwap.SurfaceEntered += HandleSurfaceEntered;
 
-        foreach (var system in FindObjectsByType<ObjectiveSystem>(FindObjectsInactive.Include))
+        foreach (var s in FindObjectsByType<ObjectiveSystem>(FindObjectsInactive.Include))
         {
-            if (system.gameObject.scene == SceneSwap.SurfaceScene) continue;
-            system.Register(this);
+            if (s.gameObject.scene == SceneSwap.SurfaceScene) continue;
+            system = s;
+            system.Register(this); // ignores duplicates
             break;
         }
     }
@@ -41,27 +33,7 @@ public class Sampler : Objective
     private void OnDestroy()
     {
         if (analyzeButton != null) analyzeButton.onInteracted.RemoveListener(HandlePress);
-    }
-
-    //Incase we dont want buttons
-    //Needs a trigger collider
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!IsRunning || loaded != null) return;
-
-        SampleItem item = other.GetComponentInParent<SampleItem>();
-        if (item != null) TryLoad(item);
-
-        loaded = item;
-    }
-
-    //Debug stuff with interaction system
-    private void HandlePress()
-    {
-        if (!IsRunning || analyzing || stored <= 0) return;
-        stored--;
-        analyzing = true;
-        remaining = analysisSeconds;
+        SceneSwap.SurfaceEntered -= HandleSurfaceEntered;
     }
 
     private static int CountSamplesInSurface()
@@ -75,30 +47,47 @@ public class Sampler : Objective
         return count;
     }
 
-    public void Collect()
-    {
-        if (IsActive) stored++;
-    }
-
     private void HandleSurfaceEntered()
     {
         int count = CountSamplesInSurface();
-        if (count == 0) return; //no samples here
+        if (count == 0) return; // no samples on this planet
 
         if (IsActive && !IsComplete)
         {
-            totalRequired += count;
+            totalRequired += count; // still working through earlier samples
             return;
         }
 
-        ResetObjective();
+        ResetObjective();           // clears progress (and the pause flag)
+        SetPaused(system != null && system.Suspended); // restore the system's pause state
         totalRequired = count;
-        TriggerObjectiveStart();
+        pendingStart = true;        // starts in Update once unpaused
+    }
+
+    public bool Collect()
+    {
+        if (!IsRunning) return false;
+        stored++;
+        return true;
+    }
+
+    private void HandlePress()
+    {
+        if (!IsRunning || analyzing || stored <= 0) return;
+        stored--;
+        analyzing = true;
+        remaining = analysisSeconds;
     }
 
     private void Update()
     {
-        if (analyzing && IsRunning) //when paused freeze the timer
+        if (pendingStart && !IsPaused)
+        {
+            pendingStart = false;
+            TriggerObjectiveStart();
+        }
+
+        if (analyzing && IsRunning) // frozen while paused
         {
             remaining -= Time.deltaTime;
             if (remaining <= 0f) FinishAnalysis();
@@ -106,7 +95,6 @@ public class Sampler : Objective
         RefreshText();
     }
 
-    //Complete objective when analysis finished
     private void FinishAnalysis()
     {
         analyzing = false;
@@ -118,16 +106,14 @@ public class Sampler : Objective
 
     protected override void OnObjectiveReset()
     {
-        analyzed = 0; stored = 0; totalRequired = 0; analyzing = false;
+        analyzed = 0; stored = 0; totalRequired = 0; analyzing = false; pendingStart = false;
     }
 
-    //Show progress
     private void RefreshText()
     {
         if (statusText == null) return;
 
-        int total = analyzed + samples.Count;
-        string header = $"SAMPLES ANALYZED: {analyzed}/{total}\n";
+        string header = $"SAMPLES ANALYZED: {analyzed}/{totalRequired}\n";
 
         if (IsComplete)       statusText.text = header + "ALL ANALYSES COMPLETE";
         else if (analyzing)
@@ -135,14 +121,8 @@ public class Sampler : Objective
             int t = Mathf.CeilToInt(remaining);
             statusText.text = header + $"ANALYZING...  {t / 60:00}:{t % 60:00}";
         }
-        else if (loaded != null) statusText.text = header + "SAMPLE LOADED\nPRESS TO ANALYZE";
-        else                     statusText.text = header + "PLACE SAMPLE IN MACHINE";
-    }
-
-    public bool TryLoad(SampleItem item)
-    {
-        if (!IsRunning || loaded != null || !samples.Contains(item)) return false;
-        loaded = item;
-        return true;
+        else if (stored > 0)  statusText.text = header + "SAMPLES READY\nPRESS TO ANALYZE";
+        else if (IsActive)    statusText.text = header + "COLLECT SAMPLES";
+        else                  statusText.text = "NO SAMPLES TO ANALYZE";
     }
 }

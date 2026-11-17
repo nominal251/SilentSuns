@@ -14,8 +14,11 @@ namespace SilentSuns.Menu
         private bool sceneAlreadyLoading;
         private bool failurePending;
 
-        public static string RestartScene { get; private set; } = "SampleScene";
-        public static bool IsSurveyScene(string name) => name == "SampleScene" || name == "PlanetSurfaceTest" || name == "ObjectiveCheck";
+        public static string RestartScene { get; private set; } = "PreDANMerge";
+        public static bool IsSurveyScene(string name) => name == "PreDANMerge"
+        || name == "PlanetSurfaceTest" || name == "ObjectiveCheck" || name == "AcidSprings"
+        || name == "Brian_Level_Design_Blockout";
+        
 
         public static GameManager Manager => instance != null ? instance.game : null;
         public static EventManager Events => instance != null ? instance.events : null;

@@ -26342,6 +26342,18 @@ PrefabInstance:
       propertyPath: globalVolume
       value: 
       objectReference: {fileID: 832575518}
+    - target: {fileID: 5594662521506250484, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 5594662521506250484, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 6575944633825314060, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: viewportHeight
+      value: 0.12
+      objectReference: {fileID: 0}
     - target: {fileID: 7318390735657446605, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_CullingMask.m_Bits
       value: 67109111
