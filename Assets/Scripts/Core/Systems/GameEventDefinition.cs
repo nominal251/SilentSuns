@@ -1,5 +1,6 @@
-
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameEventCategory
 {
@@ -35,6 +36,11 @@ public class GameEventDefinition : ScriptableObject
     public bool oncePerSystem;
     [Min(0)] public int maxTriggersPerRun = 0; //0 means unlimited unless oncePerRun is enabled
 
+    [Header("Scene Restrictions")]
+    public bool limitedToScenes;
+    [Tooltip("Scene names exactly as they appear in Build Settings. The event is allowed if any currently loaded scene is listed")]
+    public string[] whitelistedScenes;
+
     [Header("Implementation")]
     [Tooltip("Optional prefab whose component implements IGameEventSequence. EventStarted listeners can also respond to the event")]
     public GameObject eventPrefab;
@@ -49,6 +55,32 @@ public class GameEventDefinition : ScriptableObject
         {
             if (eventCategory == category)
                 return true;
+        }
+
+        return false;
+    }
+
+    //Checks whether any currently loaded scene is whitelisted for this event
+    public bool IsAllowedInLoadedScenes()
+    {
+        if (!limitedToScenes)
+            return true;
+
+        if (whitelistedScenes == null || whitelistedScenes.Length == 0)
+            return false;
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+
+            if (!scene.isLoaded)
+                continue;
+
+            foreach (string allowed in whitelistedScenes)
+            {
+                if (string.Equals(allowed, scene.name, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
         }
 
         return false;

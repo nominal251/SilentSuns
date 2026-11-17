@@ -340,6 +340,12 @@ public class EventManager : MonoBehaviour
             return false;
         }
 
+        if (!definition.IsAllowedInLoadedScenes()) // JACK ADDITION!!!!!! (Checks if event is whitelisted in current scenes)
+        {
+            if (logDetails) Debug.Log($"[EventManager] Eligibility failed | {definition.eventId} | No loaded scene is whitelisted for this event");
+            return false;
+        }
+
         if (!TriggerMatches(definition, triggerId))
         {
             if (logDetails) Debug.Log($"[EventManager] Eligibility failed | {definition.eventId} | Trigger ID '{triggerId}' is not allowed");
