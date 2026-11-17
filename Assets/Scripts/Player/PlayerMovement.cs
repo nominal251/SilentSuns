@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundCheckDistance = 0.15f;
     [SerializeField] private LayerMask groundMask = ~0;
 
+    [SerializeField]private CapsuleCollider playerCollider;
     private Rigidbody rBody;
     private Collider bodyCollider;
     private GameObject camera;
@@ -73,6 +74,14 @@ public class PlayerMovement : MonoBehaviour
         rBody = GetComponent<Rigidbody>();
         bodyCollider = GetComponentInChildren<Collider>();
         Cursor.lockState = CursorLockMode.Locked;
+        if (isGravityOn)
+        {
+            playerCollider.height = 2;
+        }
+        else
+        {
+            playerCollider.height = 1;
+        }
     }
 
     private void Start()
@@ -248,12 +257,14 @@ public class PlayerMovement : MonoBehaviour
                 SyncLookAnglesFromTransform();
                 rBody.useGravity = isGravityOn;
                 rBody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                playerCollider.height = 2;
             }
             else
             {
                 BakeCameraPitchIntoBody();
                 rBody.useGravity = isGravityOn;
                 rBody.constraints = RigidbodyConstraints.None;
+                playerCollider.height = 1;
             }
         }
     }
