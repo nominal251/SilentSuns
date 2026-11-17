@@ -26338,6 +26338,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3152590022826582474, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: visionAngle
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3152590022826582474, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: visionBlockerMask.m_Bits
+      value: 192
+      objectReference: {fileID: 0}
     - target: {fileID: 5348794204827691397, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: globalVolume
       value: 
