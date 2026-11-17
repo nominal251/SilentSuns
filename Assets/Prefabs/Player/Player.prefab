@@ -109,10 +109,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfb20ff8606a8064ba8c6d85820fe7d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AstronautPlayerScriptVersion1
-  isGravityOn: 1
+  isGravityOn: 0
   movementLocked: 0
   mouseSens: 1
-  floatingMoveForce: 10
+  floatingMoveForce: 30
   rollSpeed: 60
   reorientSpeed: 30
   groundedMoveForce: 25
@@ -125,6 +125,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  playerCollider: {fileID: 2701412473977605090}
   oxygenRegenRate: 10
   maxTotalDistance: 900
 --- !u!114 &5373841226381726112
@@ -170,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   health: 100
   globalVolume: {fileID: 0}
+  damageVignetteMaterial: {fileID: 0}
   cautionBreakpoint: 0
   dangerBreakpoint: 0
   goodIntensity: 0

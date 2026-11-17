@@ -4820,6 +4820,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
+  followStrength: 15
+  rotateStrength: 15
+  maxSpeed: 15
+  breakDistance: 1.5
 --- !u!1 &350154316
 GameObject:
   m_ObjectHideFlags: 0
@@ -10786,6 +10790,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
+  followStrength: 15
+  rotateStrength: 15
+  maxSpeed: 15
+  breakDistance: 1.5
 --- !u!1001 &800891335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26507,14 +26515,6 @@ PrefabInstance:
     - target: {fileID: 221757674407075658, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
-      propertyPath: isGravityOn
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674517436396139358, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
-      propertyPath: floatingMoveForce
-      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 2810187639565938681, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
       propertyPath: m_Name
