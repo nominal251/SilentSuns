@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ObserverIcePlanet
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDefinitions
   prefab: {fileID: 5178089367635141764, guid: 94bcf65f4282410468bf0680af21d35b, type: 3}
-  cost: 1
+  cost: 5
   maxCount: 0

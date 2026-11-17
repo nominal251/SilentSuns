@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PHAnalysisMinigame : Objective, IMinigame
 {
@@ -10,7 +11,9 @@ public class PHAnalysisMinigame : Objective, IMinigame
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject cameraToMinigame;
     [SerializeField] private GameObject cameraToPlayer;
+    [SerializeField] private GameObject playerObjectiveHUD; //Temp
     private MinigameManager minigameManager;
+    private bool hudWasActive;
 
     private int color = 0;
 
@@ -49,6 +52,7 @@ public class PHAnalysisMinigame : Objective, IMinigame
 
     public void StartMinigame()
     {
+        HideHUD();
         playerMovement.MinigameOnOff(); //turns camera rotation off
         camera.transform.position = cameraToMinigame.transform.position;
         camera.transform.rotation = cameraToMinigame.transform.rotation;
@@ -62,12 +66,46 @@ public class PHAnalysisMinigame : Objective, IMinigame
 
     public void EndMinigame()
     {
+        RestoreHUD();
         playerMovement.MinigameOnOff(); //turns camera rotation back on
         camera.transform.position = cameraToPlayer.transform.position;
         camera.transform.rotation = cameraToPlayer.transform.rotation;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         phBar.SetActive(false);
+    }
+
+    //Searches every loaded scene
+    private static GameObject FindInLoadedScenes(string objectName)
+    {
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (!scene.isLoaded) continue;
+
+            foreach (GameObject root in scene.GetRootGameObjects())
+                foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+                    if (t.name == objectName) return t.gameObject;
+        }
+        return null;
+    }
+
+    private void HideHUD()
+    {
+        if (playerObjectiveHUD == null)
+            playerObjectiveHUD = FindInLoadedScenes("SurveyMinimap(Clone)");
+
+        if (playerObjectiveHUD == null) return;
+
+        hudWasActive = playerObjectiveHUD.activeSelf;
+        playerObjectiveHUD.SetActive(false);
+    }
+
+    private void RestoreHUD()
+    {
+        if (playerObjectiveHUD != null && hudWasActive)
+            playerObjectiveHUD.SetActive(true);
+        hudWasActive = false;
     }
 
     public void CheckIfCorrect()

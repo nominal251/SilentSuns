@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WeepingEnemyIcePlane
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDefinitions
   prefab: {fileID: 3184370401008916531, guid: bf5f9acfeba210447bb5d12eb4289d07, type: 3}
-  cost: 2
+  cost: 4
   maxCount: 0

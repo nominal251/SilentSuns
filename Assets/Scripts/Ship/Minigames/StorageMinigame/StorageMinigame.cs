@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class StorageMinigame : Objective, IMinigame
 {
@@ -7,8 +8,10 @@ public class StorageMinigame : Objective, IMinigame
     [SerializeField] private GameObject cameraToPlayer;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private MinigameManager minigameManager;
-
+    [SerializeField] private GameObject playerObjectiveHUD; //Temp
     [SerializeField] private GameObject plane;
+
+    private bool hudWasActive;
 
     void Awake()
     {
@@ -42,12 +45,46 @@ public class StorageMinigame : Objective, IMinigame
         }
     }
 
+    //Searches every loaded scene
+    private static GameObject FindInLoadedScenes(string objectName)
+    {
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            Scene scene = SceneManager.GetSceneAt(i);
+            if (!scene.isLoaded) continue;
+
+            foreach (GameObject root in scene.GetRootGameObjects())
+                foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+                    if (t.name == objectName) return t.gameObject;
+        }
+        return null;
+    }
+
+    private void HideHUD()
+    {
+        if (playerObjectiveHUD == null)
+            playerObjectiveHUD = FindInLoadedScenes("SurveyMinimap(Clone)");
+
+        if (playerObjectiveHUD == null) return;
+
+        hudWasActive = playerObjectiveHUD.activeSelf;
+        playerObjectiveHUD.SetActive(false);
+    }
+
+    private void RestoreHUD()
+    {
+        if (playerObjectiveHUD != null && hudWasActive)
+            playerObjectiveHUD.SetActive(true);
+        hudWasActive = false;
+    }
+
     public override string GetProgressText() =>
         IsComplete ? "Storage organized" : "Organize the storage";
 
     public void StartMinigame()
     {
         plane.SetActive(true);
+        HideHUD();
 
         playerMovement.MinigameOnOff(); //turns camera rotation off
 
@@ -61,6 +98,7 @@ public class StorageMinigame : Objective, IMinigame
     public void EndMinigame()
     {
         plane.SetActive(false);
+        RestoreHUD();
 
         playerMovement.MinigameOnOff(); //turns camera rotation back on
 
