@@ -54,6 +54,8 @@ public class BodyTemp : MonoBehaviour
     {
         //cold sources like wind will add stacks, heat sources will reduce stacks
         coldStacks += change;
+        if (coldStacks < 0)
+            coldStacks = 0;
         movementScript.updateSpeedDebuff(coldStacks * slowPerStack);
     }
 }
