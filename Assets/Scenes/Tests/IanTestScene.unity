@@ -187,6 +187,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61318aec835b9064d83ebd0b641aea73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PhysicsInteractable
+  followStrength: 15
+  rotateStrength: 15
+  maxSpeed: 15
+  breakDistance: 1.5
 --- !u!54 &295266326
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -763,6 +767,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1867610574}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1991540913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1991540915}
+  - component: {fileID: 1991540914}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1991540914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991540913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 07d0c7245032acf4aaa55d4d621e0d0b, type: 2}
+--- !u!4 &1991540915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991540913}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.35567594, y: 1, z: 3.266683}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2074677883
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -819,6 +872,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5348794204827691397, guid: 9935110b384bf204f82f3e244bc12bd2, type: 3}
+      propertyPath: globalVolume
+      value: 
+      objectReference: {fileID: 1991540914}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -945,3 +1002,4 @@ SceneRoots:
   - {fileID: 144743491}
   - {fileID: 295266330}
   - {fileID: 798658967}
+  - {fileID: 1991540915}

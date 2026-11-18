@@ -16,13 +16,13 @@ public class PlayerHealth : MonoBehaviour
     private SuitDamageVignette suitVignette;
 
     [Header("Health state breakpoints")]
-    [SerializeField, Range(0, 100)] private float cautionBreakpoint;
-    [SerializeField, Range(0, 100)] private float dangerBreakpoint;
+    [SerializeField, Range(0, 100)] private float cautionBreakpoint = 60;
+    [SerializeField, Range(0, 100)] private float dangerBreakpoint = 35;
 
     [Header("Vignette intensity at breakpoints.")]
-    [SerializeField, Range(0, 1)] private float goodIntensity;
-    [SerializeField, Range(0, 1)] private float cautionIntensity;
-    [SerializeField, Range(0, 1)] private float dangerIntensity;
+    [SerializeField, Range(0, 1)] private float goodIntensity = .1f;
+    [SerializeField, Range(0, 1)] private float cautionIntensity = .4f;
+    [SerializeField, Range(0, 1)] private float dangerIntensity = .7f;
 
     public HealthCondition Condition
     {

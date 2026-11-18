@@ -37,6 +37,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
     //Hidden Internal Variables
     private float yRotation = 0f;
     private float cameraXRotation = 0f;
+    private float speedDebuff = 1f;
     private float currentStamina;
     private float currentRegenCooldown;
     private float currentExhaustionCooldown;
@@ -131,7 +132,7 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         Vector3 inputDirection = new Vector3(inputHandler.moveInput.x, 0f, inputHandler.moveInput.z);
         inputDirection.Normalize();
 
-        float force = (inputHandler.sprintInput && canRun) ? moveForce * sprintMultiplier : moveForce;
+        float force = (inputHandler.sprintInput && canRun) ? moveForce * sprintMultiplier * speedDebuff : moveForce * speedDebuff;
         rBody.AddRelativeForce(inputDirection * force, ForceMode.Force);
     }
 
@@ -157,5 +158,10 @@ public class PlayerMovementOnPlanet : MonoBehaviour
         float distance = bounds.extents.y - radius + groundCheckDistance;
         return Physics.SphereCast(bounds.center, radius, Vector3.down, out _, distance,
             groundMask, QueryTriggerInteraction.Ignore);
+    }
+
+    public void updateSpeedDebuff(float incomingValue)
+    {
+        speedDebuff = 1 - incomingValue;
     }
 }
