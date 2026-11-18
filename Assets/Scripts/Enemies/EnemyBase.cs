@@ -30,26 +30,17 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual bool EnemyCanSeePlayer()
     {
-        //finding the reference points for raycast
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (agent == null || !FindPlayer()) return false;
+
         Vector3 origin = agent.transform.position + Vector3.up;
-        Vector3 target = playerTransform.position + Vector3.up - new Vector3(0, 1f, 0f);
+        Vector3 target = playerTransform.position + Vector3.up * 0.9f;
         Vector3 direction = target - origin;
-        float distance = direction.magnitude;
 
-        //Debug.DrawRay(origin, direction, Color.red);
+        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, direction.magnitude + 0.5f,
+                layerMask, QueryTriggerInteraction.Ignore))
+            return hit.transform.IsChildOf(playerTransform);
 
-        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, Mathf.Infinity, layerMask, QueryTriggerInteraction.Ignore))
-        {
-
-            if (hit.transform.IsChildOf(playerTransform))
-            {
-                //Debug.Log("enemy sees");
-                return true;
-            }
-
-            // A wall or another object blocks the view.
-            return false;
-        }
         return false;
     }
 
@@ -73,5 +64,18 @@ public class EnemyBase : MonoBehaviour
         }
 
         agent = GetComponent<NavMeshAgent>(); //finds the navmeshagent
+    }
+
+    protected bool FindPlayer()
+    {
+        if (playerTransform != null) return true;
+
+        // Prefer the player that actually has PlayerMovement, in case another object shares the tag.
+        var movement = FindFirstObjectByType<PlayerMovement>();
+        player = movement != null ? movement.gameObject : GameObject.FindWithTag("Player");
+        if (player == null) return false;
+
+        playerTransform = player.transform;
+        return true;
     }
 }

@@ -35,8 +35,10 @@ public class WeepingEnemy : EnemyBase
 
     bool PlayerCanSeeEnemy()
     {
-        bool playerCanSee = playerVision.CanSeeTarget(transform);
-        return playerCanSee;
+        if (playerVision == null && player != null)
+            playerVision = player.GetComponent<PlayerVision>();
+        // If the player can't be found yet, treat it as "being watched" so the enemy stays still.
+        return playerVision == null || playerVision.CanSeeTarget(transform);
     }
 
     void Logic()
