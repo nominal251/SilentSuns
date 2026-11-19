@@ -183,9 +183,9 @@ GameObject:
   - component: {fileID: 7660258448381898780}
   - component: {fileID: 1528956739675281545}
   - component: {fileID: 1457930700981306017}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerOnPlanet
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -262,10 +262,6 @@ MonoBehaviour:
   staminaRegenRate: 10
   staminaRegenCooldown: 1
   staminaExhaustionCooldown: 3.5
-  currentStamina: 0
-  currentRegenCooldown: 0
-  currentExhaustionCooldown: 0
-  canRun: 1
 --- !u!114 &7660258448381898780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,6 +305,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   health: 100
   globalVolume: {fileID: 0}
+  damageVignetteMaterial: {fileID: 0}
   cautionBreakpoint: 60
   dangerBreakpoint: 35
   goodIntensity: 0.1
