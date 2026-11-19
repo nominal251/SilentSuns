@@ -2,14 +2,25 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Enemy Array")]
+    [Tooltip("Place your EnemyDefinition scriptable objects that you would like to spawn randomly here")]
     [SerializeField] private EnemyDefinitions[] spawnableEnemies;
 
     [Header("Enemy Random Spawn Array")]
+    [Tooltip("Create GameObject in world and drag it here to set it for a list of random spawn points")]
     [SerializeField] private Transform[] randomSpawnPoints;
+
+    [Header("Set Enemy Array")]
+    [Tooltip("Place an enemy here if it is guaranteed to spawn, at the same index in this array as the setSpawnPoints array")]
+    [SerializeField] private EnemyDefinitions[] setSpawnEnemies;
+
+    [Header("Enemy Set Spawn Array")]
+    [Tooltip("Create GameObject in world and drag it here at same index as the enemy you would like to spawn with this transform")]
+    [SerializeField] private Transform[] setSpawnPoints;
 
     private List<EnemyDefinitions> enemiesToSpawn = new List<EnemyDefinitions>(); //list of the enemies that we want to spawn
 
@@ -91,5 +102,14 @@ public class EnemySpawner : MonoBehaviour
 
             Instantiate(enemiesToSpawn[i].prefab, spawnTrans.position, spawnTrans.rotation);
         }
+
+        int setToSpawn = setSpawnEnemies.Length;
+        for (int i = 0; i < setToSpawn; i++) //loops through what can spawn and spawns them all at random points
+        {
+            Transform spawnTrans = setSpawnPoints[i];
+
+            Instantiate(setSpawnEnemies[i].prefab, spawnTrans.position, spawnTrans.rotation);
+        }
+
     }
 }
