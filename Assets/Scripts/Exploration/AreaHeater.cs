@@ -49,7 +49,7 @@ public class AreaHeater : MonoBehaviour
         if (other.tag == "Player")
         {
             playerInArea = false;
+            currentCooldown = cooldown;
         }
-        currentCooldown = cooldown
     }
 }
