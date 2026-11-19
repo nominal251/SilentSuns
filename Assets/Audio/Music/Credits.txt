@@ -1,0 +1,28 @@
+Silent Suns main menu music
+
+ARCA Standby.ogg
+Menu mix assembled by Daniel Chaviano.
+
+Final Transmission - I Think I Can Help You
+https://www.youtube.com/watch?v=uQpKLqAacQ8
+Used as a background layer.
+
+The Six Realms - I Think I Can Help You
+https://www.youtube.com/watch?v=jD0zM-g9DMU
+Used as a background layer.
+
+Sanity Unravels - Karl Casey @ White Bat Audio
+https://www.youtube.com/watch?v=0uLka-O5LgE
+Music by Karl Casey @ White Bat Audio.
+Slowed down, lowered in pitch, and edited in sections for the menu mix.
+
+The supplied mix is used unchanged. Unity handles playback volume and fades.
+
+Source terms checked November 18, 2026:
+Final Transmission and The Six Realms are listed under the YouTube Audio Library
+license on their source pages. Those pages permit incorporation into other
+content and prohibit standalone distribution of the source tracks.
+Sanity Unravels is available for use in games with the credit above.
+White Bat Audio's terms prohibit separate soundtrack distribution and
+re-releasing its music as another music product.
+https://whitebataudio.com/pages/faq

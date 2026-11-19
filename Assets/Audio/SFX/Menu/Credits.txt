@@ -14,11 +14,11 @@ These are the original keypress recordings, copied without audio edits.
 The creator recorded a Cherry KC 1000 with a Shure SM7B.
 Playback level is adjusted in the game.
 
-Menu Music.mp3
-Temporary supplied track; can be replaced later.
-Original supplied file retained without audio edits.
-Playback fades and volume are applied in Unity.
-License not documented. The CC0 sound-effect licenses below do not cover this track.
+ARCA Standby.ogg
+Main menu mix: Final Transmission and The Six Realms by I Think I Can Help You,
+with Sanity Unravels by Karl Casey @ White Bat Audio.
+Music by Karl Casey @ White Bat Audio.
+Full source links and editing notes: Assets/Audio/Music/Credits.txt
 
 Interaction/KeyboardPress.wav
 Title: Key_Press

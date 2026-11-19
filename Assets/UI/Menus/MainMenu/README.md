@@ -120,7 +120,7 @@ Menu sounds are in `Assets/Audio/SFX/Menu` and the music track is in `Assets/Aud
 | `Hardware/CRTPowerOn.wav` | Darklanlan, [CRT monitor turns on](https://commons.wikimedia.org/wiki/File:CRT_monitor_turns_on.ogg) | CC0 | Trimmed to 0.92-4.72 seconds, converted to mono WAV, raised 5 dB, and faded at both ends. |
 | `Hardware/CRTHum.wav` | X3SB, [CRT TV Hum](https://freesound.org/people/X3SB/sounds/818513/) | CC0 | Trimmed to 1.8-6.8 seconds, converted to mono WAV, adjusted to -29 dBFS RMS, and crossfaded for looping. |
 | `Interaction/ControllerDisconnected.ogg` | Kenney, [Interface Sounds](https://kenney.nl/assets/interface-sounds), `error_006.ogg` | CC0 | Copied unchanged. Playback volume is reduced in the game. |
-| `Menu Music.mp3` | Temporary supplied track; can be replaced later. | Not documented. | File unchanged. Fades and volume are handled in Unity. |
+| `ARCA Standby.ogg` | [Final Transmission](https://www.youtube.com/watch?v=uQpKLqAacQ8) and [The Six Realms](https://www.youtube.com/watch?v=jD0zM-g9DMU) by I Think I Can Help You; [Sanity Unravels](https://www.youtube.com/watch?v=0uLka-O5LgE), music by Karl Casey @ White Bat Audio. | Source terms and credits in `Assets/Audio/Music/Credits.txt`. | Menu mix by Daniel Chaviano. First two tracks layered as background ambience; Sanity Unravels slowed, lowered in pitch, and edited in sections. |
 
 Exact download URLs, source hashes, and edit details are kept in `Assets/Audio/SFX/Menu/Credits.txt`, `Assets/Audio/SFX/Menu/Hardware/Sources.json`, and `Assets/Audio/SFX/Menu/Interaction/Sources.json`.
 

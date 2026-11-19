@@ -587,7 +587,7 @@ namespace SilentSuns.Menu.Tests
         {
             AudioSource music = terminal.Find("Menu Music").GetComponent<AudioSource>();
             Assert.That(music.outputAudioMixerGroup.name, Is.EqualTo("Music"));
-            Assert.That(music.clip.name, Is.EqualTo("Menu Music"));
+            Assert.That(music.clip.name, Is.EqualTo("ARCA Standby"));
             Assert.That(music.loop, Is.True);
             Assert.That(music.isPlaying, Is.False);
             Click("Standby/Wake screen");
@@ -612,7 +612,7 @@ namespace SilentSuns.Menu.Tests
             Assert.That(music.isPlaying, Is.False);
             Assert.That(terminal.Find("Monitor Audio").GetComponent<TerminalPowerAudio>().Running, Is.False);
             yield return WaitForTransition();
-            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("SampleScene"));
+            Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("PreDANMerge"));
             Assert.That(Object.FindFirstObjectByType<TerminalMenuMusic>(), Is.Null);
         }
 

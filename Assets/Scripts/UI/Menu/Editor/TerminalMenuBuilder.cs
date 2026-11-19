@@ -97,7 +97,7 @@ namespace SilentSuns.Menu.Editor
             musicSource.loop = true;
             musicSource.volume = 0f;
             musicSource.spatialBlend = 0f;
-            string musicPath = "Assets/Audio/Music/Menu Music.mp3";
+            string musicPath = "Assets/Audio/Music/ARCA Standby.ogg";
             AudioImporter musicImporter = (AudioImporter)AssetImporter.GetAtPath(musicPath);
             AudioImporterSampleSettings musicSettings = musicImporter.defaultSampleSettings;
             musicSettings.loadType = AudioClipLoadType.Streaming;
