@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: 'Log - [unassigned 1]'
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: 'Log - [unassigned 1]'
+  logTitle: Routine Maintenance
+  author: '[Captain TBD]'
+  shipName: '[Unassigned]'
+  dateRecorded: '[TBD]'
+  logText: 'Spent most of the morning trying to get the ventilation fan in the aft
+    compartment working properly again.
+
+    It''s been making a rattling noise
+    for the better part of a week. Nothing serious, but there''s only so much of
+    that I can listen to before it starts getting on my nerves.
+
+    Turns out one
+    of the mounting brackets had worked itself loose. Tightened it, checked the others,
+    and gave the whole assembly a good cleaning while I was at it.
+
+    The noise
+    is gone now.
+
+    I''ve also noticed the water reclamation system is running
+    a little less efficiently than it should. Probably just needs another filter
+    change. I''ll put that on tomorrow''s list.
+
+    Otherwise, everything''s holding
+    together.
+
+    Not exactly exciting work, but I suppose that''s a good thing.
+    Out here, boring is usually preferable.'

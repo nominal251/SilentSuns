@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: Log - Fractals
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: Log - Fractals
+  logTitle: Structural Noise Report
+  author: Capt. Thomas Eriksen
+  shipName: 027-Lifthrasir
+  dateRecorded: '[Mission timestamp TBD]'
+  logText: "I've been hearing an intermittent creaking noise from somewhere along
+    the starboard side of the ship.\r\nInitially I attributed it to thermal expansion,
+    but the frequency has increased over the past several hours. The sound is inconsistent
+    with the normal stresses I've observed during previous flight operations.\r\nThere
+    are no corresponding pressure fluctuations or structural warnings.\r\nI've inspected
+    the accessible sections of the hull and found nothing out of place.\r\nI'll continue
+    monitoring it. There's no indication of an immediate hazard.\n\r\n[ENTRY APPENDED
+    \u2014 TIME TBD]\r\nSomething is wrong with the corridor outside the habitation
+    compartment.\r\nI noticed it while returning from the equipment bay. I could
+    see the doorway at the far end, but it appeared much farther away than it should
+    have been.\r\nI thought it was a trick of the lighting.\r\nI walked toward it.
+    After several steps, I stopped. The distance hadn't changed.\r\nI returned to
+    the habitation compartment and checked the internal layout. Nothing has been
+    modified.\r\nI can hear the creaking again.\r\nI'm going to take another look.\r\n"

@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: Log - impostor
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: Log - impostor
+  logTitle: Unauthorized File Access
+  author: Capt. Michael Hayes
+  shipName: 008-Anqa
+  dateRecorded: '[Mission timestamp TBD]'
+  logText: 'I''m documenting this because it''s happened twice now, and I''d rather
+    have a record of it than keep second-guessing myself.
+
+    Yesterday morning
+    I noticed that several personal files had been opened while I was asleep. Nothing
+    important. Family photographs, some old correspondence, a few recordings from
+    home.
+
+    I dug into the access history. According to the computer, I was the
+    one who opened them.
+
+    I wasn''t.
+
+    I assumed it was a timestamp error
+    or some kind of indexing problem. I''ve had stranger issues with this machine.
+
+    Then
+    I got back from the surface today and found my things had been moved.
+
+    My
+    jacket was hanging beside the cabin door. I left it folded on my bunk. One of
+    the storage drawers was open, and I''m certain I''d closed it before leaving.
+
+    I
+    checked the ship''s access records. No unusual entries. No indication that anyone
+    boarded while I was away.
+
+    Obviously, nobody did. There''s nobody else out
+    here.
+
+    I''ve checked the compartments twice. There''s nothing missing, nothing
+    damaged, and no sign of a break-in.
+
+    I don''t know what to make of it.
+
+    Maybe
+    I''m more tired than I thought. Maybe I''ve started doing things without remembering
+    them.
+
+    But I know I didn''t open those files.
+
+    And I know where I left
+    my jacket.
+
+'

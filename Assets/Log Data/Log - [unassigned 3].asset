@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: 'Log - [unassigned 3]'
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: 'Log - [unassigned 3]'
+  logTitle: Conflicting Readings
+  author: '[Captain TBD]'
+  shipName: '[Unassigned]'
+  dateRecorded: '[TBD]'
+  logText: 'I''ve been reviewing the latest survey data, and something isn''t adding
+    up.
+
+    The atmospheric readings from yesterday''s scan don''t match the ones
+    I collected this morning. Oxygen concentration, surface pressure, even the estimated
+    temperature. All different.
+
+    Ordinarily, I''d assume the equipment was malfunctioning.
+    But I ran the diagnostics twice, and everything came back within tolerance.
+
+    The
+    strangest part is that the orbital imagery hasn''t changed. Same cloud formations,
+    same weather systems, same visible landmarks.
+
+    I checked the original data
+    files to make sure I hadn''t accidentally compared readings from two different
+    planets.
+
+    I hadn''t.
+
+    SYS-CTRL reports no instrument faults.
+
+    I''ll
+    run another scan tomorrow and compare the results. If the discrepancy persists,
+    I''ll have to mark the planet for further investigation.
+
+    For now, I''m
+    keeping both sets of readings. No sense discarding data just because I can''t
+    explain it.'

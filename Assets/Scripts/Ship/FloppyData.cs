@@ -10,6 +10,7 @@ public class FloppyData : ScriptableObject
     public string diskName;
     public string logTitle;
     public string author;
+    public string shipName;
     public string dateRecorded;
 
     [Header("Log Contents")]

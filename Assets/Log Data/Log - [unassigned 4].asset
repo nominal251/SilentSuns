@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: 'Log - [unassigned 4]'
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: 'Log - [unassigned 4]'
+  logTitle: The Missing Interval
+  author: '[Captain TBD]'
+  shipName: '[Unassigned]'
+  dateRecorded: '[TBD]'
+  logText: 'Something peculiar happened with the ship''s clock yesterday.
+
+    I
+    finished cataloguing the surface samples at approximately 1400 hours. I remember
+    checking the time because I was planning to eat afterward.
+
+    The next time
+    I looked, it was nearly 1700.
+
+    Three hours.
+
+    I don''t remember doing
+    anything during that time. I hadn''t fallen asleep, at least not that I recall.
+    I was still sitting at the same desk, with the same sample container in front
+    of me.
+
+    At first I thought the clock had simply jumped forward. But the
+    computer''s activity records show several routine operations during those hours.
+
+    Nothing
+    unusual. Environmental checks, power distribution adjustments, a scheduled diagnostic.
+
+    The
+    records also indicate that I accessed the navigation terminal at 1532.
+
+    I
+    have no recollection of doing that.
+
+    I checked the terminal. No course changes,
+    no new destinations, nothing that would suggest I''d been working on anything
+    important.
+
+    Perhaps I was simply more tired than I realized.
+
+    I''ve
+    decided to keep a handwritten record of my activities for the next few days.
+    If this happens again, I''d like to know whether the problem is with the computer
+    or with me.'

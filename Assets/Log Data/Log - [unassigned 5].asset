@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92b2c8003586277498a007ee213cc22b, type: 3}
+  m_Name: 'Log - [unassigned 5]'
+  m_EditorClassIdentifier: Assembly-CSharp::FloppyData
+  diskName: 'Log - [unassigned 5]'
+  logTitle: Unscheduled Transmission
+  author: '[Captain TBD]'
+  shipName: '[Unassigned]'
+  dateRecorded: '[TBD]'
+  logText: 'Received a transmission on the emergency frequency at approximately 0217.
+
+    It
+    lasted eleven seconds.
+
+    At first I thought it was interference. A low, irregular
+    sound, almost like someone breathing directly into a microphone.
+
+    Then I
+    heard a voice.
+
+    Couldn''t understand what it was saying. It was too distorted,
+    and there was a constant clicking sound underneath it.
+
+    I tried responding,
+    but the transmission stopped before I could establish contact.
+
+    SYS-CTRL
+    couldn''t identify the source. No nearby vessels, no detectable communications
+    equipment, nothing.
+
+    I replayed the recording several times.
+
+    On the
+    fourth attempt, I noticed something.
+
+    There were two voices.
+
+    One was
+    speaking. The other was repeating the same sounds a moment later, almost perfectly.
+
+    I
+    don''t know what language they were speaking, or whether it was language at all.
+
+    I
+    tried playing it at a slower speed.
+
+    I wish I hadn''t.
+
+    The second
+    voice wasn''t repeating the first.
+
+    It was answering.'
