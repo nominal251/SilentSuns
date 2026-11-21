@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8696806633759672822
+--- !u!1 &8362863111295025517
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,10 +8,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8357153836522132300}
-  - component: {fileID: 4923921720986754281}
-  - component: {fileID: 7183733980207654947}
-  - component: {fileID: 5773067932814094572}
+  - component: {fileID: 6336327897535522821}
+  - component: {fileID: 5463211382528342000}
+  - component: {fileID: 3637877990214373387}
+  - component: {fileID: 4372389763335945792}
+  - component: {fileID: 3975541822052190239}
   m_Layer: 0
   m_Name: geysermound
   m_TagString: Untagged
@@ -19,36 +20,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8357153836522132300
+--- !u!4 &6336327897535522821
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8696806633759672822}
+  m_GameObject: {fileID: 8362863111295025517}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -298.74, y: 0.41, z: -111.6}
+  m_LocalPosition: {x: -166.3195, y: 1.9095244, z: -110.901024}
   m_LocalScale: {x: 153.03, y: 153.03, z: 153.03}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4923921720986754281
+--- !u!33 &5463211382528342000
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8696806633759672822}
+  m_GameObject: {fileID: 8362863111295025517}
   m_Mesh: {fileID: 4711208715938537054, guid: b1cb1fea118f4bb408181603ccb41f3a, type: 3}
---- !u!23 &7183733980207654947
+--- !u!23 &3637877990214373387
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8696806633759672822}
+  m_GameObject: {fileID: 8362863111295025517}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -91,13 +92,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5773067932814094572
+--- !u!64 &4372389763335945792
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8696806633759672822}
+  m_GameObject: {fileID: 8362863111295025517}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -113,3 +114,22 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4711208715938537054, guid: b1cb1fea118f4bb408181603ccb41f3a, type: 3}
+--- !u!114 &3975541822052190239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8362863111295025517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5206d9522790764c9540fd4e4a440d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GeyserDamageZone
+  numDamageOverTime: 5
+  timer: 0
+  blowTimer: 0
+  dotTimer: 0
+  tmp: 0
+  isBlowing: 0
+  inPool: 0
